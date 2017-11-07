@@ -1,0 +1,261 @@
+body{
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
+  font-family: arial;
+}
+
+input, textarea, a{
+  outline: none;
+}
+
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+canvas[resize] {
+  width: calc(100% - 300px);
+  height: calc(100% - 50px);
+}
+
+header{
+  height: 50px;
+  background: #000;
+  color: white;
+}
+
+aside.content{
+  position: absolute;
+  left: 50px;
+  top: 50px;
+  height: calc(100vh - 50px);
+  width: 200px;
+  background: rgba(255, 255, 255, .7);
+  z-index: 99;
+  backdrop-filter: blur(20px);
+}
+
+aside.content > ul.pages{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+aside.content > ul.pages.open > li{
+  display: block;
+}
+
+aside.content > ul.pages > li{
+  height: 50px;
+  line-height: 50px;
+  padding: 0px 20px;
+  background: rgba(0, 0, 0, .9);
+  font-weight: bold;
+  color: white;
+  cursor: default;
+  display: none;
+}
+
+aside.content > ul.pages > li:hover{
+  background: rgba(0, 0, 0, .7);
+}
+
+aside.content > ul.pages:hover > li{
+  display: block;
+}
+
+aside.content > ul.pages > li.current{
+  display: block;
+}
+
+aside.content > ul.layer-three, aside.content > ul.layer-three ul{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+aside.content > ul.layer-three ul{
+  border-left: 1px solid #000;
+  margin-top: 5px;
+}
+
+aside.content > ul.layer-three li{
+  padding: 5px 20px;
+  cursor: default;
+}
+
+aside.content > ul.layer-three li.selected{
+  border-left: 4px solid black;
+  padding: 5px 16px;
+}
+
+aside.tools{
+  position: fixed;
+  left: 0;
+  top: 50px;
+  height: calc(100vh - 50px);
+  width: 50px;
+  background: #000;
+}
+
+aside.tools > ul{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+}
+
+aside.tools > ul > li{
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  margin: 5px;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  vertical-align: middle;
+  color: #fff;
+  font-size: 16pt;
+}
+
+aside.tools > ul > li:hover, aside.tools > ul > li.selected{
+  border: 1px solid #fff;
+  cursor: default;
+}
+
+aside.details{
+  position: fixed;
+  right: 0px;
+  top: 50px;
+  height: calc(100vh - 50px);
+  width: 250px;
+  background: #000;
+  z-index: 99;
+  color: white;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+aside.details > section > input{
+  height: 50px;
+  margin: 0;
+  line-height: 50px;
+  font-size: 16pt;
+  background: transparent;
+  box-sizing: border-box;
+  color: white;
+  border: 0px;
+}
+
+aside.details .row{
+  margin: 10px -10px;
+}
+
+aside.details .row .input-field{
+  margin: 0 10px;
+}
+
+canvas{
+  left: 50px;
+  top: 50px;
+  position: absolute;
+}
+
+header{
+  display: flex;
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+}
+
+ul.actions{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: inline-block;
+}
+
+ul.actions > li{
+  display: inline-block;
+  min-width: 50px;
+  height: 50px;
+  line-height: 50px;
+  vertical-align: middle;
+  text-align: center;
+  font-size: 18pt;
+  cursor: default;
+}
+
+div.document-name{
+  line-height: 50px;
+  vertical-align: middle;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  flex: 1;
+}
+
+div.document-name > input {
+  color: white;
+  background: transparent;
+  border: none;
+  line-height: 50px;
+  text-align: center;
+  font-size: 12pt;
+}
+
+ul.win-control{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  color: white;
+}
+ul.win-control > li{
+  display: inline-block;
+  font-size: 18pt;
+  margin: 10px;
+  cursor: default;
+  -webkit-app-region: no-drag;
+}
+
+ul.win-control > li:hover{
+  color: #b5b5b5;
+}
+
+.row{
+  display: flex;
+  flex-direction: row;
+}
+
+.input-field{
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  padding: 5px 0px;
+}
+
+.input-field > label{
+  font-size: 10pt;
+}
+
+.input-field > input{
+  width: 100%;
+  padding: 0;
+  display: inline-block;
+  height: 30px;
+  line-height: 30px;
+  vertical-align: middle;
+  background: transparent;
+  border: 0px;
+  border-bottom: 1px solid white;
+  color: white;
+}
+
+.input-field.unit-px:after{
+  content: 'px';
+  position: absolute;
+  right: 5px;
+  top: 28px;
+}
