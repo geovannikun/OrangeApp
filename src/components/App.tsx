@@ -43,6 +43,7 @@ class App extends React.Component<Object, MyState> {
 
   componentDidMount(){
     paper.setup('canvas');
+    paper.settings.handleSize = 10;
 
     var hitOptions = {
       segments: true,
