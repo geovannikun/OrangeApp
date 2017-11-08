@@ -1,6 +1,7 @@
 import '../assets/css/App.css';
 import React, { Component } from 'react';
 import paper, { Tool, Point, Rectangle, Size, Path, Group } from 'paper';
+import { OrangeRect, OrangePosition, OrangeSize } from '../classes/index';
 const {BrowserWindow} = require('electron').remote;
 
 paper.install(window);
@@ -9,8 +10,7 @@ class ProtoElement{
   [key:string]: any
   id: string
   name: string
-  position: Object
-  size: Object
+  element: paper.Item
 }
 
 class ProtoTool{
@@ -50,9 +50,18 @@ class App extends React.Component<Object, MyState> {
       fill: true,
       tolerance: 5
     };
-
     var secondPath = new Path.Circle(new Point(180, 50), 35);
     secondPath.fillColor = 'red';
+    
+    const circleEl = new ProtoElement();
+    circleEl.name = 'circle';
+    circleEl.id = (new Date().valueOf()).toString();
+    circleEl.element = secondPath;
+
+    const o_rectangle = new OrangeRect('rect', new OrangePosition(200, 100), new OrangeSize(200, 100));
+    o_rectangle.render(paper);
+    o_rectangle.position = new OrangePosition(800, 100);
+
     var selectionRect:Path.Rectangle = new Path.Rectangle({
       point: [0, 0],
       size: [1, 1],
@@ -64,18 +73,18 @@ class App extends React.Component<Object, MyState> {
     var selectionStartPoint:Point | null;
     var selectionItem:paper.Item | null;
     const selection = new Tool();
-    selection.onMouseDown = function(event) {
+    selection.onMouseDown = (event) => {
       var hitResult = paper.project.hitTest(event.point, hitOptions);
       if(hitResult){
         selectionItem = hitResult.item;
-        hitResult.item.selected = true;
+        this.selectObject(hitResult.item);
         selectionStartPoint = null;
       }else{
         paper.project.deselectAll();
         selectionStartPoint = event.point;
       }
     }
-    selection.onMouseDrag = function(event) {
+    selection.onMouseDrag = (event) => {
       if(selectionItem){
         selectionItem.position.x += event.delta.x;
         selectionItem.position.y += event.delta.y;
@@ -94,7 +103,7 @@ class App extends React.Component<Object, MyState> {
           recursive: true,
           inside: selectionRect.bounds
         }).forEach((item:paper.Item) => {
-          item.selected = true;
+          this.selectObject(item)
         })
         selectionRect.selected = false;
       }
@@ -129,8 +138,18 @@ class App extends React.Component<Object, MyState> {
 
     this.setState({
       ...this.state,
+      objects: [...this.state.objects, circleEl],
+      currentElement: circleEl,
       tools,
     }, () => this.changeTool(tools[0]));
+  }
+
+  selectObject(object:paper.Item){
+    object.selected = true;
+  }
+
+  unselectObject(object:paper.Item){
+    object.selected = false;
   }
 
   changeFileName = (fileName:string) => {
@@ -188,7 +207,7 @@ class App extends React.Component<Object, MyState> {
     return (
       <ul className='layer-three'>
         { list.map((item:ProtoElement) => (
-          <li key={item.id} onClick={() => this.changeCurrent(item)} className={this.state.currentElement.id == item.id ? 'selected' : ''}>
+          <li key={item.id} onClick={() => this.changeCurrent(item)} className={this.state.currentElement && this.state.currentElement.id == item.id ? 'selected' : ''}>
             {item.name}
             {item.getObjects && this.renderObjectList(item.getObjects())}
           </li>
