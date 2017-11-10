@@ -29,8 +29,9 @@ abstract class IOrangeItem {
   }
   set position(position:OrangePosition) {
     this._position = position;
+    this.guidelines.itemMoved();
     if(this.element)
-    this.element.pivot = new paper.Point(this._position.x, this._position.y);
+      this.element.bounds.topLeft = new paper.Point(this._position.x, this._position.y);
   }
   get size(): OrangeSize {
     return this._size;

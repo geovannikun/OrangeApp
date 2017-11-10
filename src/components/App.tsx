@@ -50,7 +50,6 @@ class App extends React.Component<Object, MyState> {
     const o_rectangle = new OrangeRect('rect', new OrangePosition(800, 300), new OrangeSize(100, 100));
     o_rectangle.selected = true;
     o_rectangle.render(paper);
-    o_rectangle.position = new OrangePosition(200, 100);
 
     var selectionRect:Path.Rectangle = new Path.Rectangle({
       point: [0, 0],
@@ -79,8 +78,12 @@ class App extends React.Component<Object, MyState> {
     }
     selection.onMouseDrag = (event) => {
       if(selectionItem){
-        selectionItem.position.x += event.delta.x;
-        selectionItem.position.y += event.delta.y;
+        this.state.objects.forEach((object:IOrangeItem) => 
+          object.selected && this.updateElement(object, 'position', new OrangePosition(
+            object.position.x + event.delta.x,
+            object.position.y + event.delta.y, 
+          ))
+        );
       }else if(selectionStartPoint){
         paper.project.deselectAll();
         if(selectionStartPoint.y < event.point.y && selectionStartPoint.x < event.point.x){
@@ -147,6 +150,9 @@ class App extends React.Component<Object, MyState> {
   updateElement = (element:IOrangeItem ,prop:string, value:any) => {
     if(element){
       switch (prop) {
+        case 'position':
+          element.position = value;
+          break;
         case 'name':
           element.name = value;
           break;
@@ -211,9 +217,8 @@ class App extends React.Component<Object, MyState> {
     return (
       <ul className='layer-three'>
         { list.map((item:IOrangeItem) => (
-          <li key={item.id} onClick={() => this.selectObject(item)} className={item.selected ? 'selected' : ''}>
+          <li key={item.id} onClick={() => this.updateElement(item, 'select', true)} className={item.selected ? 'selected' : ''}>
             {item.name}
-            {/* item.getObjects && this.renderObjectList(item.getObjects()) */}
           </li>
         ))}
       </ul>
