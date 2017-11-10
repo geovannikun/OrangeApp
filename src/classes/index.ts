@@ -3,6 +3,7 @@ import OrangePosition from './OrangePosition';
 import OrangeRect from './OrangeRect';
 import OrangeSize from './OrangeSize';
 import OrangeStyle from './OrangeStyle';
+import OrangeGuideline from './OrangeGuideline';
 
 export {
     IOrangeItem,
@@ -10,4 +11,5 @@ export {
     OrangeRect,
     OrangeSize,
     OrangeStyle,
+    OrangeGuideline,
 }

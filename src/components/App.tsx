@@ -47,7 +47,7 @@ class App extends React.Component<Object, MyState> {
     var secondPath = new Path.Circle(new Point(180, 50), 35);
     secondPath.fillColor = 'red';
 
-    const o_rectangle = new OrangeRect('rect', new OrangePosition(200, 100), new OrangeSize(200, 100));
+    const o_rectangle = new OrangeRect('rect', new OrangePosition(800, 300), new OrangeSize(100, 100));
     o_rectangle.selected = true;
     o_rectangle.render(paper);
     o_rectangle.position = new OrangePosition(200, 100);
