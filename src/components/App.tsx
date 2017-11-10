@@ -1,17 +1,10 @@
 import '../assets/css/App.css';
 import React, { Component } from 'react';
 import paper, { Tool, Point, Rectangle, Size, Path, Group } from 'paper';
-import { OrangeRect, OrangePosition, OrangeSize } from '../classes/index';
+import { OrangeRect, OrangePosition, OrangeSize, OrangeStyle, IOrangeItem } from '../classes/index';
 const {BrowserWindow} = require('electron').remote;
 
 paper.install(window);
-
-class ProtoElement{
-  [key:string]: any
-  id: string
-  name: string
-  element: paper.Item
-}
 
 class ProtoTool{
   title: string
@@ -27,8 +20,7 @@ class ProtoTool{
 interface MyState {
   tools: Array<ProtoTool>;
   currentTool?: ProtoTool;
-  currentElement?: ProtoElement;
-  objects: Array<ProtoElement>;
+  objects: Array<IOrangeItem>;
   fileName: string;
 }
 
@@ -36,8 +28,7 @@ class App extends React.Component<Object, MyState> {
   state = {
     tools: new Array(),
     currentTool: undefined,
-    currentElement: undefined,
-    objects: new Array(),
+    objects: new Array<IOrangeItem>(),
     fileName: 'filename',
   }
 
@@ -53,15 +44,11 @@ class App extends React.Component<Object, MyState> {
     };
     var secondPath = new Path.Circle(new Point(180, 50), 35);
     secondPath.fillColor = 'red';
-    
-    const circleEl = new ProtoElement();
-    circleEl.name = 'circle';
-    circleEl.id = (new Date().valueOf()).toString();
-    circleEl.element = secondPath;
 
     const o_rectangle = new OrangeRect('rect', new OrangePosition(200, 100), new OrangeSize(200, 100));
+    o_rectangle.selected = true;
     o_rectangle.render(paper);
-    o_rectangle.position = new OrangePosition(800, 100);
+    o_rectangle.position = new OrangePosition(200, 100);
 
     var selectionRect:Path.Rectangle = new Path.Rectangle({
       point: [0, 0],
@@ -78,10 +65,13 @@ class App extends React.Component<Object, MyState> {
       var hitResult = paper.project.hitTest(event.point, hitOptions);
       if(hitResult){
         selectionItem = hitResult.item;
-        this.selectObject(hitResult.item);
+        const element:IOrangeItem = this.state.objects.find((object:IOrangeItem) => object.element === selectionItem);
+        this.updateElement(element, 'select', true);
         selectionStartPoint = null;
       }else{
-        paper.project.deselectAll();
+        this.state.objects.forEach(
+          (object:IOrangeItem) => this.updateElement(object, 'select', false)
+        );
         selectionStartPoint = event.point;
       }
     }
@@ -104,7 +94,8 @@ class App extends React.Component<Object, MyState> {
           recursive: true,
           inside: selectionRect.bounds
         }).forEach((item:paper.Item) => {
-          this.selectObject(item)
+          const element:IOrangeItem = this.state.objects.find((object:IOrangeItem) => object.element === item);
+          this.updateElement(element, 'select', true);
         })
         selectionRect.selected = false;
       }
@@ -139,18 +130,9 @@ class App extends React.Component<Object, MyState> {
 
     this.setState({
       ...this.state,
-      objects: [...this.state.objects, circleEl],
-      currentElement: circleEl,
+      objects: [...this.state.objects, o_rectangle],
       tools,
     }, () => this.changeTool(tools[0]));
-  }
-
-  selectObject(object:paper.Item){
-    object.selected = true;
-  }
-
-  unselectObject(object:paper.Item){
-    object.selected = false;
   }
 
   changeFileName = (fileName:string) => {
@@ -160,19 +142,34 @@ class App extends React.Component<Object, MyState> {
     });
   }
 
-  updateCurrent = (prop:string, value:string) => {
-    if(this.state.currentElement){
-      const element:ProtoElement = this.state.currentElement;
-      element[prop] = value;
+  updateElement = (element:IOrangeItem ,prop:string, value:any) => {
+    if(element){
+      switch (prop) {
+        case 'name':
+          element.name = value;
+          break;
+        case 'select':
+          element.selected = value;
+          break;
+        case 'width':
+          element.size = new OrangeSize(parseInt(value), element.size.height);
+          break;
+        case 'height':
+          element.size = new OrangeSize(element.size.width, parseInt(value));
+          break;
+        case 'fill':
+          element.style = { fillColor:  value} as OrangeStyle;
+          break;
+      }
       this.setState({
         ...this.state,
-        currentElement: element,
+        objects: this.state.objects.map((item:IOrangeItem) => {
+          if(item.id === element.id)
+            return element;
+          return item;
+        }),
       });
     }
-  }
-
-  changeCurrent = (item:ProtoElement) => {
-    // this.canvas.setActiveObject(item);
   }
 
   changeTool = (tool:ProtoTool) => {
@@ -204,13 +201,17 @@ class App extends React.Component<Object, MyState> {
     }
   }
 
-  renderObjectList = (list:Array<ProtoElement>):JSX.Element => {
+  getSelectedItems = (items:Array<IOrangeItem>) => {
+    return items.filter(item => item.selected);
+  }
+
+  renderObjectList = (list:Array<IOrangeItem>):JSX.Element => {
     return (
       <ul className='layer-three'>
-        { list.map((item:ProtoElement) => (
-          <li key={item.id} onClick={() => this.changeCurrent(item)} className={this.state.currentElement && this.state.currentElement.id == item.id ? 'selected' : ''}>
+        { list.map((item:IOrangeItem) => (
+          <li key={item.id} onClick={() => this.selectObject(item)} className={item.selected ? 'selected' : ''}>
             {item.name}
-            {item.getObjects && this.renderObjectList(item.getObjects())}
+            {/* item.getObjects && this.renderObjectList(item.getObjects()) */}
           </li>
         ))}
       </ul>
@@ -218,6 +219,7 @@ class App extends React.Component<Object, MyState> {
   }
 
   render() {
+    const selectedItems:Array<IOrangeItem> = this.getSelectedItems(this.state.objects);
     return (
       <main>
         <header>
@@ -252,23 +254,23 @@ class App extends React.Component<Object, MyState> {
         </aside>
         <canvas id='canvas' resize="true"/>
         <aside className='details'>
-          {this.state.current && (
+          {selectedItems.length == 1 && (
             <section>
-              <input value={this.state.current.name} onChange={(e) => this.updateCurrent('name', e.target.value)}/>
+              <input value={selectedItems[0].name} onChange={(e) => this.updateElement(selectedItems[0], 'name', e.target.value)}/>
               <div className='row'>
                 <span className='input-field unit-px'>
                   <label>Width</label>
-                  <input type='number' value={Math.round(this.state.current.width)} onChange={(e) => this.updateCurrent('width', e.target.value)}/>
+                  <input type='number' value={selectedItems[0].size.width} onChange={(e) => this.updateElement(selectedItems[0], 'width', e.target.value)}/>
                 </span>
                 <span className='input-field unit-px'>
                   <label>Height</label>
-                  <input value={Math.round(this.state.current.height)} onChange={(e) => this.updateCurrent('height', e.target.value)}/>
+                  <input type='number' value={selectedItems[0].size.height} onChange={(e) => this.updateElement(selectedItems[0], 'height', e.target.value)}/>
                 </span>
               </div>
               <div className='row'>
                 <span className='input-field'>
                   <label>Color</label>
-                  <input value={this.state.current.fill} onChange={(e) => this.updateCurrent('fill', e.target.value)}/>
+                  <input value={selectedItems[0].style.fillColor} onChange={(e) => this.updateElement(selectedItems[0], 'fill', e.target.value)}/>
                 </span>
               </div>
             </section>
