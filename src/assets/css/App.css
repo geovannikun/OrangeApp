@@ -16,8 +16,44 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 }
 
 canvas[resize] {
-  width: calc(100% - 300px);
+  width: calc(100% - 50px);
   height: calc(100% - 50px);
+}
+
+#context-menu{
+  position: fixed;
+  z-index: 9999;
+}
+
+#context-menu.show{
+  display: inline-block;
+}
+
+#context-menu.hide{
+  display: none;
+}
+
+#context-menu > ul {
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  min-width: 200px;
+  background: rgba(0, 0, 0, .8);
+  backdrop-filter: blur(10px);
+  color: white;
+  list-style: none;
+  font-size: 10pt;
+  font-weight: bold;
+  border: 1px solid #b5b5b5;
+}
+
+#context-menu > ul > li {
+  padding: 10px;
+  cursor: default;
+}
+
+#context-menu > ul > li:hover{
+  background: rgba(255, 255, 255, .1);
 }
 
 header{

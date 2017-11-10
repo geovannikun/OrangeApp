@@ -2,6 +2,8 @@ import '../assets/css/App.css';
 import React, { Component } from 'react';
 import paper, { Tool, Point, Rectangle, Size, Path, Group } from 'paper';
 import { OrangeRect, OrangePosition, OrangeSize, OrangeStyle, IOrangeItem } from '../classes/index';
+import ContextMenu from './ContextMenu';
+import ContextMenuItem from './ContextMenuItem';
 const {BrowserWindow} = require('electron').remote;
 
 paper.install(window);
@@ -222,6 +224,9 @@ class App extends React.Component<Object, MyState> {
     const selectedItems:Array<IOrangeItem> = this.getSelectedItems(this.state.objects);
     return (
       <main>
+        <ContextMenu>
+          <ContextMenuItem onClick={() => console.log('teste')}>Teste</ContextMenuItem>
+        </ContextMenu>
         <header>
           <ul className='actions'>
             <li>≡</li>
