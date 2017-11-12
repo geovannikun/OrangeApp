@@ -4,6 +4,7 @@ body{
   height: 100vh;
   overflow: hidden;
   font-family: arial;
+  background: #1B1B1B;
 }
 
 input, textarea, a{

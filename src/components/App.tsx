@@ -1,155 +1,201 @@
 import '../assets/css/App.css';
-import React, { Component } from 'react';
-import paper, { Tool, Point, Rectangle, Size, Path, Group } from 'paper';
-import { OrangeRect, OrangePosition, OrangeSize, OrangeStyle, IOrangeItem } from '../classes/index';
+
+import {
+  IOrangeItem,
+  OrangeArtboard,
+  OrangeGuideline,
+  OrangePosition,
+  OrangeRect,
+  OrangeSize,
+  OrangeStyle,
+  OrangeTool,
+} from '../classes/index';
+
 import ContextMenu from './ContextMenu';
 import ContextMenuItem from './ContextMenuItem';
-const {BrowserWindow} = require('electron').remote;
 
-paper.install(window);
+import electron from 'electron';
+import React, { Component } from 'react';
+import paper, {
+  Group,
+  Path,
+  Point,
+  Rectangle,
+  Size,
+  Tool,
+} from 'paper';
 
-class ProtoTool{
-  title: string
-  icon: string
-  tool: Tool
-  constructor(title:string, icon:string, tool:Tool){
-    this.title = title;
-    this.icon = icon;
-    this.tool = tool;
+declare module 'react' {
+  interface CanvasHTMLAttributes<T> extends DOMAttributes<T> {
+    resize: any;
   }
 }
 
-interface MyState {
-  tools: Array<ProtoTool>;
-  currentTool?: ProtoTool;
-  objects: Array<IOrangeItem>;
+const { BrowserWindow } = electron.remote;
+
+interface IMyState {
+  tools: OrangeTool[];
+  currentTool?: OrangeTool;
+  objects: OrangeArtboard[];
   fileName: string;
 }
 
-class App extends React.Component<Object, MyState> {
-  state = {
-    tools: new Array(),
+class App extends React.Component<object, IMyState> {
+  public state = {
     currentTool: undefined,
-    objects: new Array<IOrangeItem>(),
     fileName: 'filename',
-  }
+    objects: new Array<OrangeArtboard>(),
+    tools: new Array(),
+  };
 
-  componentDidMount(){
+  public componentDidMount() {
+    paper.install(window);
     paper.setup('canvas');
     paper.settings.handleSize = 10;
 
-    var hitOptions = {
+    const hitOptions = {
+      fill: true,
       segments: true,
       stroke: true,
-      fill: true,
-      tolerance: 5
+      tolerance: 5,
     };
-    var secondPath = new Path.Circle(new Point(180, 50), 35);
-    secondPath.fillColor = 'red';
 
-    const o_rectangle = new OrangeRect('rect', new OrangePosition(800, 300), new OrangeSize(100, 100));
-    o_rectangle.selected = true;
-    o_rectangle.render(paper);
+    const oArtboard = new OrangeArtboard('oArtboard', new OrangePosition(250, 100), new OrangeSize(400, 800));
+    oArtboard.selected = true;
+    oArtboard.render(paper);
 
-    var selectionRect:Path.Rectangle = new Path.Rectangle({
+    const oRectangle = new OrangeRect('rect', new OrangePosition(50, 50), new OrangeSize(100, 100));
+    oRectangle.selected = true;
+
+    oArtboard.add(oRectangle);
+
+    const selectionRect: Path.Rectangle = new Path.Rectangle({
+      dashArray: [10, 12],
+      fillColor: 'rgba(0, 0, 0, 0.1)',
       point: [0, 0],
       size: [1, 1],
       strokeColor: 'black',
-      fillColor: 'rgba(0, 0, 0, 0.1)',
-      dashArray: [10, 12],
     });
-    
-    var selectionStartPoint:Point | null;
-    var selectionItem:paper.Item | null;
+
+    let selectionStartPoint: Point | null;
+    let selectionItem: paper.Item | null;
     const selection = new Tool();
     selection.onMouseDown = (event) => {
-      var hitResult = paper.project.hitTest(event.point, hitOptions);
-      if(hitResult){
+      const hitResult = paper.project.hitTest(event.point, hitOptions);
+      if (hitResult) {
         selectionItem = hitResult.item;
-        const element:IOrangeItem = this.state.objects.find((object:IOrangeItem) => object.element === selectionItem);
-        this.updateElement(element, 'select', true);
-        selectionStartPoint = null;
-      }else{
-        this.state.objects.forEach(
-          (object:IOrangeItem) => this.updateElement(object, 'select', false)
-        );
+        const currentArtboard: OrangeArtboard | undefined =
+          this.state.objects.find((object: OrangeArtboard) => object.selected);
+        if (currentArtboard) {
+          const element: IOrangeItem | undefined = currentArtboard.children.find((object: IOrangeItem) =>
+            object.element === selectionItem,
+          );
+          if (element) {
+            this.updateElement(element, 'select', true);
+          } else {
+            this.state.objects.forEach((object: OrangeArtboard) => {
+              this.updateElement(object, 'selectAll', false);
+            });
+            selectionStartPoint = event.point;
+          }
+          selectionStartPoint = null;
+        }
+      } else {
+        this.state.objects.forEach((object: OrangeArtboard) => {
+            this.updateElement(object, 'selectAll', false);
+        });
         selectionStartPoint = event.point;
       }
-    }
+    };
+
     selection.onMouseDrag = (event) => {
-      if(selectionItem){
-        this.state.objects.forEach((object:IOrangeItem) => 
-          object.selected && this.updateElement(object, 'position', new OrangePosition(
-            object.position.x + event.delta.x,
-            object.position.y + event.delta.y, 
-          ))
-        );
-      }else if(selectionStartPoint){
-        paper.project.deselectAll();
-        if(selectionStartPoint.y < event.point.y && selectionStartPoint.x < event.point.x){
-          selectionRect.bounds = new Rectangle(selectionStartPoint, event.point)
-        }else if(selectionStartPoint.y > event.point.y && selectionStartPoint.x > event.point.x){
-          selectionRect.bounds = new Rectangle(event.point, selectionStartPoint)
-        }else if(selectionStartPoint.y > event.point.y && selectionStartPoint.x < event.point.x){
-          selectionRect.bounds = new Rectangle(new Point(selectionStartPoint.x, event.point.y), new Point(event.point.x, selectionStartPoint.y))
-        }else if(selectionStartPoint.y < event.point.y && selectionStartPoint.x > event.point.x){
-          selectionRect.bounds = new Rectangle(new Point(event.point.x, selectionStartPoint.y), new Point(selectionStartPoint.x, event.point.y))
+      if (selectionItem) {
+        const currentArtboard: OrangeArtboard | undefined =
+          this.state.objects.find((object: OrangeArtboard) => object.selected);
+        if (currentArtboard) {
+          currentArtboard.children.forEach((object: IOrangeItem) => {
+            if (object.selected) {
+              this.updateElement(object, 'position', new OrangePosition(
+                object.position.x + event.delta.x,
+                object.position.y + event.delta.y,
+              ));
+            }
+          });
+        }
+      } else if (selectionStartPoint) {
+        /* paper.project.deselectAll();
+        if (selectionStartPoint.y < event.point.y && selectionStartPoint.x < event.point.x) {
+          selectionRect.bounds = new Rectangle(selectionStartPoint, event.point);
+        } else if (selectionStartPoint.y > event.point.y && selectionStartPoint.x > event.point.x) {
+          selectionRect.bounds = new Rectangle(event.point, selectionStartPoint);
+        } else if (selectionStartPoint.y > event.point.y && selectionStartPoint.x < event.point.x) {
+          selectionRect.bounds = new Rectangle(
+            new Point(selectionStartPoint.x, event.point.y),
+            new Point(event.point.x, selectionStartPoint.y),
+          );
+        } else if (selectionStartPoint.y < event.point.y && selectionStartPoint.x > event.point.x) {
+          selectionRect.bounds = new Rectangle(
+            new Point(event.point.x, selectionStartPoint.y),
+            new Point(selectionStartPoint.x, event.point.y),
+          );
         }
         paper.project.getItems({
+          inside: selectionRect.bounds,
           recursive: true,
-          inside: selectionRect.bounds
-        }).forEach((item:paper.Item) => {
-          const element:IOrangeItem = this.state.objects.find((object:IOrangeItem) => object.element === item);
-          this.updateElement(element, 'select', true);
-        })
-        selectionRect.selected = false;
+        }).forEach((item: paper.Item) => {
+          const element: IOrangeItem | undefined = this.state.objects.find((object: IOrangeItem) =>
+            object.element === item,
+          );
+          if (element) {
+            this.updateElement(element, 'select', true);
+          }
+        });
+        selectionRect.selected = false; */
       }
-    }
+    };
 
-    selection.onMouseUp = function(event) {
-      if(selectionItem){
+    selection.onMouseUp = (event) => {
+      if (selectionItem) {
         selectionItem = null;
-      }else if(selectionStartPoint){
+      } else if (selectionStartPoint) {
         selectionStartPoint = null;
         selectionRect.bounds = new Rectangle(new Point(0, 0), new Point(1, 1));
       }
-    }
+    };
 
     const rect = new Tool();
-    rect.onMouseDown = function(event) {
-      console.log('rect');
-      // Create a new path every time the mouse is clicked
-      path = new Path();
-      path.add(event.point);
-      path.strokeColor = 'black';
-    }
     const text = new Tool();
     const layer = new Tool();
 
-    const tools = new Array<ProtoTool>();
+    const tools = new Array<OrangeTool>();
 
-    tools.push(new ProtoTool('selection', '⊹', selection))
-    tools.push(new ProtoTool('rect', '◻', rect))
-    tools.push(new ProtoTool('text', '℞', text))
-    tools.push(new ProtoTool('layer', 'layer', layer))
+    tools.push(new OrangeTool('selection', '⊹', selection));
+    tools.push(new OrangeTool('rect', '◻', rect));
+    tools.push(new OrangeTool('text', '℞', text));
+    tools.push(new OrangeTool('layer', 'layer', layer));
 
     this.setState({
       ...this.state,
-      objects: [...this.state.objects, o_rectangle],
+      objects: [...this.state.objects, oArtboard],
       tools,
     }, () => this.changeTool(tools[0]));
   }
 
-  changeFileName = (fileName:string) => {
+  private changeFileName = (fileName: string) => {
     this.setState({
       ...this.state,
-      fileName
+      fileName,
     });
   }
 
-  updateElement = (element:IOrangeItem ,prop:string, value:any) => {
-    if(element){
+  private updateElement = (element: IOrangeItem | OrangeArtboard , prop: string, value: any) => {
+    if (element) {
       switch (prop) {
+        case 'selectAll':
+          if (element instanceof OrangeArtboard) {
+            element.selectAll(value);
+          }
+          break;
         case 'position':
           element.position = value;
           break;
@@ -160,37 +206,54 @@ class App extends React.Component<Object, MyState> {
           element.selected = value;
           break;
         case 'width':
-          element.size = new OrangeSize(parseInt(value), element.size.height);
+          element.size = new OrangeSize(parseInt(value, 0), element.size.height);
           break;
         case 'height':
-          element.size = new OrangeSize(element.size.width, parseInt(value));
+          element.size = new OrangeSize(element.size.width, parseInt(value, 0));
           break;
         case 'fill':
-          element.style = { fillColor:  value} as OrangeStyle;
+          if (element instanceof IOrangeItem) {
+            element.style = { fillColor: value };
+          }
           break;
       }
       this.setState({
         ...this.state,
-        objects: this.state.objects.map((item:IOrangeItem) => {
-          if(item.id === element.id)
-            return element;
-          return item;
+        objects: this.state.objects.map((artboard: OrangeArtboard) => {
+          return this.updateOrangeItem(element, artboard);
         }),
       });
     }
   }
 
-  changeTool = (tool:ProtoTool) => {
+  private updateOrangeItem = (item: OrangeArtboard | IOrangeItem, artboard: OrangeArtboard): OrangeArtboard => {
+    if (item instanceof IOrangeItem) {
+      artboard.children = artboard.children.map((subItem: IOrangeItem) => {
+        if (item === subItem) {
+          return item;
+        }
+        return subItem;
+      });
+      return artboard;
+    } else {
+      if (item === artboard) {
+        return item;
+      }
+      return artboard;
+    }
+  }
+
+  private changeTool = (tool: OrangeTool) => {
     tool.tool.activate();
     this.setState({
       ...this.state,
-      currentTool: tool
+      currentTool: tool,
     });
   }
 
-  windowAction = (action:string) => {
-    var window = BrowserWindow.getFocusedWindow();
-    switch(action){
+  private windowAction = (action: string) => {
+    const window = BrowserWindow.getFocusedWindow();
+    switch (action) {
       case 'close':
         window.close();
         break;
@@ -198,9 +261,9 @@ class App extends React.Component<Object, MyState> {
         window.minimize();
         break;
       case 'maximize':
-        if(window.isMaximized()){
+        if (window.isMaximized()) {
           window.unmaximize();
-        }else{
+        } else {
             window.maximize();
         }
         break;
@@ -209,48 +272,127 @@ class App extends React.Component<Object, MyState> {
     }
   }
 
-  getSelectedItems = (items:Array<IOrangeItem>) => {
-    return items.filter(item => item.selected);
+  private getSelectedItems = (items: Array<IOrangeItem | OrangeArtboard>) => {
+    return items.filter((item: IOrangeItem) => item.selected);
   }
 
-  renderObjectList = (list:Array<IOrangeItem>):JSX.Element => {
-    return (
-      <ul className='layer-three'>
-        { list.map((item:IOrangeItem) => (
-          <li key={item.id} onClick={() => this.updateElement(item, 'select', true)} className={item.selected ? 'selected' : ''}>
-            {item.name}
-          </li>
-        ))}
-      </ul>
-    );
+  private renderObjectList = (list: Array<IOrangeItem | OrangeArtboard>): JSX.Element[] => {
+    return list.map((item: IOrangeItem) => (
+      <li
+        key={item.id}
+        onClick={this.handleElementSelection(item, 'select')}
+        className={item.selected ? 'selected' : ''}
+      >
+        {item.name}
+      </li>
+    ));
   }
 
-  render() {
-    const selectedItems:Array<IOrangeItem> = this.getSelectedItems(this.state.objects);
+  private renderToolsList = (list: OrangeTool[]): JSX.Element[] => {
+    return list.map((tool: OrangeTool) => (
+      <li
+        key={tool.title}
+        onClick={this.handleChangeTool(tool)}
+        className={(this.state.currentTool === tool) ? 'selected' : ''}
+      >
+        {tool.icon}
+      </li>
+    ));
+  }
+
+  private renderElementDetails = (list: Array<IOrangeItem | OrangeArtboard>): JSX.Element | undefined => {
+    if (list.length === 1) {
+      const selected = list[0];
+      return (
+        <section>
+          <input value={selected.name} onChange={this.handleElementChange(selected, 'name')}/>
+          <div className='row'>
+            <span className='input-field unit-px'>
+              <label>Width</label>
+              <input
+                type='number'
+                value={selected.size.width}
+                onChange={this.handleElementChange(selected, 'width')}
+              />
+            </span>
+            <span className='input-field unit-px'>
+              <label>Height</label>
+              <input
+                type='number'
+                value={selected.size.height}
+                onChange={this.handleElementChange(selected, 'height')}
+              />
+            </span>
+          </div>
+          {this.renderStyleEditor('Color', selected, 'fill')}
+        </section>
+      );
+    }
+    return undefined;
+  }
+
+  private renderStyleEditor = (title: string, element: IOrangeItem | OrangeArtboard, propertie: string) => {
+    if (element instanceof IOrangeItem) {
+      return (
+        <div className='row'>
+          <span className='input-field'>
+            <label>{title}</label>
+            <input value={element.style.fillColor} onChange={this.handleElementChange(element, propertie)}/>
+          </span>
+        </div>
+      );
+    }
+    return undefined;
+  }
+
+  private handleFileName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    this.changeFileName((event.target as HTMLInputElement).value);
+  }
+
+  private handleWinControl = (action: string) => (event: any) => {
+    this.windowAction(action);
+  }
+
+  private handleElementSelection = (item: IOrangeItem | OrangeArtboard, propertie: string) => (event: any) => {
+    this.updateElement(item, propertie, true);
+  }
+
+  private handleElementChange = (item: IOrangeItem | OrangeArtboard, propertie: string) => (event: any) => {
+    this.updateElement(item, propertie, event.target.value);
+  }
+
+  private handleChangeTool = (tool: OrangeTool) => (event: any) => {
+    this.changeTool(tool);
+  }
+
+  private handleContextMenu = (event: any) => {
+    console.log('oi');
+  }
+
+  public render() {
+    const selectedItems: Array<IOrangeItem | OrangeArtboard> = this.getSelectedItems(this.state.objects);
     return (
       <main>
         <ContextMenu>
-          <ContextMenuItem onClick={() => console.log('teste')}>Teste</ContextMenuItem>
+          <ContextMenuItem onClick={this.handleContextMenu}>Teste</ContextMenuItem>
         </ContextMenu>
         <header>
           <ul className='actions'>
             <li>≡</li>
-            <li>proto<b>editor</b></li>
+            <li>proto<b>editor :)</b></li>
           </ul>
           <div className='document-name'>
-            <input value={this.state.fileName} onChange={(e) => this.changeFileName(e.target.value)}/>
+            <input value={this.state.fileName} onChange={this.handleFileName}/>
           </div>
           <ul className='win-control'>
-            <li onClick={() => this.windowAction('minimize')}>⊖</li>
-            <li onClick={() => this.windowAction('maximize')}>⊕</li>
-            <li onClick={() => this.windowAction('close')}>⊗</li>
+            <li onClick={this.handleWinControl('minimize')}>⊖</li>
+            <li onClick={this.handleWinControl('maximize')}>⊕</li>
+            <li onClick={this.handleWinControl('close')}>⊗</li>
           </ul>
         </header>
         <aside className='tools'>
           <ul>
-            { this.state.tools.map((tool:ProtoTool) => (
-              <li key={tool.title} onClick={() => this.changeTool(tool)} className={(this.state.currentTool==tool)?'selected':''}>{tool.icon}</li>
-            ))}
+            {this.renderToolsList(this.state.tools)}
           </ul>
         </aside>
         <aside className='content'>
@@ -260,31 +402,14 @@ class App extends React.Component<Object, MyState> {
             <li>page 3</li>
             <li>page 4</li>
           </ul>
-          {this.renderObjectList(this.state.objects)}
+
+          <ul className='layer-three'>
+            {this.renderObjectList(this.state.objects)}
+          </ul>
         </aside>
-        <canvas id='canvas' resize="true"/>
+        <canvas id='canvas' resize='true'/>
         <aside className='details'>
-          {selectedItems.length == 1 && (
-            <section>
-              <input value={selectedItems[0].name} onChange={(e) => this.updateElement(selectedItems[0], 'name', e.target.value)}/>
-              <div className='row'>
-                <span className='input-field unit-px'>
-                  <label>Width</label>
-                  <input type='number' value={selectedItems[0].size.width} onChange={(e) => this.updateElement(selectedItems[0], 'width', e.target.value)}/>
-                </span>
-                <span className='input-field unit-px'>
-                  <label>Height</label>
-                  <input type='number' value={selectedItems[0].size.height} onChange={(e) => this.updateElement(selectedItems[0], 'height', e.target.value)}/>
-                </span>
-              </div>
-              <div className='row'>
-                <span className='input-field'>
-                  <label>Color</label>
-                  <input value={selectedItems[0].style.fillColor} onChange={(e) => this.updateElement(selectedItems[0], 'fill', e.target.value)}/>
-                </span>
-              </div>
-            </section>
-          )}
+          {this.renderElementDetails(selectedItems)}
         </aside>
       </main>
     );

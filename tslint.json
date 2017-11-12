@@ -7,8 +7,17 @@
     "jsRules": {},
     "rules": {
         "quotemark": [true, "single"],
-        "no-console": [true, "log", "warning"],
-        "jsx-wrap-multiline": false
+        "jsx-wrap-multiline": false,
+        "member-ordering": false,
+        "ordered-imports": false,
+        "no-console": { "severity": "warning" },
+        "no-unused-variable": true,
+        "forin": false,
+        "interface-name": false,
+        "variable-name": [true,
+            "check-format",
+            "allow-leading-underscore"
+        ]
     },
     "rulesDirectory": []
 }
