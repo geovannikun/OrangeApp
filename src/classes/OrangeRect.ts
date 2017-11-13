@@ -11,6 +11,5 @@ export default class OrangeRect extends IOrangeItem {
       ),
       new Size(this.size.width, this.size.height),
     );
-    this.element.fillColor = 'red';
   }
 }

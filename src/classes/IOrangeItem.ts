@@ -1,6 +1,7 @@
 import paper from 'paper';
 
 import { OrangePosition, OrangeSize, OrangeStyle, OrangeGuideline, OrangeArtboard } from './index';
+import { debug } from 'util';
 
 abstract class IOrangeItem {
   public id: string;
@@ -37,8 +38,8 @@ abstract class IOrangeItem {
     this.guidelines.itemMoved();
     if (this.element) {
       this.element.bounds.topLeft = new paper.Point(
-        this.parent.position.x + this._position.x,
-        this.parent.position.y + this._position.y,
+        this.parent.position.x + this.position.x,
+        this.parent.position.y + this.position.y,
       );
     }
   }
@@ -78,10 +79,17 @@ abstract class IOrangeItem {
   set style(style: OrangeStyle) {
     this._style = { ...this._style, ...style };
     if (this.element) {
-      for (const property in Object.keys(style)) {
+      this.apllyStyle(style);
+    }
+  }
+
+  private apllyStyle(style?: OrangeStyle) {
+    const styleToAplly = style || this.style;
+    if (this.element) {
+      for (const property in styleToAplly) {
         switch (property) {
           case 'fillColor':
-            this.element.style.fillColor = style.fillColor || '';
+            this.element.style.fillColor = styleToAplly.fillColor || '';
             break;
         }
       }
@@ -92,6 +100,7 @@ abstract class IOrangeItem {
 
   public render(canvas: paper.PaperScope) {
     this.generate(canvas);
+    this.apllyStyle();
     this.guidelines.generate(canvas);
   }
 }
