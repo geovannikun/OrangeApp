@@ -6,6 +6,7 @@ import OrangeSize from './OrangeSize';
 import OrangeStyle from './OrangeStyle';
 import OrangeTool from './OrangeTool';
 import OrangeArtboard from './OrangeArtboard';
+import ViewZoom from './ViewZoom';
 
 export {
     IOrangeItem,
@@ -16,4 +17,5 @@ export {
     OrangeSize,
     OrangeStyle,
     OrangeTool,
+    ViewZoom,
 };

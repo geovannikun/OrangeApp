@@ -9,6 +9,7 @@ import {
   OrangeSize,
   OrangeStyle,
   OrangeTool,
+  ViewZoom,
 } from '../classes/index';
 
 import ContextMenu from './ContextMenu';
@@ -52,6 +53,12 @@ class App extends React.Component<object, IMyState> {
     paper.install(window);
     paper.setup('canvas');
     paper.settings.handleSize = 10;
+
+    /* window.addEventListener('wheel', (event: WheelEvent) => {
+      console.log(event);
+    }); */
+
+    const paperZoom = new ViewZoom(paper.project);
 
     const hitOptions = {
       fill: true,
@@ -272,8 +279,14 @@ class App extends React.Component<object, IMyState> {
     }
   }
 
-  private getSelectedItems = (items: Array<IOrangeItem | OrangeArtboard>) => {
-    return items.filter((item: IOrangeItem) => item.selected);
+  private getSelectedItems = (items: OrangeArtboard[]): Array<IOrangeItem | OrangeArtboard> => {
+    let array = new Array<IOrangeItem | OrangeArtboard>();
+    items.forEach((artboard: OrangeArtboard) => {
+      if (artboard.selected) {
+        array = [...array, ...artboard.children.filter((item: IOrangeItem) => item.selected)];
+      }
+    });
+    return array;
   }
 
   private renderObjectList = (list: Array<IOrangeItem | OrangeArtboard>): JSX.Element[] => {
@@ -284,8 +297,17 @@ class App extends React.Component<object, IMyState> {
         className={item.selected ? 'selected' : ''}
       >
         {item.name}
+        {item instanceof OrangeArtboard && this.renderSubList(item.children)}
       </li>
     ));
+  }
+
+  private renderSubList = (list: Array<IOrangeItem | OrangeArtboard>): JSX.Element => {
+    return(
+      <ul>
+        {this.renderObjectList(list)}
+      </ul>
+    );
   }
 
   private renderToolsList = (list: OrangeTool[]): JSX.Element[] => {
