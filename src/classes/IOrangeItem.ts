@@ -47,12 +47,12 @@ abstract class IOrangeItem {
     return this._size;
   }
   set size(size: OrangeSize) {
+    size.width = size.width <= 0 ? this.size.width : size.width;
+    size.height = size.height <= 0 ? this.size.height : size.height;
     this._size = size;
     if (this.element) {
-      this.element.bounds = new paper.Rectangle(
-        this.element.bounds.topLeft,
-        new paper.Point(this._position.x + size.width, this._position.y + size.height),
-      );
+      this.element.bounds.width = this.size.width;
+      this.element.bounds.height = this.size.height;
     }
   }
   get angle(): number {
