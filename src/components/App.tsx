@@ -87,7 +87,6 @@ class App extends React.Component<object, IMyState> {
     });
     selectionRect.visible = false;
 
-    let selectionStartPoint: Point | null;
     const selectedItems: IOrangeItem[] = new Array<IOrangeItem>();
     const selection = new Tool();
     selection.onMouseDown = (e: paper.ToolEvent) => {
@@ -113,43 +112,32 @@ class App extends React.Component<object, IMyState> {
             this.state.objects.forEach((object: OrangeArtboard) => {
               this.updateElement(object, 'selectAll', false);
             });
-            selectionStartPoint = e.point;
             selectionRect.visible = true;
-          } else {
-            selectionStartPoint = null;
           }
         } else {
           this.state.objects.forEach((object: OrangeArtboard) => {
               this.updateElement(object, 'selectAll', false);
           });
-          selectionStartPoint = e.point;
           selectionRect.visible = true;
         }
       }
     };
 
     selection.onMouseDrag = (event: paper.ToolEvent) => {
-      if (selectedItems.length && !selectionStartPoint) {
+      if (selectedItems.length && !selectionRect.visible) {
         selectedItems.forEach((object: IOrangeItem) => {
           this.updateElement(object, 'position', new OrangePosition(
             object.position.x + event.delta.x,
             object.position.y + event.delta.y,
           ));
         });
-      } else if (selectionStartPoint) {
-        if (selectionStartPoint.y < event.point.y && selectionStartPoint.x < event.point.x) {
-          selectionRect.bounds = new Rectangle(selectionStartPoint, event.point);
-        } else if (selectionStartPoint.y > event.point.y && selectionStartPoint.x > event.point.x) {
-          selectionRect.bounds = new Rectangle(event.point, selectionStartPoint);
-        } else if (selectionStartPoint.y > event.point.y && selectionStartPoint.x < event.point.x) {
+      } else {
+        if (event.downPoint.y !== event.point.y && event.downPoint.x !== event.point.x) {
+          const x = [event.point.x, event.downPoint.x].sort();
+          const y = [event.point.y, event.downPoint.y].sort();
           selectionRect.bounds = new Rectangle(
-            new Point(selectionStartPoint.x, event.point.y),
-            new Point(event.point.x, selectionStartPoint.y),
-          );
-        } else if (selectionStartPoint.y < event.point.y && selectionStartPoint.x > event.point.x) {
-          selectionRect.bounds = new Rectangle(
-            new Point(event.point.x, selectionStartPoint.y),
-            new Point(selectionStartPoint.x, event.point.y),
+            new Point(x[0], y[0]),
+            new Point(x[1], y[1]),
           );
         }
         paper.project.getItems({
@@ -175,9 +163,8 @@ class App extends React.Component<object, IMyState> {
     };
 
     selection.onMouseUp = (event) => {
-      if (selectionStartPoint) {
+      if (selectionRect.visible) {
         selectionRect.visible = false;
-        selectionStartPoint = null;
         selectionRect.bounds = new Rectangle(new Point(0, 0), new Point(1, 1));
       }
     };
