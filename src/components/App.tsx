@@ -134,7 +134,6 @@ class App extends React.Component<object, IMyState> {
           ));
         });
       } else if (selectionStartPoint) {
-        paper.project.deselectAll();
         if (selectionStartPoint.y < event.point.y && selectionStartPoint.x < event.point.x) {
           selectionRect.bounds = new Rectangle(selectionStartPoint, event.point);
         } else if (selectionStartPoint.y > event.point.y && selectionStartPoint.x > event.point.x) {
@@ -169,7 +168,6 @@ class App extends React.Component<object, IMyState> {
             return false;
           });
         });
-        selectionRect.selected = false;
       }
     };
 
