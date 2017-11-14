@@ -168,8 +168,36 @@ class App extends React.Component<object, IMyState> {
         selectionRect.bounds = new Rectangle(new Point(0, 0), new Point(1, 1));
       }
     };
-
     const rect = new Tool();
+    rect.onMouseDown = (e: paper.ToolEvent) => {
+      if (e.event.which === 1) {
+        selectionRect.visible = true;
+      }
+    };
+    rect.onMouseDrag = (event: paper.ToolEvent) => {
+      if (event.downPoint.y !== event.point.y && event.downPoint.x !== event.point.x) {
+        const x = [event.point.x, event.downPoint.x].sort();
+        const y = [event.point.y, event.downPoint.y].sort();
+        selectionRect.bounds = new Rectangle(
+          new Point(x[0], y[0]),
+          new Point(x[1], y[1]),
+        );
+      }
+    };
+    rect.onMouseUp = (event: paper.ToolEvent) => {
+      selectionRect.visible = false;
+      if (event.downPoint.y !== event.point.y && event.downPoint.x !== event.point.x) {
+        const x = [event.point.x, event.downPoint.x].sort();
+        const y = [event.point.y, event.downPoint.y].sort();
+        const oRect = new OrangeRect(
+          'rect oi',
+          new OrangePosition(x[0] - oArtboard.position.x, y[0] - oArtboard.position.y),
+          new OrangeSize(x[1] - x[0], y[1] - y[0]),
+        );
+        oRect.selected = true;
+        oArtboard.add(oRect);
+      }
+    };
     const text = new Tool();
     const layer = new Tool();
 
