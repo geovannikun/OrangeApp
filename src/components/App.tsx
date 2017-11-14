@@ -94,24 +94,27 @@ class App extends React.Component<object, IMyState> {
       if (e.event.which === 1) {
         const hitResult = paper.project.hitTest(e.point, hitOptions);
         if (hitResult) {
-          const currentArtboard: OrangeArtboard | undefined =
-            this.state.objects.find((object: OrangeArtboard) => object.selected);
-          if (currentArtboard) {
-            const element: IOrangeItem | undefined = currentArtboard.children.find((object: IOrangeItem) => {
-              if (object.element === hitResult.item) {
-                this.updateElement(object, 'select', true);
-                selectedItems.push(object);
-              }
-              return false;
-            });
-            if (!selectedItems.length) {
-              this.state.objects.forEach((object: OrangeArtboard) => {
-                this.updateElement(object, 'selectAll', false);
+          this.state.objects.find((artboard: OrangeArtboard) => {
+            if (artboard.selected) {
+              artboard.children.find((object: IOrangeItem) => {
+                if (object.element === hitResult.item) {
+                  this.updateElement(object, 'select', true);
+                  selectedItems.push(object);
+                  return true;
+                }
+                return false;
               });
-              selectionStartPoint = e.point;
+              return true;
             }
-            selectionStartPoint = null;
+            return false;
+          });
+          if (!selectedItems.length) {
+            this.state.objects.forEach((object: OrangeArtboard) => {
+              this.updateElement(object, 'selectAll', false);
+            });
+            selectionStartPoint = e.point;
           }
+          selectionStartPoint = null;
         } else {
           this.state.objects.forEach((object: OrangeArtboard) => {
               this.updateElement(object, 'selectAll', false);
