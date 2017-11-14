@@ -186,6 +186,7 @@ class App extends React.Component<object, IMyState> {
     };
     rect.onMouseUp = (event: paper.ToolEvent) => {
       selectionRect.visible = false;
+      selectionRect.bounds = new Rectangle(new Point(0, 0), new Point(1, 1));
       if (event.downPoint.y !== event.point.y && event.downPoint.x !== event.point.x) {
         const x = [event.point.x, event.downPoint.x].sort();
         const y = [event.point.y, event.downPoint.y].sort();
@@ -195,7 +196,7 @@ class App extends React.Component<object, IMyState> {
           new OrangeSize(x[1] - x[0], y[1] - y[0]),
         );
         oRect.selected = true;
-        oArtboard.add(oRect);
+        this.updateElement(oArtboard, 'add', oRect);
       }
     };
     const text = new Tool();
@@ -225,6 +226,11 @@ class App extends React.Component<object, IMyState> {
   private updateElement = (element: IOrangeItem | OrangeArtboard , prop: string, value: any) => {
     if (element) {
       switch (prop) {
+        case 'add':
+          if (element instanceof OrangeArtboard) {
+            element.add(value);
+          }
+          break;
         case 'selectAll':
           if (element instanceof OrangeArtboard) {
             element.selectAll(value);
