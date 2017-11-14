@@ -32,6 +32,12 @@ declare module 'react' {
   }
 }
 
+declare module 'paper' {
+  interface ToolEvent {
+    event: NativeMouseEvent;
+  }
+}
+
 const { BrowserWindow } = electron.remote;
 
 interface IMyState {
@@ -53,10 +59,6 @@ class App extends React.Component<object, IMyState> {
     paper.install(window);
     paper.setup('canvas');
     paper.settings.handleSize = 10;
-
-    /* window.addEventListener('wheel', (event: WheelEvent) => {
-      console.log(event);
-    }); */
 
     const paperZoom = new ViewZoom(paper.project);
 
@@ -85,50 +87,48 @@ class App extends React.Component<object, IMyState> {
     });
 
     let selectionStartPoint: Point | null;
-    let selectionItem: paper.Item | null;
+    const selectedItems: IOrangeItem[] = new Array<IOrangeItem>();
     const selection = new Tool();
-    selection.onMouseDown = (event) => {
-      const hitResult = paper.project.hitTest(event.point, hitOptions);
-      if (hitResult) {
-        selectionItem = hitResult.item;
-        const currentArtboard: OrangeArtboard | undefined =
-          this.state.objects.find((object: OrangeArtboard) => object.selected);
-        if (currentArtboard) {
-          const element: IOrangeItem | undefined = currentArtboard.children.find((object: IOrangeItem) =>
-            object.element === selectionItem,
-          );
-          if (element) {
-            this.updateElement(element, 'select', true);
-          } else {
-            this.state.objects.forEach((object: OrangeArtboard) => {
-              this.updateElement(object, 'selectAll', false);
+    selection.onMouseDown = (e: paper.ToolEvent) => {
+      selectedItems.length = 0;
+      if (e.event.which === 1) {
+        const hitResult = paper.project.hitTest(e.point, hitOptions);
+        if (hitResult) {
+          const currentArtboard: OrangeArtboard | undefined =
+            this.state.objects.find((object: OrangeArtboard) => object.selected);
+          if (currentArtboard) {
+            const element: IOrangeItem | undefined = currentArtboard.children.find((object: IOrangeItem) => {
+              if (object.element === hitResult.item) {
+                this.updateElement(object, 'select', true);
+                selectedItems.push(object);
+              }
+              return false;
             });
-            selectionStartPoint = event.point;
+            if (!selectedItems.length) {
+              this.state.objects.forEach((object: OrangeArtboard) => {
+                this.updateElement(object, 'selectAll', false);
+              });
+              selectionStartPoint = e.point;
+            }
+            selectionStartPoint = null;
           }
-          selectionStartPoint = null;
+        } else {
+          this.state.objects.forEach((object: OrangeArtboard) => {
+              this.updateElement(object, 'selectAll', false);
+          });
+          selectionStartPoint = e.point;
         }
-      } else {
-        this.state.objects.forEach((object: OrangeArtboard) => {
-            this.updateElement(object, 'selectAll', false);
-        });
-        selectionStartPoint = event.point;
       }
     };
 
-    selection.onMouseDrag = (event) => {
-      if (selectionItem) {
-        const currentArtboard: OrangeArtboard | undefined =
-          this.state.objects.find((object: OrangeArtboard) => object.selected);
-        if (currentArtboard) {
-          currentArtboard.children.forEach((object: IOrangeItem) => {
-            if (object.selected) {
-              this.updateElement(object, 'position', new OrangePosition(
-                object.position.x + event.delta.x,
-                object.position.y + event.delta.y,
-              ));
-            }
-          });
-        }
+    selection.onMouseDrag = (event: paper.ToolEvent) => {
+      if (selectedItems.length) {
+        selectedItems.forEach((object: IOrangeItem) => {
+          this.updateElement(object, 'position', new OrangePosition(
+            object.position.x + event.delta.x,
+            object.position.y + event.delta.y,
+          ));
+        });
       } else if (selectionStartPoint) {
         /* paper.project.deselectAll();
         if (selectionStartPoint.y < event.point.y && selectionStartPoint.x < event.point.x) {
@@ -162,9 +162,7 @@ class App extends React.Component<object, IMyState> {
     };
 
     selection.onMouseUp = (event) => {
-      if (selectionItem) {
-        selectionItem = null;
-      } else if (selectionStartPoint) {
+      if (selectionStartPoint) {
         selectionStartPoint = null;
         selectionRect.bounds = new Rectangle(new Point(0, 0), new Point(1, 1));
       }
