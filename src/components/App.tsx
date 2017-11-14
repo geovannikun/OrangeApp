@@ -85,6 +85,7 @@ class App extends React.Component<object, IMyState> {
       size: [1, 1],
       strokeColor: 'black',
     });
+    selectionRect.visible = false;
 
     let selectionStartPoint: Point | null;
     const selectedItems: IOrangeItem[] = new Array<IOrangeItem>();
@@ -113,6 +114,7 @@ class App extends React.Component<object, IMyState> {
               this.updateElement(object, 'selectAll', false);
             });
             selectionStartPoint = e.point;
+            selectionRect.visible = true;
           } else {
             selectionStartPoint = null;
           }
@@ -121,6 +123,7 @@ class App extends React.Component<object, IMyState> {
               this.updateElement(object, 'selectAll', false);
           });
           selectionStartPoint = e.point;
+          selectionRect.visible = true;
         }
       }
     };
@@ -173,6 +176,7 @@ class App extends React.Component<object, IMyState> {
 
     selection.onMouseUp = (event) => {
       if (selectionStartPoint) {
+        selectionRect.visible = false;
         selectionStartPoint = null;
         selectionRect.bounds = new Rectangle(new Point(0, 0), new Point(1, 1));
       }
