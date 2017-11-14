@@ -113,8 +113,9 @@ class App extends React.Component<object, IMyState> {
               this.updateElement(object, 'selectAll', false);
             });
             selectionStartPoint = e.point;
+          } else {
+            selectionStartPoint = null;
           }
-          selectionStartPoint = null;
         } else {
           this.state.objects.forEach((object: OrangeArtboard) => {
               this.updateElement(object, 'selectAll', false);
@@ -125,7 +126,7 @@ class App extends React.Component<object, IMyState> {
     };
 
     selection.onMouseDrag = (event: paper.ToolEvent) => {
-      if (selectedItems.length) {
+      if (selectedItems.length && !selectionStartPoint) {
         selectedItems.forEach((object: IOrangeItem) => {
           this.updateElement(object, 'position', new OrangePosition(
             object.position.x + event.delta.x,
@@ -133,7 +134,7 @@ class App extends React.Component<object, IMyState> {
           ));
         });
       } else if (selectionStartPoint) {
-        /* paper.project.deselectAll();
+        paper.project.deselectAll();
         if (selectionStartPoint.y < event.point.y && selectionStartPoint.x < event.point.x) {
           selectionRect.bounds = new Rectangle(selectionStartPoint, event.point);
         } else if (selectionStartPoint.y > event.point.y && selectionStartPoint.x > event.point.x) {
@@ -152,15 +153,23 @@ class App extends React.Component<object, IMyState> {
         paper.project.getItems({
           inside: selectionRect.bounds,
           recursive: true,
-        }).forEach((item: paper.Item) => {
-          const element: IOrangeItem | undefined = this.state.objects.find((object: IOrangeItem) =>
-            object.element === item,
-          );
-          if (element) {
-            this.updateElement(element, 'select', true);
-          }
+        }).forEach((selected: paper.Item) => {
+          this.state.objects.find((artboard: OrangeArtboard) => {
+            if (artboard.selected) {
+              artboard.children.find((object: IOrangeItem) => {
+                if (object.element === selected) {
+                  this.updateElement(object, 'select', true);
+                  selectedItems.push(object);
+                  return true;
+                }
+                return false;
+              });
+              return true;
+            }
+            return false;
+          });
         });
-        selectionRect.selected = false; */
+        selectionRect.selected = false;
       }
     };
 
