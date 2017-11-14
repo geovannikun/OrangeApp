@@ -79,11 +79,11 @@ abstract class IOrangeItem {
   set style(style: OrangeStyle) {
     this._style = { ...this._style, ...style };
     if (this.element) {
-      this.apllyStyle(style);
+      this.applyStyle(style);
     }
   }
 
-  private apllyStyle(style?: OrangeStyle) {
+  private applyStyle(style?: OrangeStyle) {
     const styleToAplly = style || this.style;
     if (this.element) {
       for (const property in styleToAplly) {
@@ -100,7 +100,7 @@ abstract class IOrangeItem {
 
   public render(canvas: paper.PaperScope) {
     this.generate(canvas);
-    this.apllyStyle();
+    this.applyStyle();
     this.guidelines.generate(canvas);
   }
 }
