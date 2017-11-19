@@ -88,41 +88,8 @@ class App extends React.Component<object, IMyState> {
     selectionRect.visible = false;
 
     const selectedItems: IOrangeItem[] = new Array<IOrangeItem>();
-    const selection = new Tool();
-    selection.onMouseDown = (e: paper.ToolEvent) => {
-      selectedItems.length = 0;
-      if (e.event.which === 1) {
-        const hitResult = paper.project.hitTest(e.point, hitOptions);
-        if (hitResult) {
-          this.state.objects.find((artboard: OrangeArtboard) => {
-            if (artboard.selected) {
-              artboard.children.find((object: IOrangeItem) => {
-                if (object.element === hitResult.item) {
-                  this.updateElement(object, 'select', true);
-                  selectedItems.push(object);
-                  return true;
-                }
-                return false;
-              });
-              return true;
-            }
-            return false;
-          });
-          if (!selectedItems.length) {
-            this.state.objects.forEach((object: OrangeArtboard) => {
-              this.updateElement(object, 'selectAll', false);
-            });
-            selectionRect.visible = true;
-          }
-        } else {
-          this.state.objects.forEach((object: OrangeArtboard) => {
-              this.updateElement(object, 'selectAll', false);
-          });
-          selectionRect.visible = true;
-        }
-      }
-    };
 
+    const selection = new Tool();
     selection.onMouseDrag = (event: paper.ToolEvent) => {
       if (selectedItems.length && !selectionRect.visible) {
         selectedItems.forEach((object: IOrangeItem) => {
@@ -132,6 +99,10 @@ class App extends React.Component<object, IMyState> {
           ));
         });
       } else {
+        selectedItems.length = 0;
+        this.state.objects.forEach((object: OrangeArtboard) => {
+            this.updateElement(object, 'selectAll', false);
+        });
         if (event.downPoint.y !== event.point.y && event.downPoint.x !== event.point.x) {
           const x = [event.point.x, event.downPoint.x].sort();
           const y = [event.point.y, event.downPoint.y].sort();
@@ -139,6 +110,7 @@ class App extends React.Component<object, IMyState> {
             new Point(x[0], y[0]),
             new Point(x[1], y[1]),
           );
+          selectionRect.visible = true;
         }
         paper.project.getItems({
           inside: selectionRect.bounds,
@@ -161,13 +133,46 @@ class App extends React.Component<object, IMyState> {
         });
       }
     };
-
-    selection.onMouseUp = (event) => {
+    selection.onMouseUp = (e: paper.ToolEvent) => {
       if (selectionRect.visible) {
         selectionRect.visible = false;
         selectionRect.bounds = new Rectangle(new Point(0, 0), new Point(1, 1));
+      } else {
+        if (e.event.which === 1) {
+          const hitResult = paper.project.hitTest(e.point, hitOptions);
+          if (hitResult) {
+            if (!selectedItems.find((item) => item.element === hitResult.item)) {
+              if (!e.event.ctrlKey) {
+                selectedItems.length = 0;
+                this.state.objects.forEach((object: OrangeArtboard) => {
+                    this.updateElement(object, 'selectAll', false);
+                });
+              }
+              this.state.objects.find((artboard: OrangeArtboard) => {
+                if (artboard.selected) {
+                  artboard.children.find((object: IOrangeItem) => {
+                    if (object.element === hitResult.item) {
+                      this.updateElement(object, 'select', true);
+                      selectedItems.push(object);
+                      return true;
+                    }
+                    return false;
+                  });
+                  return true;
+                }
+                return false;
+              });
+            }
+          } else {
+            selectedItems.length = 0;
+            this.state.objects.forEach((object: OrangeArtboard) => {
+                this.updateElement(object, 'selectAll', false);
+            });
+          }
+        }
       }
     };
+
     const rect = new Tool();
     rect.onMouseDown = (e: paper.ToolEvent) => {
       if (e.event.which === 1) {
