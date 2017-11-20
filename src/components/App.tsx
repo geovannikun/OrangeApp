@@ -36,6 +36,9 @@ declare module 'paper' {
   interface ToolEvent {
     event: NativeMouseEvent;
   }
+  interface KeyEvent {
+    event: NativeMouseEvent;
+  }
 }
 
 const { BrowserWindow } = electron.remote;
@@ -170,6 +173,33 @@ class App extends React.Component<object, IMyState> {
             });
           }
         }
+      }
+    };
+    selection.onKeyDown = (e: paper.KeyEvent) => {
+      if (selectedItems.length) {
+        let x = 0;
+        let y = 0;
+        const multiple = e.event.shiftKey ? 10 : 1;
+        switch (e.key) {
+          case 'right':
+            x = 1 * multiple;
+            break;
+          case 'left':
+            x = -1 * multiple;
+            break;
+          case 'down':
+            y = 1 * multiple;
+            break;
+          case 'up':
+            y = -1 * multiple;
+            break;
+        }
+        selectedItems.forEach((object: IOrangeItem) => {
+          this.updateElement(object, 'position', new OrangePosition(
+            object.position.x + x,
+            object.position.y + y,
+          ));
+        });
       }
     };
 
