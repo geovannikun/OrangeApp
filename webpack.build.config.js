@@ -16,7 +16,7 @@ module.exports = {
   output: {
     path: OUTPUT_DIR,
     publicPath: './',
-    filename: 'bundle.js'
+    filename: 'bundle.js',
   },
   module: {
     rules: [
@@ -24,46 +24,46 @@ module.exports = {
         test: /\.css$/,
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
-          use: 'css-loader'
+          use: 'css-loader',
         }),
-        include: defaultInclude
+        include: defaultInclude,
       },
       {
         test: /\.tsx?$/,
         use: [{ loader: "awesome-typescript-loader" }],
-        include: defaultInclude
+        include: defaultInclude,
       },  
       {
         test: /\.jsx?$/,
         use: [{ loader: 'babel-loader' }],
-        include: defaultInclude
+        include: defaultInclude,
       },
       {
         test: /\.(jpe?g|png|gif)$/,
         use: [{ loader: 'file-loader?name=img/[name]__[hash:base64:5].[ext]' }],
-        include: defaultInclude
+        include: defaultInclude,
       },
       {
         test: /\.(eot|svg|ttf|woff|woff2)$/,
         use: [{ loader: 'file-loader?name=font/[name]__[hash:base64:5].[ext]' }],
-        include: defaultInclude
+        include: defaultInclude,
       },
-      { enforce: "pre", test: /\.js$/, loader: "source-map-loader" }
-    ]
+      { enforce: "pre", test: /\.js$/, loader: "source-map-loader" },
+    ],
   },
   target: 'electron-renderer',
   plugins: [
     new HtmlWebpackPlugin(),
     new ExtractTextPlugin('bundle.css'),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('production')
+      'process.env.NODE_ENV': JSON.stringify('production'),
     }),
-    new BabiliPlugin()
+    new BabiliPlugin(),
   ],
   stats: {
     colors: true,
     children: false,
     chunks: false,
-    modules: false
-  }
+    modules: false,
+  },
 };
