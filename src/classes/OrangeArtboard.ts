@@ -1,52 +1,29 @@
 import paper, { Path, Point, PointText, Size } from 'paper';
 
-import IOrangeItem from './IOrangeItem';
 import { OrangeSize, OrangePosition } from './index';
 
-export default class OrangeArtboard {
-  public id: string;
-  public name: string;
+import IOrangeItem from './IOrangeItem';
+
+export default class OrangeArtboard extends IOrangeItem {
   public background: paper.Item;
   public canvas: paper.PaperScope;
 
-  private _position: OrangePosition;
-  private _size: OrangeSize;
-  private _selected: boolean;
   private _children: IOrangeItem[] = new Array<IOrangeItem>();
 
-  constructor(name: string, position: OrangePosition, size: OrangeSize) {
-    this.id = (new Date().valueOf()).toString();
-    this.name = name;
-    this._position = position;
-    this._size = size;
-  }
-
-  get position(): OrangePosition {
-    return this._position;
-  }
-  set position(position: OrangePosition) {
-    this._position = position;
+  public position_overload() {
     if (this.background) {
-      this.background.bounds.topLeft = new paper.Point(this._position.x, this._position.y);
+      this.background.bounds.topLeft = new paper.Point(this.position.x, this.position.y);
     }
   }
-  get size(): OrangeSize {
-    return this._size;
-  }
-  set size(size: OrangeSize) {
-    this._size = size;
+  public size_overload() {
     if (this.background) {
       this.background.bounds = new paper.Rectangle(
         this.background.bounds.topLeft,
-        new paper.Point(this._position.x + size.width, this._position.y + size.height),
+        new paper.Point(this.position.x + this.size.width, this.position.y + this.size.height),
       );
     }
   }
-  get selected(): boolean {
-    return this._selected;
-  }
-  set selected(selected: boolean) {
-    this._selected = selected;
+  public selected_overload() {
     this._children.forEach((element: IOrangeItem) => {
       element.selected = false;
     });
@@ -72,7 +49,7 @@ export default class OrangeArtboard {
     });
   }
 
-  public render(canvas: paper.PaperScope) {
+  public generate(canvas: paper.PaperScope) {
     this.canvas = canvas;
     const name = new PointText({
       content: this.name,
@@ -86,6 +63,9 @@ export default class OrangeArtboard {
       new Point(this.position.x, this.position.y),
       new Size(this.size.width, this.size.height),
     );
+  }
+
+  public render_overload(canvas: paper.PaperScope) {
     this.background.fillColor = 'white';
     this._children.forEach((element: IOrangeItem) => {
       element.render(canvas);

@@ -2,6 +2,7 @@ import '../assets/css/App.css';
 
 import {
   IOrangeItem,
+  IOrangePrimitive,
   OrangeArtboard,
   OrangeGuideline,
   OrangePosition,
@@ -122,7 +123,7 @@ class App extends React.Component<object, IMyState> {
           this.state.objects.find((artboard: OrangeArtboard) => {
             if (artboard.selected) {
               artboard.children.find((object: IOrangeItem) => {
-                if (object.element === selected) {
+                if ((object instanceof IOrangePrimitive) && object.element === selected) {
                   this.updateElement(object, 'select', true);
                   selectedItems.push(object);
                   return true;
@@ -144,7 +145,9 @@ class App extends React.Component<object, IMyState> {
         if (e.event.which === 1) {
           const hitResult = paper.project.hitTest(e.point, hitOptions);
           if (hitResult) {
-            if (!selectedItems.find((item) => item.element === hitResult.item)) {
+            if (!selectedItems.find((item) =>
+              (item instanceof IOrangePrimitive) && item.element === hitResult.item)
+            ) {
               if (!e.event.ctrlKey) {
                 selectedItems.length = 0;
                 this.state.objects.forEach((object: OrangeArtboard) => {
@@ -154,7 +157,7 @@ class App extends React.Component<object, IMyState> {
               this.state.objects.find((artboard: OrangeArtboard) => {
                 if (artboard.selected) {
                   artboard.children.find((object: IOrangeItem) => {
-                    if (object.element === hitResult.item) {
+                    if ((object instanceof IOrangePrimitive) && object.element === hitResult.item) {
                       this.updateElement(object, 'select', true);
                       selectedItems.push(object);
                       return true;
@@ -258,7 +261,7 @@ class App extends React.Component<object, IMyState> {
     });
   }
 
-  private updateElement = (element: IOrangeItem | OrangeArtboard , prop: string, value: any) => {
+  private updateElement = (element: IOrangeItem , prop: string, value: any) => {
     if (element) {
       switch (prop) {
         case 'add':
@@ -287,7 +290,7 @@ class App extends React.Component<object, IMyState> {
           element.size = new OrangeSize(element.size.width, parseInt(value, 0));
           break;
         case 'fill':
-          if (element instanceof IOrangeItem) {
+          if (element instanceof IOrangePrimitive) {
             element.style = { fillColor: value };
           }
           break;
@@ -301,7 +304,7 @@ class App extends React.Component<object, IMyState> {
     }
   }
 
-  private updateOrangeItem = (item: OrangeArtboard | IOrangeItem, artboard: OrangeArtboard): OrangeArtboard => {
+  private updateOrangeItem = (item: IOrangeItem, artboard: OrangeArtboard): OrangeArtboard => {
     if (item instanceof IOrangeItem) {
       artboard.children = artboard.children.map((subItem: IOrangeItem) => {
         if (item === subItem) {
@@ -347,8 +350,8 @@ class App extends React.Component<object, IMyState> {
     }
   }
 
-  private getSelectedItems = (items: OrangeArtboard[]): Array<IOrangeItem | OrangeArtboard> => {
-    let array = new Array<IOrangeItem | OrangeArtboard>();
+  private getSelectedItems = (items: OrangeArtboard[]): IOrangeItem[] => {
+    let array = new Array<IOrangeItem>();
     items.forEach((artboard: OrangeArtboard) => {
       if (artboard.selected) {
         array = [...array, ...artboard.children.filter((item: IOrangeItem) => item.selected)];
@@ -357,7 +360,7 @@ class App extends React.Component<object, IMyState> {
     return array;
   }
 
-  private renderObjectList = (list: Array<IOrangeItem | OrangeArtboard>): JSX.Element[] => {
+  private renderObjectList = (list: IOrangeItem[]): JSX.Element[] => {
     return list.map((item: IOrangeItem) => (
       <li
         key={item.id}
@@ -370,7 +373,7 @@ class App extends React.Component<object, IMyState> {
     ));
   }
 
-  private renderSubList = (list: Array<IOrangeItem | OrangeArtboard>): JSX.Element => {
+  private renderSubList = (list: IOrangeItem[]): JSX.Element => {
     return(
       <ul>
         {this.renderObjectList(list)}
@@ -390,7 +393,7 @@ class App extends React.Component<object, IMyState> {
     ));
   }
 
-  private renderElementDetails = (list: Array<IOrangeItem | OrangeArtboard>): JSX.Element | undefined => {
+  private renderElementDetails = (list: IOrangeItem[]): JSX.Element | undefined => {
     if (list.length === 1) {
       const selected = list[0];
       return (
@@ -421,8 +424,8 @@ class App extends React.Component<object, IMyState> {
     return undefined;
   }
 
-  private renderStyleEditor = (title: string, element: IOrangeItem | OrangeArtboard, propertie: string) => {
-    if (element instanceof IOrangeItem) {
+  private renderStyleEditor = (title: string, element: IOrangeItem, propertie: string) => {
+    if (element instanceof IOrangePrimitive) {
       return (
         <div className='row'>
           <span className='input-field'>
@@ -443,11 +446,11 @@ class App extends React.Component<object, IMyState> {
     this.windowAction(action);
   }
 
-  private handleElementSelection = (item: IOrangeItem | OrangeArtboard, propertie: string) => (event: any) => {
+  private handleElementSelection = (item: IOrangeItem, propertie: string) => (event: any) => {
     this.updateElement(item, propertie, true);
   }
 
-  private handleElementChange = (item: IOrangeItem | OrangeArtboard, propertie: string) => (event: any) => {
+  private handleElementChange = (item: IOrangeItem, propertie: string) => (event: any) => {
     this.updateElement(item, propertie, event.target.value);
   }
 
@@ -460,7 +463,7 @@ class App extends React.Component<object, IMyState> {
   }
 
   public render() {
-    const selectedItems: Array<IOrangeItem | OrangeArtboard> = this.getSelectedItems(this.state.objects);
+    const selectedItems: IOrangeItem[] = this.getSelectedItems(this.state.objects);
     return (
       <main>
         <ContextMenu>

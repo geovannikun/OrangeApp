@@ -1,8 +1,8 @@
 import paper, { Path, Size, Point } from 'paper';
 
-import IOrangeItem from './IOrangeItem';
+import IOrangePrimitive from './IOrangePrimitive';
 
-export default class OrangeRect extends IOrangeItem {
+export default class OrangeRect extends IOrangePrimitive {
   public generate(canvas: paper.PaperScope) {
     this.element = new Path.Rectangle(
       new Point(

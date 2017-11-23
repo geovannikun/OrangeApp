@@ -7,9 +7,11 @@ import OrangeStyle from './OrangeStyle';
 import OrangeTool from './OrangeTool';
 import OrangeArtboard from './OrangeArtboard';
 import ViewZoom from './ViewZoom';
+import IOrangePrimitive from './IOrangePrimitive';
 
 export {
     IOrangeItem,
+    IOrangePrimitive,
     OrangeArtboard,
     OrangeGuideline,
     OrangePosition,
