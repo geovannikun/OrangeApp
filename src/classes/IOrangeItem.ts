@@ -1,12 +1,12 @@
 import paper from 'paper';
 
-import { OrangePosition, OrangeSize, OrangeArtboard } from './index';
+import { OrangePosition, OrangeSize, OrangeLayer } from './index';
 import { debug } from 'util';
 
 abstract class IOrangeItem {
   public id: string;
   public name: string;
-  public parent: OrangeArtboard;
+  public parent: OrangeLayer;
 
   private _position: OrangePosition;
   private _size: OrangeSize;

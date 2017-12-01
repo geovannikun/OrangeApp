@@ -4,6 +4,7 @@ import {
   IOrangeItem,
   IOrangePrimitive,
   OrangeArtboard,
+  OrangeLayer,
   OrangeGuideline,
   OrangePosition,
   OrangeRect,
@@ -47,7 +48,7 @@ const { BrowserWindow } = electron.remote;
 interface IMyState {
   tools: OrangeTool[];
   currentTool?: OrangeTool;
-  objects: OrangeArtboard[];
+  objects: OrangeLayer[];
   fileName: string;
 }
 
@@ -55,7 +56,7 @@ class App extends React.Component<object, IMyState> {
   public state = {
     currentTool: undefined,
     fileName: 'filename',
-    objects: new Array<OrangeArtboard>(),
+    objects: new Array<OrangeLayer>(),
     tools: new Array(),
   };
 
@@ -104,7 +105,7 @@ class App extends React.Component<object, IMyState> {
         });
       } else {
         selectedItems.length = 0;
-        this.state.objects.forEach((object: OrangeArtboard) => {
+        this.state.objects.forEach((object: OrangeLayer) => {
             this.updateElement(object, 'selectAll', false);
         });
         if (event.downPoint.y !== event.point.y && event.downPoint.x !== event.point.x) {
@@ -120,7 +121,7 @@ class App extends React.Component<object, IMyState> {
           inside: selectionRect.bounds,
           recursive: true,
         }).forEach((selected: paper.Item) => {
-          this.state.objects.find((artboard: OrangeArtboard) => {
+          this.state.objects.find((artboard: OrangeLayer) => {
             if (artboard.selected) {
               artboard.children.find((object: IOrangeItem) => {
                 if ((object instanceof IOrangePrimitive) && object.element === selected) {
@@ -150,11 +151,11 @@ class App extends React.Component<object, IMyState> {
             ) {
               if (!e.event.ctrlKey) {
                 selectedItems.length = 0;
-                this.state.objects.forEach((object: OrangeArtboard) => {
+                this.state.objects.forEach((object: OrangeLayer) => {
                     this.updateElement(object, 'selectAll', false);
                 });
               }
-              this.state.objects.find((artboard: OrangeArtboard) => {
+              this.state.objects.find((artboard: OrangeLayer) => {
                 if (artboard.selected) {
                   artboard.children.find((object: IOrangeItem) => {
                     if ((object instanceof IOrangePrimitive) && object.element === hitResult.item) {
@@ -171,7 +172,7 @@ class App extends React.Component<object, IMyState> {
             }
           } else {
             selectedItems.length = 0;
-            this.state.objects.forEach((object: OrangeArtboard) => {
+            this.state.objects.forEach((object: OrangeLayer) => {
                 this.updateElement(object, 'selectAll', false);
             });
           }
@@ -265,12 +266,12 @@ class App extends React.Component<object, IMyState> {
     if (element) {
       switch (prop) {
         case 'add':
-          if (element instanceof OrangeArtboard) {
+          if (element instanceof OrangeLayer) {
             element.add(value);
           }
           break;
         case 'selectAll':
-          if (element instanceof OrangeArtboard) {
+          if (element instanceof OrangeLayer) {
             element.selectAll(value);
           }
           break;
@@ -297,14 +298,14 @@ class App extends React.Component<object, IMyState> {
       }
       this.setState({
         ...this.state,
-        objects: this.state.objects.map((artboard: OrangeArtboard) => {
+        objects: this.state.objects.map((artboard: OrangeLayer) => {
           return this.updateOrangeItem(element, artboard);
         }),
       });
     }
   }
 
-  private updateOrangeItem = (item: IOrangeItem, artboard: OrangeArtboard): OrangeArtboard => {
+  private updateOrangeItem = (item: IOrangeItem, artboard: OrangeLayer): OrangeLayer => {
     if (item instanceof IOrangeItem) {
       artboard.children = artboard.children.map((subItem: IOrangeItem) => {
         if (item === subItem) {
@@ -350,9 +351,9 @@ class App extends React.Component<object, IMyState> {
     }
   }
 
-  private getSelectedItems = (items: OrangeArtboard[]): IOrangeItem[] => {
+  private getSelectedItems = (items: OrangeLayer[]): IOrangeItem[] => {
     let array = new Array<IOrangeItem>();
-    items.forEach((artboard: OrangeArtboard) => {
+    items.forEach((artboard: OrangeLayer) => {
       if (artboard.selected) {
         array = [...array, ...artboard.children.filter((item: IOrangeItem) => item.selected)];
       }
@@ -368,7 +369,7 @@ class App extends React.Component<object, IMyState> {
         className={item.selected ? 'selected' : ''}
       >
         {item.name}
-        {item instanceof OrangeArtboard && this.renderSubList(item.children)}
+        {item instanceof OrangeLayer && this.renderSubList(item.children)}
       </li>
     ));
   }

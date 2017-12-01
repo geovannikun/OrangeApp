@@ -8,10 +8,12 @@ import OrangeTool from './OrangeTool';
 import OrangeArtboard from './OrangeArtboard';
 import ViewZoom from './ViewZoom';
 import IOrangePrimitive from './IOrangePrimitive';
+import OrangeLayer from './OrangeLayer';
 
 export {
     IOrangeItem,
     IOrangePrimitive,
+    OrangeLayer,
     OrangeArtboard,
     OrangeGuideline,
     OrangePosition,
