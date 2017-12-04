@@ -11,5 +11,6 @@ export default class OrangeRect extends IOrangePrimitive {
       ),
       new Size(this.size.width, this.size.height),
     );
+    this.element.data.primitive = this;
   }
 }

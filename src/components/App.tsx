@@ -12,6 +12,7 @@ import {
   OrangeStyle,
   OrangeTool,
   ViewZoom,
+  OrangeSelect,
 } from '../classes/index';
 
 import ContextMenu from './ContextMenu';
@@ -50,20 +51,24 @@ interface IMyState {
   currentTool?: OrangeTool;
   objects: OrangeLayer[];
   fileName: string;
+  selector: OrangeSelect;
 }
 
 class App extends React.Component<object, IMyState> {
-  public state = {
-    currentTool: undefined,
-    fileName: 'filename',
-    objects: new Array<OrangeLayer>(),
-    tools: new Array(),
-  };
+
+  constructor(props: object) {
+    super(props);
+    paper.install(window);
+    this.state = {
+      fileName: 'FileName.o',
+      objects: [],
+      selector: new OrangeSelect(),
+      tools: [],
+    };
+  }
 
   public componentDidMount() {
-    paper.install(window);
     paper.setup('canvas');
-    paper.settings.handleSize = 10;
 
     const paperZoom = new ViewZoom(paper.project);
 
@@ -75,11 +80,9 @@ class App extends React.Component<object, IMyState> {
     };
 
     const oArtboard = new OrangeArtboard('oArtboard', new OrangePosition(250, 100), new OrangeSize(400, 800));
-    oArtboard.selected = true;
     oArtboard.render(paper);
 
     const oRectangle = new OrangeRect('rect', new OrangePosition(50, 50), new OrangeSize(100, 100));
-    oRectangle.selected = true;
 
     oArtboard.add(oRectangle);
 
@@ -92,22 +95,19 @@ class App extends React.Component<object, IMyState> {
     });
     selectionRect.visible = false;
 
-    const selectedItems: IOrangeItem[] = new Array<IOrangeItem>();
+    this.state.selector.create();
 
     const selection = new Tool();
     selection.onMouseDrag = (event: paper.ToolEvent) => {
-      if (selectedItems.length && !selectionRect.visible) {
-        selectedItems.forEach((object: IOrangeItem) => {
+      if (this.state.selector.selecteds.length && !selectionRect.visible) {
+        this.state.selector.selecteds.forEach((object: IOrangeItem) => {
           this.updateElement(object, 'position', new OrangePosition(
             object.position.x + event.delta.x,
             object.position.y + event.delta.y,
           ));
         });
       } else {
-        selectedItems.length = 0;
-        this.state.objects.forEach((object: OrangeLayer) => {
-            this.updateElement(object, 'selectAll', false);
-        });
+        this.state.selector.clear();
         if (event.downPoint.y !== event.point.y && event.downPoint.x !== event.point.x) {
           const x = [event.point.x, event.downPoint.x].sort();
           const y = [event.point.y, event.downPoint.y].sort();
@@ -121,20 +121,8 @@ class App extends React.Component<object, IMyState> {
           inside: selectionRect.bounds,
           recursive: true,
         }).forEach((selected: paper.Item) => {
-          this.state.objects.find((artboard: OrangeLayer) => {
-            if (artboard.selected) {
-              artboard.children.find((object: IOrangeItem) => {
-                if ((object instanceof IOrangePrimitive) && object.element === selected) {
-                  this.updateElement(object, 'select', true);
-                  selectedItems.push(object);
-                  return true;
-                }
-                return false;
-              });
-              return true;
-            }
-            return false;
-          });
+          const object = selected.data.primitive;
+          this.state.selector.add(object);
         });
       }
     };
@@ -146,41 +134,19 @@ class App extends React.Component<object, IMyState> {
         if (e.event.which === 1) {
           const hitResult = paper.project.hitTest(e.point, hitOptions);
           if (hitResult) {
-            if (!selectedItems.find((item) =>
-              (item instanceof IOrangePrimitive) && item.element === hitResult.item)
-            ) {
-              if (!e.event.ctrlKey) {
-                selectedItems.length = 0;
-                this.state.objects.forEach((object: OrangeLayer) => {
-                    this.updateElement(object, 'selectAll', false);
-                });
-              }
-              this.state.objects.find((artboard: OrangeLayer) => {
-                if (artboard.selected) {
-                  artboard.children.find((object: IOrangeItem) => {
-                    if ((object instanceof IOrangePrimitive) && object.element === hitResult.item) {
-                      this.updateElement(object, 'select', true);
-                      selectedItems.push(object);
-                      return true;
-                    }
-                    return false;
-                  });
-                  return true;
-                }
-                return false;
-              });
+            if (!e.event.ctrlKey) {
+              this.state.selector.clear();
             }
+            const object = hitResult.item.data.primitive;
+            this.state.selector.add(object);
           } else {
-            selectedItems.length = 0;
-            this.state.objects.forEach((object: OrangeLayer) => {
-                this.updateElement(object, 'selectAll', false);
-            });
+            this.state.selector.clear();
           }
         }
       }
     };
     selection.onKeyDown = (e: paper.KeyEvent) => {
-      if (selectedItems.length) {
+      if (this.state.selector.selecteds.length) {
         let x = 0;
         let y = 0;
         const multiple = e.event.shiftKey ? 10 : 1;
@@ -198,7 +164,7 @@ class App extends React.Component<object, IMyState> {
             y = -1 * multiple;
             break;
         }
-        selectedItems.forEach((object: IOrangeItem) => {
+        this.state.selector.selecteds.forEach((object: IOrangeItem) => {
           this.updateElement(object, 'position', new OrangePosition(
             object.position.x + x,
             object.position.y + y,
@@ -234,7 +200,7 @@ class App extends React.Component<object, IMyState> {
           new OrangePosition(x[0] - oArtboard.position.x, y[0] - oArtboard.position.y),
           new OrangeSize(x[1] - x[0], y[1] - y[0]),
         );
-        oRect.selected = true;
+        this.state.selector.add(oRect);
         this.updateElement(oArtboard, 'add', oRect);
       }
     };
@@ -270,19 +236,11 @@ class App extends React.Component<object, IMyState> {
             element.add(value);
           }
           break;
-        case 'selectAll':
-          if (element instanceof OrangeLayer) {
-            element.selectAll(value);
-          }
-          break;
         case 'position':
           element.position = value;
           break;
         case 'name':
           element.name = value;
-          break;
-        case 'select':
-          element.selected = value;
           break;
         case 'width':
           element.size = new OrangeSize(parseInt(value, 0), element.size.height);
@@ -351,22 +309,12 @@ class App extends React.Component<object, IMyState> {
     }
   }
 
-  private getSelectedItems = (items: OrangeLayer[]): IOrangeItem[] => {
-    let array = new Array<IOrangeItem>();
-    items.forEach((artboard: OrangeLayer) => {
-      if (artboard.selected) {
-        array = [...array, ...artboard.children.filter((item: IOrangeItem) => item.selected)];
-      }
-    });
-    return array;
-  }
-
   private renderObjectList = (list: IOrangeItem[]): JSX.Element[] => {
     return list.map((item: IOrangeItem) => (
       <li
         key={item.id}
         onClick={this.handleElementSelection(item, 'select')}
-        className={item.selected ? 'selected' : ''}
+        className={this.state.selector.selecteds.find((selected) => selected === item) ? 'selected' : ''}
       >
         {item.name}
         {item instanceof OrangeLayer && this.renderSubList(item.children)}
@@ -464,7 +412,6 @@ class App extends React.Component<object, IMyState> {
   }
 
   public render() {
-    const selectedItems: IOrangeItem[] = this.getSelectedItems(this.state.objects);
     return (
       <main>
         <ContextMenu>
@@ -503,7 +450,7 @@ class App extends React.Component<object, IMyState> {
         </aside>
         <canvas id='canvas' resize='true'/>
         <aside className='details'>
-          {this.renderElementDetails(selectedItems)}
+          {this.renderElementDetails(this.state.selector.selecteds)}
         </aside>
       </main>
     );

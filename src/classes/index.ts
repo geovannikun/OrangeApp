@@ -9,6 +9,7 @@ import OrangeArtboard from './OrangeArtboard';
 import ViewZoom from './ViewZoom';
 import IOrangePrimitive from './IOrangePrimitive';
 import OrangeLayer from './OrangeLayer';
+import OrangeSelect from './OrangeSelect';
 
 export {
     IOrangeItem,
@@ -21,5 +22,6 @@ export {
     OrangeSize,
     OrangeStyle,
     OrangeTool,
+    OrangeSelect,
     ViewZoom,
 };

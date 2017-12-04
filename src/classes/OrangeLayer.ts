@@ -11,11 +11,6 @@ export default class OrangeLayer extends IOrangeItem {
 
   public position_overload() {}
   public size_overload() {}
-  public selected_overload() {
-    this._children.forEach((element: IOrangeItem) => {
-      element.selected = false;
-    });
-  }
   public get children(): IOrangeItem[] {
     return this._children;
   }
@@ -29,12 +24,6 @@ export default class OrangeLayer extends IOrangeItem {
       value.render(this.canvas);
     }
     this._children.push(value);
-  }
-
-  public selectAll(value: boolean) {
-    this._children.forEach((element: IOrangeItem) => {
-      element.selected = value;
-    });
   }
 
   public generate(canvas: paper.PaperScope) {

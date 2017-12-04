@@ -31,11 +31,6 @@ abstract class IOrangePrimitive extends IOrangeItem {
       this.element.bounds.height = this.size.height;
     }
   }
-  public selected_overload() {
-    if (this.element) {
-      this.element.selected = this.selected;
-    }
-  }
   get angle(): number {
     return this._angle;
   }
