@@ -19,6 +19,7 @@ import ContextMenu from './ContextMenu';
 import ContextMenuItem from './ContextMenuItem';
 
 import electron from 'electron';
+import {observer} from 'mobx-react';
 import React, { Component } from 'react';
 import paper, {
   Group,
@@ -50,17 +51,20 @@ interface IMyState {
   tools: OrangeTool[];
   currentTool?: OrangeTool;
   objects: OrangeLayer[];
-  fileName: string;
   selector: OrangeSelect;
 }
 
-class App extends React.Component<object, IMyState> {
+interface IMyProps {
+  document: Document;
+}
 
-  constructor(props: object) {
+@observer(['document'])
+class App extends React.Component<IMyProps, IMyState> {
+
+  constructor(props: IMyProps) {
     super(props);
     paper.install(window);
     this.state = {
-      fileName: 'FileName.o',
       objects: [],
       selector: new OrangeSelect(),
       tools: [],
@@ -222,10 +226,7 @@ class App extends React.Component<object, IMyState> {
   }
 
   private changeFileName = (fileName: string) => {
-    this.setState({
-      ...this.state,
-      fileName,
-    });
+    this.props.document.title = fileName;
   }
 
   private updateElement = (element: IOrangeItem , prop: string, value: any) => {
@@ -423,7 +424,7 @@ class App extends React.Component<object, IMyState> {
             <li>proto<b>editor :)</b></li>
           </ul>
           <div className='document-name'>
-            <input value={this.state.fileName} onChange={this.handleFileName}/>
+            <input value={this.props.document.title} onChange={this.handleFileName}/>
           </div>
           <ul className='win-control'>
             <li onClick={this.handleWinControl('minimize')}>⊖</li>
