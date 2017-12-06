@@ -22,6 +22,7 @@ class OrangePage {
   }
 
   public render(canvas: paper.PaperScope) {
+    canvas.project.clear();
     this.items.forEach((item) => item.render(canvas));
   }
 }
