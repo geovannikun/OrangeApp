@@ -13,8 +13,6 @@ export default class ToolsStore {
   @observable public all: OrangeTool[] = new Array<OrangeTool>();
   @observable public selected: OrangeTool;
 
-  public create() {}
-
   @action
   public add(value: OrangeTool) {
     if (value &&  this.all.indexOf(value) === -1) {

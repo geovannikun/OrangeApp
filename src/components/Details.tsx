@@ -23,15 +23,15 @@ import paper, {
 
 import SelectorStore from '../stores/SelectorStore';
 
-interface IMyProps {
+interface InjectedProps {
   selector: SelectorStore;
 }
-
+@inject('selector')
 @observer
-class Details extends React.Component<IMyProps, object> {
+class Details extends React.Component {
 
-  constructor(props: IMyProps) {
-    super(props);
+  get injected() {
+    return this.props as InjectedProps;
   }
 
   private updateElement = (element: IOrangeItem , prop: string, value: any) => {
@@ -115,7 +115,7 @@ class Details extends React.Component<IMyProps, object> {
   public render() {
     return (
       <aside className='details'>
-        {this.renderElementDetails(this.props.selector.selecteds)}
+        {this.renderElementDetails(this.injected.selector.selecteds)}
       </aside>
     );
   }

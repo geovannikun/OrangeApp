@@ -21,19 +21,23 @@ import Toolstore from '../stores/ToolsStore';
 import SelectorStore from '../stores/SelectorStore';
 import AppStore from '../stores/AppStore';
 
-interface IMyProps {
+interface InjectedProps {
   tools: Toolstore;
   selector: SelectorStore;
   app: AppStore;
 }
-
+@inject('selector', 'tools', 'app')
 @observer
-class Tools extends React.Component<IMyProps, object> {
+class Tools extends React.Component {
+
+  get injected() {
+    return this.props as InjectedProps;
+  }
 
   private _selectionRect: Path.Rectangle;
 
-  public componentWillReceiveProps(nextProps: IMyProps) {
-    if (nextProps.app.canvas && !this.props.tools.all.length) {
+  public componentWillReceiveProps(nextProps: InjectedProps) {
+    if (nextProps.app.canvas && !this.injected.tools.all.length) {
       this._selectionRect = new Path.Rectangle({
         dashArray: [10, 12],
         fillColor: 'rgba(0, 0, 0, 0.1)',
@@ -45,10 +49,10 @@ class Tools extends React.Component<IMyProps, object> {
 
       const text = new Tool();
       const layer = new Tool();
-      this.props.tools.add(new OrangeTool('selection', '⊹', this.createSelectionTool()));
-      this.props.tools.add(new OrangeTool('rect', '◻', this.createRectTool()));
-      this.props.tools.add(new OrangeTool('text', '℞', text));
-      this.props.tools.add(new OrangeTool('layer', 'layer', layer));
+      this.injected.tools.add(new OrangeTool('selection', '⊹', this.createSelectionTool()));
+      this.injected.tools.add(new OrangeTool('rect', '◻', this.createRectTool()));
+      this.injected.tools.add(new OrangeTool('text', '℞', text));
+      this.injected.tools.add(new OrangeTool('layer', 'layer', layer));
     }
   }
 
@@ -56,15 +60,15 @@ class Tools extends React.Component<IMyProps, object> {
     const hitOptions = { fill: true, segments: true, stroke: true, tolerance: 5 };
     const selection = new Tool();
     selection.onMouseDrag = (event: paper.ToolEvent) => {
-      if (this.props.selector.selecteds.length && !this._selectionRect.visible) {
-        this.props.selector.selecteds.forEach((object: IOrangeItem) => {
+      if (this.injected.selector.selecteds.length && !this._selectionRect.visible) {
+        this.injected.selector.selecteds.forEach((object: IOrangeItem) => {
           object.position = new OrangePosition(
             object.position.x + event.delta.x,
             object.position.y + event.delta.y,
           );
         });
       } else {
-        this.props.selector.clear();
+        this.injected.selector.clear();
         if (event.downPoint.y !== event.point.y && event.downPoint.x !== event.point.x) {
           const x = [event.point.x, event.downPoint.x].sort();
           const y = [event.point.y, event.downPoint.y].sort();
@@ -79,7 +83,7 @@ class Tools extends React.Component<IMyProps, object> {
           recursive: true,
         }).forEach((selected: paper.Item) => {
           const object = selected.data.primitive;
-          this.props.selector.add(object);
+          this.injected.selector.add(object);
         });
       }
     };
@@ -92,18 +96,18 @@ class Tools extends React.Component<IMyProps, object> {
           const hitResult = paper.project.hitTest(e.point, hitOptions);
           if (hitResult) {
             if (!e.event.ctrlKey) {
-              this.props.selector.clear();
+              this.injected.selector.clear();
             }
             const object = hitResult.item.data.primitive;
-            this.props.selector.add(object);
+            this.injected.selector.add(object);
           } else {
-            this.props.selector.clear();
+            this.injected.selector.clear();
           }
         }
       }
     };
     selection.onKeyDown = (e: paper.KeyEvent) => {
-      if (this.props.selector.selecteds.length) {
+      if (this.injected.selector.selecteds.length) {
         let x = 0;
         let y = 0;
         const multiple = e.event.shiftKey ? 10 : 1;
@@ -121,7 +125,7 @@ class Tools extends React.Component<IMyProps, object> {
             y = -1 * multiple;
             break;
         }
-        this.props.selector.selecteds.forEach((object: IOrangeItem) => {
+        this.injected.selector.selecteds.forEach((object: IOrangeItem) => {
           object.position = new OrangePosition(
             object.position.x + x,
             object.position.y + y,
@@ -160,8 +164,8 @@ class Tools extends React.Component<IMyProps, object> {
           new OrangePosition(x[0], y[0]),
           new OrangeSize(x[1] - x[0], y[1] - y[0]),
         );
-        this.props.selector.add(oRect);
-        const oArtboard: OrangeArtboard = this.props.selector.selectedArtboards[0] as OrangeArtboard;
+        this.injected.selector.add(oRect);
+        const oArtboard: OrangeArtboard = this.injected.selector.selectedArtboards[0] as OrangeArtboard;
         if (oArtboard) {
           oArtboard.add(oRect);
         }
@@ -171,7 +175,7 @@ class Tools extends React.Component<IMyProps, object> {
   }
 
   private handleChangeTool = (tool: OrangeTool) => (event: any) => {
-    this.props.tools.select(tool);
+    this.injected.tools.select(tool);
   }
 
   private renderToolsList = (list: OrangeTool[]): JSX.Element[] => {
@@ -179,7 +183,7 @@ class Tools extends React.Component<IMyProps, object> {
       <li
         key={tool.title}
         onClick={this.handleChangeTool(tool)}
-        className={(this.props.tools.selected === tool) ? 'selected' : ''}
+        className={(this.injected.tools.selected === tool) ? 'selected' : ''}
       >
         {tool.icon}
       </li>
@@ -190,7 +194,7 @@ class Tools extends React.Component<IMyProps, object> {
     return (
       <aside className='tools'>
         <ul>
-          {this.renderToolsList(this.props.tools.all)}
+          {this.renderToolsList(this.injected.tools.all)}
         </ul>
       </aside>
     );

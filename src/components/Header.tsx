@@ -6,15 +6,15 @@ const { BrowserWindow } = electron.remote;
 
 import DocumentStore from '../stores/DocumentStore';
 
-interface IMyProps {
+interface InjectedProps {
   document: DocumentStore;
 }
-
+@inject('document')
 @observer
-class Header extends React.Component<IMyProps, object> {
+class Header extends React.Component {
 
-  constructor(props: IMyProps) {
-    super(props);
+  get injected() {
+    return this.props as InjectedProps;
   }
 
   private windowAction = (action: string) => {
@@ -43,7 +43,7 @@ class Header extends React.Component<IMyProps, object> {
   }
 
   private changeFileName = (fileName: string) => {
-    this.props.document.setTitle(fileName);
+    this.injected.document.setTitle(fileName);
   }
 
   private handleWinControl = (action: string) => (event: any) => {
@@ -58,7 +58,7 @@ class Header extends React.Component<IMyProps, object> {
           <li>proto<b>editor :)</b></li>
         </ul>
         <div className='document-name'>
-          <input value={this.props.document.title} onChange={this.handleFileName}/>
+          <input value={this.injected.document.title} onChange={this.handleFileName}/>
         </div>
         <ul className='win-control'>
           <li onClick={this.handleWinControl('minimize')}>⊖</li>

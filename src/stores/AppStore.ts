@@ -8,7 +8,7 @@ import paper, {
   Tool,
 } from 'paper';
 
-export default class ToolsStore {
+export default class AppStore {
   @observable public canvas: paper.PaperScope;
 
   @action
