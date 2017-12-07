@@ -1,4 +1,5 @@
 import paper, { Path, Point, PointText, Size } from 'paper';
+import { observable, action, computed } from 'mobx';
 
 import { OrangeSize, OrangePosition } from './index';
 
@@ -7,12 +8,17 @@ import OrangeLayer from './OrangeLayer';
 export default class OrangeArtboard extends OrangeLayer {
   public background: paper.Item;
 
-  public position_overload() {
+  @action
+  public setPosition(x: number, y: number) {
+    super.setPosition(x, y);
     if (this.background) {
       this.background.bounds.topLeft = new paper.Point(this.position.x, this.position.y);
     }
   }
-  public size_overload() {
+
+  @action
+  public setSize(width: number, height: number) {
+    super.setSize(width, height);
     if (this.background) {
       this.background.bounds = new paper.Rectangle(
         this.background.bounds.topLeft,

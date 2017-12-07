@@ -1,4 +1,4 @@
-import { observable, autorun, action, computed } from 'mobx';
+import { observable, observe, action, computed } from 'mobx';
 import { IOrangeItem, OrangeArtboard } from '../classes';
 import paper, {
   Group,
@@ -14,7 +14,7 @@ export default class SelectorStore {
   private _selectionRect: Path.Rectangle;
 
   constructor() {
-    autorun(() => {
+    observe(this.selecteds, (change) => {
       this.update();
     });
   }
@@ -54,13 +54,13 @@ export default class SelectorStore {
 
   private update() {
     if (this.selecteds.length) {
-      const x1 = Math.min(...this.selecteds.map((value) => value.parent.position.x + value.position.x));
-      const y1 = Math.min(...this.selecteds.map((value) => value.parent.position.y + value.position.y));
+      const x1 = Math.min(...this.selecteds.map((value) => value.absolutePosition.x));
+      const y1 = Math.min(...this.selecteds.map((value) => value.absolutePosition.y));
       const x2 = Math.max(...this.selecteds.map((value) =>
-        value.parent.position.x + value.position.x + value.size.width,
+        value.absolutePosition.x + value.size.width,
       ));
       const y2 = Math.max(...this.selecteds.map((value) =>
-        value.parent.position.y + value.position.y + value.size.height,
+        value.absolutePosition.y + value.size.height,
       ));
       console.log(x1, y1, x2, y2);
       this._selectionRect.bounds = new Rectangle(

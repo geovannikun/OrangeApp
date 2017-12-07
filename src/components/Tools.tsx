@@ -62,7 +62,7 @@ class Tools extends React.Component {
     selection.onMouseDrag = (event: paper.ToolEvent) => {
       if (this.injected.selector.selecteds.length && !this._selectionRect.visible) {
         this.injected.selector.selecteds.forEach((object: IOrangeItem) => {
-          object.position = new OrangePosition(
+          object.setPosition(
             object.position.x + event.delta.x,
             object.position.y + event.delta.y,
           );
@@ -126,10 +126,7 @@ class Tools extends React.Component {
             break;
         }
         this.injected.selector.selecteds.forEach((object: IOrangeItem) => {
-          object.position = new OrangePosition(
-            object.position.x + x,
-            object.position.y + y,
-          );
+          object.setPosition(object.position.x + x, object.position.y + y);
         });
       }
     };

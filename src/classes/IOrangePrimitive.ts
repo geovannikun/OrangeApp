@@ -1,23 +1,22 @@
 import paper from 'paper';
+import { observable, action, computed } from 'mobx';
 
 import { OrangePosition, OrangeSize, OrangeStyle } from './index';
-import { debug } from 'util';
 import IOrangeItem from './IOrangeItem';
 
 abstract class IOrangePrimitive extends IOrangeItem {
-  public id: string;
-  public name: string;
-  public element: paper.Item;
-
-  private _angle: number;
-  private _style: OrangeStyle;
+  @observable public element: paper.Item;
+  @observable public angle: number;
+  @observable public style: OrangeStyle;
 
   constructor(name: string, position: OrangePosition, size: OrangeSize) {
     super(name, position, size);
-    this._style = { fillColor: 'red' };
+    this.style = { fillColor: 'red' };
   }
 
-  public position_overload() {
+  @action
+  public setPosition(x: number, y: number) {
+    super.setPosition(x, y);
     if (this.element) {
       this.element.bounds.topLeft = new paper.Point(
         this.parent.position.x + this.position.x,
@@ -25,26 +24,24 @@ abstract class IOrangePrimitive extends IOrangeItem {
       );
     }
   }
-  public size_overload() {
+  @action
+  public setSize(width: number, height: number) {
+    super.setSize(width, height);
     if (this.element) {
       this.element.bounds.width = this.size.width;
       this.element.bounds.height = this.size.height;
     }
   }
-  get angle(): number {
-    return this._angle;
-  }
-  set angle(angle: number) {
-    this._angle = angle;
+  @action
+  public setAngle(angle: number) {
+    this.angle = angle;
     if (this.element) {
-      this.element.rotation = this._angle;
+      this.element.rotation = this.angle;
     }
   }
-  get style(): OrangeStyle {
-    return this._style;
-  }
-  set style(style: OrangeStyle) {
-    this._style = { ...this._style, ...style };
+  @action
+  public setStyle(style: OrangeStyle) {
+    this.style = { ...this.style, ...style };
     if (this.element) {
       this.applyStyle(style);
     }

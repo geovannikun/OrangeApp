@@ -1,4 +1,5 @@
 import paper, { Path, Point, PointText, Size } from 'paper';
+import { observable, action, computed } from 'mobx';
 
 import { OrangeSize, OrangePosition } from './index';
 
@@ -7,23 +8,15 @@ import IOrangeItem from './IOrangeItem';
 export default class OrangeLayer extends IOrangeItem {
   public canvas: paper.PaperScope;
 
-  private _children: IOrangeItem[] = new Array<IOrangeItem>();
+  @observable public children: IOrangeItem[] = new Array<IOrangeItem>();
 
-  public position_overload() {}
-  public size_overload() {}
-  public get children(): IOrangeItem[] {
-    return this._children;
-  }
-  public set children(value: IOrangeItem[]) {
-    this._children = value;
-  }
-
+  @action
   public add(value: IOrangeItem) {
     value.parent = this;
     if (this.canvas) {
       value.render(this.canvas);
     }
-    this._children.push(value);
+    this.children.push(value);
   }
 
   public generate(canvas: paper.PaperScope) {
@@ -39,7 +32,7 @@ export default class OrangeLayer extends IOrangeItem {
   }
 
   public render_overload(canvas: paper.PaperScope) {
-    this._children.forEach((element: IOrangeItem) => {
+    this.children.forEach((element: IOrangeItem) => {
       element.render(canvas);
     });
   }

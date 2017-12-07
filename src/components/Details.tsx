@@ -46,13 +46,13 @@ class Details extends React.Component {
           element.position = value;
           break;
         case 'name':
-          element.name = value;
+          element.setName(value);
           break;
         case 'width':
-          element.size = new OrangeSize(parseInt(value, 0), element.size.height);
+          element.setSize(parseInt(value, 0), element.size.height);
           break;
         case 'height':
-          element.size = new OrangeSize(element.size.width, parseInt(value, 0));
+          element.setSize(element.size.width, parseInt(value, 0));
           break;
         case 'fill':
           if (element instanceof IOrangePrimitive) {
