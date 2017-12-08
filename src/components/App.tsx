@@ -24,14 +24,7 @@ import Pages from './Pages';
 
 import { inject, observer } from 'mobx-react';
 import React, { Component } from 'react';
-import paper, {
-  Group,
-  Path,
-  Point,
-  Rectangle,
-  Size,
-  Tool,
-} from 'paper';
+import paper, { Group, MouseEvent, Path, Point, Rectangle, Size, Tool } from 'paper';
 
 import DocumentStore from '../stores/DocumentStore';
 import SelectorStore from '../stores/SelectorStore';
@@ -73,23 +66,23 @@ class App extends React.Component {
 
   public componentDidMount() {
     paper.setup('canvas');
-
-    this.injected.app.setCanvas(paper);
-    const page1 = new OrangePage('page1');
-
     const paperZoom = new ViewZoom(paper.project);
+    this.injected.app.setCanvas(paper);
+
+    this.injected.document.addPage(new OrangePage('page1'));
+    const page = this.injected.document.selectedPage;
 
     const oArtboard = new OrangeArtboard('oArtboard', new OrangePosition(250, 100), new OrangeSize(400, 800));
+    const oLayer = new OrangeLayer('layer', new OrangePosition(250, 150), new OrangeSize(100, 100));
+    const oRectangle = new OrangeRect('rect', new OrangePosition(300, 150), new OrangeSize(100, 100));
 
-    const oRectangle = new OrangeRect('rect', new OrangePosition(50, 50), new OrangeSize(100, 100));
+    page.add(oArtboard);
+    page.add(oRectangle);
+    page.add(oLayer);
+    oRectangle.changeParent(oLayer);
+    oLayer.changeParent(oArtboard);
 
-    oArtboard.add(oRectangle);
-
-    page1.addItem(oArtboard);
-
-    this.injected.document.addPage(page1);
-
-    this.injected.selector!.create();
+    this.injected.selector.create();
   }
 
   private updateElement = (element: IOrangeItem , prop: string, value: any) => {
@@ -143,9 +136,9 @@ class App extends React.Component {
       <li
         key={item.id}
         onClick={this.handleElementSelection(item, 'select')}
-        className={this.injected.selector!.selecteds.find((selected) => selected === item) ? 'selected' : ''}
+        className={this.injected.selector.selecteds.find((selected) => selected === item) ? 'selected' : ''}
       >
-        {item.name}
+        {item.name} - {JSON.stringify(item.position)}- {JSON.stringify(item.absolutePosition)}
         {item instanceof OrangeLayer && this.renderSubList(item.children)}
       </li>
     ));
@@ -160,7 +153,8 @@ class App extends React.Component {
   }
 
   private handleElementSelection = (item: IOrangeItem, propertie: string) => (event: any) => {
-    this.injected.selector!.add(item);
+    (event as MouseEvent).stopPropagation();
+    this.injected.selector.add(item);
   }
 
   private handleContextMenu = (event: any) => {
@@ -178,7 +172,7 @@ class App extends React.Component {
         <aside className='content'>
           <Pages/>
           <ul className='layer-three'>
-            {this.injected.document.selectedPage && this.renderObjectList(this.injected.document.selectedPage.items)}
+            {this.injected.document.selectedPage && this.renderObjectList(this.injected.document.selectedPage.children)}
           </ul>
         </aside>
         <canvas id='canvas' resize='true'/>

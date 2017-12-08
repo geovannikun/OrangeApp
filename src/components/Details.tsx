@@ -56,7 +56,7 @@ class Details extends React.Component {
           break;
         case 'fill':
           if (element instanceof IOrangePrimitive) {
-            element.style = { fillColor: value };
+            element.setStyle('fillColor', value);
           }
           break;
       }

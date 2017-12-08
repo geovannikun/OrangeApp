@@ -17,10 +17,11 @@ abstract class IOrangePrimitive extends IOrangeItem {
   @action
   public setPosition(x: number, y: number) {
     super.setPosition(x, y);
+    console.log(this.absolutePosition, this.parent.absolutePosition);
     if (this.element) {
       this.element.bounds.topLeft = new paper.Point(
-        this.parent.position.x + this.position.x,
-        this.parent.position.y + this.position.y,
+        this.absolutePosition.x,
+        this.absolutePosition.y,
       );
     }
   }
@@ -39,8 +40,10 @@ abstract class IOrangePrimitive extends IOrangeItem {
       this.element.rotation = this.angle;
     }
   }
+
   @action
-  public setStyle(style: OrangeStyle) {
+  public setStyle(propertie: string, value: any) {
+    const style = { [propertie]: value };
     this.style = { ...this.style, ...style };
     if (this.element) {
       this.applyStyle(style);
@@ -60,8 +63,8 @@ abstract class IOrangePrimitive extends IOrangeItem {
     }
   }
 
-  public render_overload(canvas: paper.PaperScope) {
-    this.generate(canvas);
+  @action
+  public render(canvas: paper.PaperScope) {
     this.applyStyle();
   }
 }

@@ -22,11 +22,11 @@ export default class SelectorStore {
   public create() {
     this._selectionRect = new Path.Rectangle({
       fillColor: 'rgba(0, 0, 0, .0)',
-      point: [-10, -10],
+      point: [0, 0],
       size: [100, 100],
       strokeColor: 'orange',
     });
-    this._selectionRect.visible = true;
+    this._selectionRect.visible = false;
   }
 
   @computed get selectedArtboards() {

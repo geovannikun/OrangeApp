@@ -1,18 +1,21 @@
 import paper from 'paper';
 import { observable, action, computed } from 'mobx';
 
-import { OrangePosition, OrangeSize, OrangeLayer } from './index';
+import { OrangePosition, OrangeSize, OrangeLayer, OrangePage } from './index';
+import { render } from 'react-dom';
+
+import { v1 as uuidv1 } from 'uuid';
 
 abstract class IOrangeItem {
-  public id: string;
+  @observable public id: string;
   @observable public name: string;
-  @observable public parent: OrangeLayer;
-
+  @observable public parent: OrangeLayer | OrangePage;
   @observable public position: OrangePosition;
   @observable public size: OrangeSize;
+  @observable public rendered: boolean;
 
   constructor(name: string, position: OrangePosition, size: OrangeSize) {
-    this.id = (new Date().valueOf()).toString();
+    this.id = uuidv1();
     this.name = name;
     this.position = position;
     this.size = size;
@@ -26,8 +29,8 @@ abstract class IOrangeItem {
   @computed
   get absolutePosition(): OrangePosition {
     return new OrangePosition(
-      this.position.x + (this.parent ? this.parent.absolutePosition.x : 0),
-      this.position.y + (this.parent ? this.parent.absolutePosition.y : 0),
+      this.position.x + (this.parent instanceof OrangeLayer ? this.parent.absolutePosition.x : 0),
+      this.position.y + (this.parent instanceof OrangeLayer ? this.parent.absolutePosition.y : 0),
      );
   }
 
@@ -36,8 +39,6 @@ abstract class IOrangeItem {
     const position = new OrangePosition(x, y);
     position.x = position.x < 0 ? this.position.x : position.x;
     position.y = position.y < 0 ? this.position.y : position.y;
-    position.x = position.x + this.size.width > this.parent.size.width ? this.position.x : position.x;
-    position.y = position.y + this.size.height > this.parent.size.height ? this.position.y : position.y;
     this.position = position;
   }
 
@@ -48,12 +49,18 @@ abstract class IOrangeItem {
     this.size = new OrangeSize(width, height);
   }
 
-  public abstract generate(canvas: paper.PaperScope): void;
-  public abstract render_overload(canvas: paper.PaperScope): void;
+  @action
+  public changeParent(parent: OrangeLayer) {
+    if (this.parent) {
+      this.parent.remove(this);
+    }
+    this.parent = parent;
+    parent.add(this);
+  }
 
+  @action
   public render(canvas: paper.PaperScope) {
-    this.generate(canvas);
-    this.render_overload(canvas);
+    this.rendered = true;
   }
 }
 
