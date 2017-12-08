@@ -1,5 +1,5 @@
 import paper, { Path, Point, PointText, Size } from 'paper';
-import { observable, action, computed } from 'mobx';
+import { observable, action, computed, observe } from 'mobx';
 
 import { OrangeSize, OrangePosition } from './index';
 
@@ -9,6 +9,29 @@ export default class OrangeLayer extends IOrangeItem {
   public canvas: paper.PaperScope;
 
   @observable public children: IOrangeItem[] = new Array<IOrangeItem>();
+
+  constructor(name: string, position: OrangePosition, size: OrangeSize) {
+    super(name, position, size);
+    if (Object.getPrototypeOf(this) === OrangeLayer.prototype) {
+      observe(this.children, (change) => {
+        this.updateSize();
+      });
+    }
+  }
+
+  @action
+  public updateSize() {
+    const x2 = Math.max(...this.children.map((value) =>
+      value.absolutePosition.x + value.size.width,
+    ));
+    const y2 = Math.max(...this.children.map((value) =>
+      value.absolutePosition.y + value.size.height,
+    ));
+    this.setSize(
+      x2 - this.absolutePosition.x,
+      y2 - this.absolutePosition.y,
+    );
+  }
 
   @action
   public add(value: IOrangeItem, position?: OrangePosition) {
