@@ -77,8 +77,8 @@ class App extends React.Component {
     const oRectangle = new OrangeRect('rect', new OrangePosition(300, 150), new OrangeSize(100, 100));
 
     page.add(oArtboard);
-    page.add(oRectangle);
     page.add(oLayer);
+    page.add(oRectangle);
     oRectangle.changeParent(oLayer);
     oLayer.changeParent(oArtboard);
 
@@ -153,8 +153,9 @@ class App extends React.Component {
   }
 
   private handleElementSelection = (item: IOrangeItem, propertie: string) => (event: any) => {
-    (event as MouseEvent).stopPropagation();
-    this.injected.selector.add(item);
+    event = (event as MouseEvent);
+    event.stopPropagation();
+    this.injected.selector.select(item, event.ctrlKey);
   }
 
   private handleContextMenu = (event: any) => {

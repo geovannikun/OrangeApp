@@ -83,7 +83,7 @@ class Tools extends React.Component {
           recursive: true,
         }).forEach((selected: paper.Item) => {
           const object = selected.data.primitive;
-          this.injected.selector.add(object);
+          this.injected.selector.select(object);
         });
       }
     };
@@ -95,11 +95,8 @@ class Tools extends React.Component {
         if (e.event.which === 1) {
           const hitResult = paper.project.hitTest(e.point, hitOptions);
           if (hitResult) {
-            if (!e.event.ctrlKey) {
-              this.injected.selector.clear();
-            }
             const object = hitResult.item.data.primitive;
-            this.injected.selector.add(object);
+            this.injected.selector.select(object, e.event.ctrlKey);
           } else {
             this.injected.selector.clear();
           }
@@ -161,7 +158,7 @@ class Tools extends React.Component {
           new OrangePosition(x[0], y[0]),
           new OrangeSize(x[1] - x[0], y[1] - y[0]),
         );
-        this.injected.selector.add(oRect);
+        this.injected.selector.select(oRect);
         const oArtboard: OrangeArtboard = this.injected.selector.selectedArtboards[0] as OrangeArtboard;
         if (oArtboard) {
           oArtboard.add(oRect);

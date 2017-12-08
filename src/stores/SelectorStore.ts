@@ -21,10 +21,10 @@ export default class SelectorStore {
 
   public create() {
     this._selectionRect = new Path.Rectangle({
-      fillColor: 'rgba(0, 0, 0, .0)',
+      fillColor: 'rgba(0, 0, 0, .1)',
       point: [0, 0],
       size: [100, 100],
-      strokeColor: 'orange',
+      strokeColor: 'red',
     });
     this._selectionRect.visible = false;
   }
@@ -34,7 +34,10 @@ export default class SelectorStore {
   }
 
   @action
-  public add(value: IOrangeItem) {
+  public select(value: IOrangeItem, keep: boolean = false) {
+    if (!keep) {
+      this.selecteds.length = 0;
+    }
     if (value &&  this.selecteds.indexOf(value) === -1) {
       this.selecteds.push(value);
     }
@@ -64,8 +67,8 @@ export default class SelectorStore {
       ));
       console.log(x1, y1, x2, y2);
       this._selectionRect.bounds = new Rectangle(
-        new Point(x1 - 2, y1 - 2),
-        new Point(x2 + 2, y2 + 2),
+        new Point(x1 - 1, y1 - 1),
+        new Point(x2 + 1, y2 + 1),
       );
       this._selectionRect.visible = true;
     } else {

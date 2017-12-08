@@ -29,8 +29,8 @@ abstract class IOrangeItem {
   @computed
   get absolutePosition(): OrangePosition {
     return new OrangePosition(
-      this.position.x + (this.parent instanceof OrangeLayer ? this.parent.absolutePosition.x : 0),
-      this.position.y + (this.parent instanceof OrangeLayer ? this.parent.absolutePosition.y : 0),
+      this.position.x + (this.parent ? this.parent.absolutePosition.x : 0),
+      this.position.y + (this.parent ? this.parent.absolutePosition.y : 0),
      );
   }
 
@@ -50,11 +50,20 @@ abstract class IOrangeItem {
   }
 
   @action
-  public changeParent(parent: OrangeLayer) {
+  public setParent(parent: OrangeLayer) {
+    const newPos = {
+      x: this.absolutePosition.x - parent.absolutePosition.x,
+      y: this.absolutePosition.y - parent.absolutePosition.y,
+    };
     if (this.parent) {
       this.parent.remove(this);
     }
     this.parent = parent;
+    this.setPosition(newPos.x, newPos.y);
+  }
+
+  @action
+  public changeParent(parent: OrangeLayer) {
     parent.add(this);
   }
 
