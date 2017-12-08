@@ -19,6 +19,7 @@ export default class OrangeArtboard extends OrangeLayer {
   public setPosition(x: number, y: number) {
     super.setPosition(x, y);
     if (this.background) {
+      this.titleItem.point = new paper.Point(this.absolutePosition.x, this.absolutePosition.y - 10);
       this.background.bounds.topLeft = new paper.Point(this.absolutePosition.x, this.absolutePosition.y);
     }
   }

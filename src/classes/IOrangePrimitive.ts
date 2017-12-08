@@ -17,10 +17,6 @@ abstract class IOrangePrimitive extends IOrangeItem {
   @action
   public setPosition(x: number, y: number) {
     super.setPosition(x, y);
-    console.log(this.name);
-    console.log(this.position);
-    console.log(this.parent);
-    console.log(this.absolutePosition);
     if (this.element) {
       this.element.bounds.topLeft = new paper.Point(
         this.absolutePosition.x,

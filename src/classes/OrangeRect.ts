@@ -8,13 +8,15 @@ export default class OrangeRect extends IOrangePrimitive {
   @action
   public render(canvas: paper.PaperScope) {
     super.render(canvas);
-    this.element = new Path.Rectangle(
-      new Point(
-        this.absolutePosition.x,
-        this.absolutePosition.y,
-      ),
-      new Size(this.size.width, this.size.height),
-    );
-    this.element.data.primitive = this;
+    if (!this.element) {
+      this.element = new Path.Rectangle(
+        new Point(
+          this.absolutePosition.x,
+          this.absolutePosition.y,
+        ),
+        new Size(this.size.width, this.size.height),
+      );
+      this.element.data.primitive = this;
+    }
   }
 }
