@@ -27,6 +27,7 @@ export default class SelectorStore {
       strokeColor: 'red',
     });
     this._selectionRect.visible = false;
+    this._selectionRect.blendMode = 'negation';
   }
 
   @computed get selectedArtboards() {
@@ -66,8 +67,8 @@ export default class SelectorStore {
         value.absolutePosition.y + value.size.height,
       ));
       this._selectionRect.bounds = new Rectangle(
-        new Point(x1 - 1, y1 - 1),
-        new Point(x2 + 1, y2 + 1),
+        new Point(x1, y1),
+        new Point(x2, y2),
       );
       this._selectionRect.visible = true;
     } else {
