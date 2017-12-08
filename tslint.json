@@ -11,7 +11,6 @@
         "member-ordering": false,
         "ordered-imports": false,
         "no-console": { "severity": "warning" },
-        "no-unused-variable": true,
         "forin": false,
         "interface-name": false,
         "variable-name": [true,

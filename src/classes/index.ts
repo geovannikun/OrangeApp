@@ -1,21 +1,23 @@
 import IOrangeItem from './IOrangeItem';
+import IOrangePrimitive from './IOrangePrimitive';
+import OrangeArtboard from './OrangeArtboard';
 import OrangeGuideline from './OrangeGuideline';
+import OrangeLayer from './OrangeLayer';
+import OrangePage from './OrangePage';
 import OrangePosition from './OrangePosition';
 import OrangeRect from './OrangeRect';
 import OrangeSize from './OrangeSize';
 import OrangeStyle from './OrangeStyle';
 import OrangeTool from './OrangeTool';
-import OrangeArtboard from './OrangeArtboard';
 import ViewZoom from './ViewZoom';
-import IOrangePrimitive from './IOrangePrimitive';
-import OrangeLayer from './OrangeLayer';
 
 export {
     IOrangeItem,
     IOrangePrimitive,
-    OrangeLayer,
     OrangeArtboard,
     OrangeGuideline,
+    OrangeLayer,
+    OrangePage,
     OrangePosition,
     OrangeRect,
     OrangeSize,
