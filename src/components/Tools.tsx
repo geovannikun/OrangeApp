@@ -20,13 +20,15 @@ import {
 import Toolstore from '../stores/ToolsStore';
 import SelectorStore from '../stores/SelectorStore';
 import AppStore from '../stores/AppStore';
+import DocumentStore from '../stores/DocumentStore';
 
 interface InjectedProps {
   tools: Toolstore;
   selector: SelectorStore;
   app: AppStore;
+  document: DocumentStore;
 }
-@inject('selector', 'tools', 'app')
+@inject('selector', 'tools', 'app', 'document')
 @observer
 class Tools extends React.Component {
 
@@ -158,11 +160,8 @@ class Tools extends React.Component {
           new OrangePosition(x[0], y[0]),
           new OrangeSize(x[1] - x[0], y[1] - y[0]),
         );
+        this.injected.document.selectedPage.add(oRect);
         this.injected.selector.select(oRect);
-        const oArtboard: OrangeArtboard = this.injected.selector.selectedArtboards[0] as OrangeArtboard;
-        if (oArtboard) {
-          oArtboard.add(oRect);
-        }
       }
     };
     return rect;
