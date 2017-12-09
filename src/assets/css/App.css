@@ -21,6 +21,31 @@ canvas[resize] {
   height: calc(100% - 50px);
 }
 
+.drag-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, .7);
+  color: white;
+  text-align: center;
+  z-index: 999;
+}
+
+.drag-overlay > .box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  line-height: 200px;
+  background: white;
+  color: black;
+  border-radius: 2px;
+}
+
 #context-menu{
   position: fixed;
   z-index: 9999;

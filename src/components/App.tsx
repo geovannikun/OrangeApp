@@ -13,6 +13,7 @@ import {
   OrangeStyle,
   OrangeTool,
   ViewZoom,
+  OrangeImage,
 } from '../classes/index';
 
 import ContextMenu from './ContextMenu';
@@ -25,6 +26,8 @@ import Pages from './Pages';
 import { inject, observer } from 'mobx-react';
 import React, { Component } from 'react';
 import paper, { Group, MouseEvent, Path, Point, Rectangle, Size, Tool } from 'paper';
+import electron from 'electron';
+import Dropzone from 'react-dropzone';
 
 import DocumentStore from '../stores/DocumentStore';
 import SelectorStore from '../stores/SelectorStore';
@@ -45,6 +48,10 @@ declare module 'paper' {
   }
 }
 
+interface AppState {
+  dropZoneActive: boolean;
+}
+
 interface InjectedProps {
   document: DocumentStore;
   selector: SelectorStore;
@@ -53,7 +60,10 @@ interface InjectedProps {
 
 @inject('document', 'selector', 'app')
 @observer
-class App extends React.Component {
+class App extends React.Component<object, AppState> {
+  public state = {
+    dropZoneActive: false,
+  };
 
   get injected() {
     return this.props as InjectedProps;
@@ -162,23 +172,65 @@ class App extends React.Component {
     console.log('oi');
   }
 
+  private handleDrop = (accepted: File[], rejected: File[]) => {
+    console.log(accepted);
+    if (rejected.length) {
+      alert('Some files are unsuported');
+    }
+    accepted.forEach((image) => {
+      const img = electron.nativeImage.createFromPath(image.path);
+      const oImage = new OrangeImage('image', new OrangePosition(0, 0), img.getSize() as OrangeSize, img.toDataURL());
+      this.injected.document.selectedPage.add(oImage);
+      oImage.setPosition(100, 100);
+    });
+    this.setState({ dropZoneActive: false });
+  }
+  private handleDragEnter = () => {
+    this.setState({ dropZoneActive: true });
+  }
+  private handleDragLeave = () => {
+    this.setState({ dropZoneActive: false });
+  }
+
+  private dragOverlayRender = (dropZoneActive: boolean) => {
+    if (dropZoneActive) {
+      return (<div className='drag-overlay'>
+        <div className='box'>
+          Drop files...
+        </div>
+      </div>);
+    }
+  }
+
   public render() {
+    const { selectedPage } = this.injected.document;
+    const { dropZoneActive } = this.state;
     return (
-      <main>
-        <ContextMenu>
-          <ContextMenuItem onClick={this.handleContextMenu}>Teste</ContextMenuItem>
-        </ContextMenu>
-        <Header/>
-        <Tools/>
-        <aside className='content'>
-          <Pages/>
-          <ul className='layer-three'>
-            {this.injected.document.selectedPage && this.renderObjectList(this.injected.document.selectedPage.children)}
-          </ul>
-        </aside>
-        <canvas id='canvas' resize='true'/>
-        <Details/>
-      </main>
+      <Dropzone
+        disableClick={true}
+        style={{ position: 'fixed', left: 0, top: 0, bottom: 0, right: 0 }}
+        accept={this.injected.app.acceptableImageTypes}
+        onDrop={this.handleDrop}
+        onDragEnter={this.handleDragEnter}
+        onDragLeave={this.handleDragLeave}
+      >
+        {this.dragOverlayRender(dropZoneActive)}
+        <main>
+          <ContextMenu>
+            <ContextMenuItem onClick={this.handleContextMenu}>Teste</ContextMenuItem>
+          </ContextMenu>
+          <Header/>
+          <Tools/>
+          <aside className='content'>
+            <Pages/>
+            <ul className='layer-three'>
+              {selectedPage && this.renderObjectList(selectedPage.children)}
+            </ul>
+          </aside>
+          <canvas id='canvas' resize='true'/>
+          <Details/>
+        </main>
+      </Dropzone>
     );
   }
 }

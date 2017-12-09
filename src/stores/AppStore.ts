@@ -10,6 +10,7 @@ import paper, {
 
 export default class AppStore {
   @observable public canvas: paper.PaperScope;
+  @observable public acceptableImageTypes: string = 'image/jpeg, image/png';
 
   @action
   public setCanvas(value: paper.PaperScope) {

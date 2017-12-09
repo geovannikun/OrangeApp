@@ -36,10 +36,10 @@ export default class SelectorStore {
 
   @action
   public select(value: IOrangeItem, keep: boolean = false) {
-    if (!keep) {
-      this.selecteds.length = 0;
-    }
     if (value &&  this.selecteds.indexOf(value) === -1) {
+      if (!keep) {
+        this.selecteds.length = 0;
+      }
       this.selecteds.push(value);
     }
   }
@@ -67,8 +67,8 @@ export default class SelectorStore {
         value.absolutePosition.y + value.size.height,
       ));
       this._selectionRect.bounds = new Rectangle(
-        new Point(x1, y1),
-        new Point(x2, y2),
+        new Point(x1 - 1, y1 - 1),
+        new Point(x2 + 1, y2 + 1),
       );
       this._selectionRect.visible = true;
     } else {

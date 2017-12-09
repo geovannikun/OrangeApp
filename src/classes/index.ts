@@ -9,6 +9,7 @@ import OrangeRect from './OrangeRect';
 import OrangeSize from './OrangeSize';
 import OrangeStyle from './OrangeStyle';
 import OrangeTool from './OrangeTool';
+import OrangeImage from './OrangeImage';
 import ViewZoom from './ViewZoom';
 
 export {
@@ -23,5 +24,6 @@ export {
     OrangeSize,
     OrangeStyle,
     OrangeTool,
+    OrangeImage,
     ViewZoom,
 };

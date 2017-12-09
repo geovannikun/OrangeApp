@@ -61,32 +61,34 @@ class Tools extends React.Component {
   private createSelectionTool() {
     const hitOptions = { fill: true, segments: true, stroke: true, tolerance: 5 };
     const selection = new Tool();
-    selection.onMouseDrag = (event: paper.ToolEvent) => {
-      if (this.injected.selector.selecteds.length && !this._selectionRect.visible) {
-        this.injected.selector.selecteds.forEach((object: IOrangeItem) => {
-          object.setPosition(
-            object.position.x + event.delta.x,
-            object.position.y + event.delta.y,
-          );
-        });
-      } else {
-        this.injected.selector.clear();
-        if (event.downPoint.y !== event.point.y && event.downPoint.x !== event.point.x) {
-          const x = [event.point.x, event.downPoint.x].sort();
-          const y = [event.point.y, event.downPoint.y].sort();
-          this._selectionRect.bounds = new Rectangle(
-            new Point(x[0], y[0]),
-            new Point(x[1], y[1]),
-          );
-          this._selectionRect.visible = true;
+    selection.onMouseDrag = (e: paper.ToolEvent) => {
+      if (e.event.which === 1) {
+        if (this.injected.selector.selecteds.length && !this._selectionRect.visible) {
+          this.injected.selector.selecteds.forEach((object: IOrangeItem) => {
+              object.setPosition(
+                object.position.x + e.delta.x,
+                object.position.y + e.delta.y,
+              );
+            });
+        } else {
+          this.injected.selector.clear();
+          if (e.downPoint.y !== e.point.y && e.downPoint.x !== e.point.x) {
+            const x = [e.point.x, e.downPoint.x].sort();
+            const y = [e.point.y, e.downPoint.y].sort();
+            this._selectionRect.bounds = new Rectangle(
+              new Point(x[0], y[0]),
+              new Point(x[1], y[1]),
+            );
+            this._selectionRect.visible = true;
+          }
+          paper.project.getItems({
+            inside: this._selectionRect.bounds,
+            recursive: true,
+          }).forEach((selected: paper.Item) => {
+            const object = selected.data.primitive;
+            this.injected.selector.select(object);
+          });
         }
-        paper.project.getItems({
-          inside: this._selectionRect.bounds,
-          recursive: true,
-        }).forEach((selected: paper.Item) => {
-          const object = selected.data.primitive;
-          this.injected.selector.select(object);
-        });
       }
     };
     selection.onMouseUp = (e: paper.ToolEvent) => {
@@ -96,9 +98,8 @@ class Tools extends React.Component {
       } else {
         if (e.event.which === 1) {
           const hitResult = paper.project.hitTest(e.point, hitOptions);
-          if (hitResult) {
-            const object = hitResult.item.data.primitive;
-            this.injected.selector.select(object, e.event.ctrlKey);
+          if (hitResult && hitResult.item.data.primitive) {
+            this.injected.selector.select(hitResult.item.data.primitive, e.event.ctrlKey);
           } else {
             this.injected.selector.clear();
           }

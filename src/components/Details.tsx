@@ -49,10 +49,10 @@ class Details extends React.Component {
           element.setName(value);
           break;
         case 'width':
-          element.setSize(parseInt(value, 0), element.size.height);
+          element.setSize(parseInt(value, 0) || 1, element.size.height);
           break;
         case 'height':
-          element.setSize(element.size.width, parseInt(value, 0));
+          element.setSize(element.size.width, parseInt(value, 1) || 1);
           break;
         case 'fill':
           if (element instanceof IOrangePrimitive) {
