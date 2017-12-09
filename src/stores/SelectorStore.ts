@@ -1,4 +1,4 @@
-import { observable, observe, action, computed } from 'mobx';
+import { observable, autorun, action, computed } from 'mobx';
 import { IOrangeItem, OrangeArtboard } from '../classes';
 import paper, {
   Group,
@@ -12,22 +12,44 @@ import paper, {
 export default class SelectorStore {
   @observable public selecteds: IOrangeItem[] = [];
   private _selectionRect: Path.Rectangle;
+  private _selectionCorners: Path.Circle[] = [];
 
   constructor() {
-    observe(this.selecteds, (change) => {
+    autorun(() => {
       this.update();
     });
   }
 
   public create() {
+    const cornerStyle = {
+      center: [0, 0],
+      fillColor: 'white',
+      radius: 5,
+      strokeColor: 'gray',
+    };
     this._selectionRect = new Path.Rectangle({
       fillColor: 'rgba(0, 0, 0, .1)',
       point: [0, 0],
       size: [100, 100],
-      strokeColor: 'red',
+      strokeColor: 'gray',
     });
+    this._selectionCorners = [
+      new Path.Circle(cornerStyle),
+      new Path.Circle(cornerStyle),
+      new Path.Circle(cornerStyle),
+      new Path.Circle(cornerStyle),
+    ];
+    this._selectionCorners.forEach((corner) => {
+      corner.visible = false;
+      corner.data.resizer = true;
+    });
+    this._selectionRect.data.resizer = true;
     this._selectionRect.visible = false;
-    this._selectionRect.blendMode = 'negation';
+  }
+
+  @action
+  private resizeItens(corner: number, point: object) {
+
   }
 
   @computed get selectedArtboards() {
@@ -70,9 +92,21 @@ export default class SelectorStore {
         new Point(x1 - 1, y1 - 1),
         new Point(x2 + 1, y2 + 1),
       );
+      this._selectionCorners.forEach((corner, index) => {
+        corner.bounds.center = new Point(
+          [0, 3].indexOf(index) >= 0 ? x1 : x2,
+          [0, 1].indexOf(index) >= 0 ? y1 : y2,
+        );
+        corner.visible = true;
+      });
       this._selectionRect.visible = true;
     } else {
-      this._selectionRect.visible = false;
+      this._selectionCorners.forEach((corner) => {
+        corner.visible = false;
+      });
+      if (this._selectionRect) {
+        this._selectionRect.visible = false;
+      }
     }
   }
 

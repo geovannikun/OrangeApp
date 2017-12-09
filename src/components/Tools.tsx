@@ -100,7 +100,7 @@ class Tools extends React.Component {
           const hitResult = paper.project.hitTest(e.point, hitOptions);
           if (hitResult && hitResult.item.data.primitive) {
             this.injected.selector.select(hitResult.item.data.primitive, e.event.ctrlKey);
-          } else {
+          } else if (!(hitResult && hitResult.item.data.resizer)) {
             this.injected.selector.clear();
           }
         }
