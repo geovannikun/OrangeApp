@@ -1,3 +1,25 @@
+import AppStore from '../stores/AppStore';
+import ContextMenu from './ContextMenu';
+import ContextMenuItem from './ContextMenuItem';
+import Details from './Details';
+import DocumentStore from '../stores/DocumentStore';
+import Dropzone from 'react-dropzone';
+import electron from 'electron';
+import Header from './Header';
+import Pages from './Pages';
+import paper, {
+  Group,
+  MouseEvent,
+  Path,
+  Point,
+  Rectangle,
+  Size,
+  Tool,
+  } from 'paper';
+import React, { Component } from 'react';
+import SelectorStore from '../stores/SelectorStore';
+import Tools from './Tools';
+import { inject, observer } from 'mobx-react';
 import '../assets/css/App.css';
 
 import {
@@ -15,23 +37,6 @@ import {
   ViewZoom,
   OrangeImage,
 } from '../classes/index';
-
-import ContextMenu from './ContextMenu';
-import ContextMenuItem from './ContextMenuItem';
-import Details from './Details';
-import Header from './Header';
-import Tools from './Tools';
-import Pages from './Pages';
-
-import { inject, observer } from 'mobx-react';
-import React, { Component } from 'react';
-import paper, { Group, MouseEvent, Path, Point, Rectangle, Size, Tool } from 'paper';
-import electron from 'electron';
-import Dropzone from 'react-dropzone';
-
-import DocumentStore from '../stores/DocumentStore';
-import SelectorStore from '../stores/SelectorStore';
-import AppStore from '../stores/AppStore';
 
 declare module 'react' {
   interface CanvasHTMLAttributes<T> extends DOMAttributes<T> {
@@ -90,6 +95,7 @@ class App extends React.Component<object, AppState> {
     page.add(oLayer);
     page.add(oRectangle);
     oRectangle.changeParent(oLayer);
+    // debugger;
     oLayer.changeParent(oArtboard);
 
     this.injected.selector.create();
@@ -173,7 +179,6 @@ class App extends React.Component<object, AppState> {
   }
 
   private handleDrop = (accepted: File[], rejected: File[]) => {
-    console.log(accepted);
     if (rejected.length) {
       alert('Some files are unsuported');
     }
