@@ -53,17 +53,18 @@ abstract class IOrangePrimitive extends IOrangeItem {
     const style = { [propertie]: value };
     this.style = { ...this.style, ...style };
     if (this.element) {
-      this.applyStyle(style);
+      this.applyStyle(this.element, style);
     }
   }
 
-  private applyStyle(style?: OrangeStyle) {
+  @action
+  public applyStyle(element: paper.Item, style?: OrangeStyle) {
     const styleToAplly = style || this.style;
-    if (this.element) {
+    if (element) {
       for (const property in styleToAplly) {
         switch (property) {
           case 'fillColor':
-            this.element.style.fillColor = styleToAplly.fillColor || '';
+            element.style.fillColor = styleToAplly.fillColor || '';
             break;
         }
       }
@@ -72,7 +73,7 @@ abstract class IOrangePrimitive extends IOrangeItem {
 
   @action
   public render(canvas: paper.PaperScope) {
-    this.applyStyle();
+    this.applyStyle(this.element);
   }
 }
 

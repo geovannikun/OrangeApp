@@ -50,10 +50,10 @@ class Details extends React.Component {
           element.setName(value);
           break;
         case 'width':
-          element.setSize(parseInt(value, 0) || 1, element.size.height);
+          element.setSize(parseInt(value, 10) || 1, element.size.height);
           break;
         case 'height':
-          element.setSize(element.size.width, parseInt(value, 1) || 1);
+          element.setSize(element.size.width, parseInt(value, 10) || 1);
           break;
         case 'fill':
           if (element instanceof IOrangePrimitive) {
@@ -63,6 +63,11 @@ class Details extends React.Component {
         case 'text':
           if (element instanceof OrangeText) {
             element.setText(value);
+          }
+          break;
+        case 'fontSize':
+          if (element instanceof OrangeText) {
+            element.setFontSize(parseInt(value, 10) || 12);
           }
           break;
       }
@@ -95,6 +100,7 @@ class Details extends React.Component {
           </div>
           {this.renderStyleEditor('Color', selected, 'fill')}
           {this.renderTextEditor('Text', selected, 'text')}
+          {this.renderFontSizeEditor('FontSize', selected, 'fontSize')}
         </section>
       );
     }
@@ -114,7 +120,7 @@ class Details extends React.Component {
     }
     return undefined;
   }
-  
+
   private renderTextEditor = (title: string, element: IOrangeItem, propertie: string) => {
     if (element instanceof OrangeText) {
       return (
@@ -122,6 +128,20 @@ class Details extends React.Component {
           <span className='input-field'>
             <label>{title}</label>
             <input value={element.text} onChange={this.handleElementChange(element, propertie)}/>
+          </span>
+        </div>
+      );
+    }
+    return undefined;
+  }
+
+  private renderFontSizeEditor = (title: string, element: IOrangeItem, propertie: string) => {
+    if (element instanceof OrangeText) {
+      return (
+        <div className='row'>
+          <span className='input-field'>
+            <label>{title}</label>
+            <input value={element.fontSize} onChange={this.handleElementChange(element, propertie)}/>
           </span>
         </div>
       );
