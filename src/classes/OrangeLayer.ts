@@ -49,12 +49,6 @@ export default class OrangeLayer extends IOrangeItem {
       y: y - this.position.y,
     };
     super.setPosition(x, y);
-    this.children.forEach((child) => {
-      child.setPosition(
-        child.position.x + posDiff.x,
-        child.position.y + posDiff.y,
-      );
-    });
   }
 
   @action

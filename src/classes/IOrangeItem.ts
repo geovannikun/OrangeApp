@@ -37,8 +37,6 @@ abstract class IOrangeItem {
   @action
   public setPosition(x: number, y: number) {
     const position = new OrangePosition(x, y);
-    position.x = position.x < 0 ? this.position.x : position.x;
-    position.y = position.y < 0 ? this.position.y : position.y;
     this.position = position;
   }
 

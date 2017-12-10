@@ -28,7 +28,7 @@ export default class SelectorStore {
       strokeColor: 'gray',
     };
     this._selectionRect = new Path.Rectangle({
-      fillColor: 'rgba(0, 0, 0, .1)',
+      fillColor: 'rgba(0, 0, 0, .0)',
       point: [0, 0],
       size: [100, 100],
       strokeColor: 'gray',

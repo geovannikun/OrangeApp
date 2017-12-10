@@ -1,5 +1,5 @@
 import paper from 'paper';
-import { observable, action, computed } from 'mobx';
+import { observable, observe, action, computed } from 'mobx';
 
 import { OrangePosition, OrangeSize, OrangeStyle } from './index';
 import IOrangeItem from './IOrangeItem';
@@ -12,16 +12,24 @@ abstract class IOrangePrimitive extends IOrangeItem {
   constructor(name: string, position: OrangePosition, size: OrangeSize) {
     super(name, position, size);
     this.style = { fillColor: 'red' };
+    observe(this, 'absolutePosition', (change) => {
+      this.updatePosition();
+    });
+  }
+
+  @action
+  private updatePosition() {
+    this.element.bounds.topLeft = new paper.Point(
+      this.absolutePosition.x,
+      this.absolutePosition.y,
+    );
   }
 
   @action
   public setPosition(x: number, y: number) {
     super.setPosition(x, y);
     if (this.element) {
-      this.element.bounds.topLeft = new paper.Point(
-        this.absolutePosition.x,
-        this.absolutePosition.y,
-      );
+      this.updatePosition();
     }
   }
   @action
