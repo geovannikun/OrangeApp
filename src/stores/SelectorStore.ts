@@ -11,6 +11,7 @@ import paper, {
 
 export default class SelectorStore {
   @observable public selecteds: IOrangeItem[] = [];
+  @observable public resizing: boolean = false;
   private _selectionRect: Path.Rectangle;
   private _selectionCorners: Path.Circle[] = [];
 
@@ -39,17 +40,49 @@ export default class SelectorStore {
       new Path.Circle(cornerStyle),
       new Path.Circle(cornerStyle),
     ];
-    this._selectionCorners.forEach((corner) => {
+    this._selectionCorners.forEach((corner, index) => {
       corner.visible = false;
       corner.data.resizer = true;
+      corner.on('mousedrag', (ev: paper.ToolEvent) => this.resizeItens(index, ev.delta));
+      corner.on('mousedown', (ev: paper.ToolEvent) => this.setResizing(true));
+      corner.on('mouseup', (ev: paper.ToolEvent) => this.setResizing(false));
     });
     this._selectionRect.data.resizer = true;
     this._selectionRect.visible = false;
   }
 
   @action
-  private resizeItens(corner: number, point: object) {
+  private setResizing(resizing: boolean) {
+    this.resizing = resizing;
+  }
 
+  @action
+  private resizeItens(corner: number, point: Point) {
+    switch (corner) {
+      case 0:
+        this.selecteds.forEach((item) => {
+          item.setPosition(item.position.x + point.x, item.position.y + point.y);
+          item.setSize(item.size.width - point.x, item.size.height - point.y);
+        });
+        break;
+      case 1:
+        this.selecteds.forEach((item) => {
+          item.setPosition(item.position.x, item.position.y + point.y);
+          item.setSize(item.size.width + point.x, item.size.height - point.y);
+        });
+        break;
+      case 2:
+        this.selecteds.forEach((item) => {
+          item.setSize(item.size.width + point.x, item.size.height + point.y);
+        });
+        break;
+      case 3:
+        this.selecteds.forEach((item) => {
+          item.setPosition(item.position.x + point.x, item.position.y);
+          item.setSize(item.size.width - point.x, item.size.height + point.y);
+        });
+        break;
+    }
   }
 
   @computed get selectedArtboards() {

@@ -64,12 +64,14 @@ class Tools extends React.Component {
     selection.onMouseDrag = (e: paper.ToolEvent) => {
       if (e.event.which === 1) {
         if (this.injected.selector.selecteds.length && !this._selectionRect.visible) {
-          this.injected.selector.selecteds.forEach((object: IOrangeItem) => {
+          if (!this.injected.selector.resizing) {
+            this.injected.selector.selecteds.forEach((object: IOrangeItem) => {
               object.setPosition(
                 object.position.x + e.delta.x,
                 object.position.y + e.delta.y,
               );
             });
+          }
         } else {
           this.injected.selector.clear();
           if (e.downPoint.y !== e.point.y && e.downPoint.x !== e.point.x) {

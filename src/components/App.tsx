@@ -154,7 +154,7 @@ class App extends React.Component<object, AppState> {
         onClick={this.handleElementSelection(item, 'select')}
         className={this.injected.selector.selecteds.find((selected) => selected === item) ? 'selected' : ''}
       >
-        {item.name} - {JSON.stringify(item.position)}- {JSON.stringify(item.absolutePosition)}
+        {item.name}
         {item instanceof OrangeLayer && this.renderSubList(item.children)}
       </li>
     ));
