@@ -36,6 +36,7 @@ import {
   OrangeTool,
   ViewZoom,
   OrangeImage,
+  OrangeText,
 } from '../classes/index';
 
 declare module 'react' {
@@ -90,10 +91,13 @@ class App extends React.Component<object, AppState> {
     const oArtboard = new OrangeArtboard('oArtboard', new OrangePosition(250, 100), new OrangeSize(400, 800));
     const oLayer = new OrangeLayer('layer', new OrangePosition(250, 150), new OrangeSize(100, 100));
     const oRectangle = new OrangeRect('rect', new OrangePosition(300, 150), new OrangeSize(100, 100));
+    const oText = new OrangeText('text', new OrangePosition(310, 160), new OrangeSize(100, 10));
+    oText.setText('Olar');
 
     page.add(oArtboard);
     page.add(oLayer);
     page.add(oRectangle);
+    page.add(oText);
     oRectangle.changeParent(oLayer);
     // debugger;
     oLayer.changeParent(oArtboard);

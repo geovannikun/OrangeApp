@@ -11,6 +11,7 @@ import OrangeStyle from './OrangeStyle';
 import OrangeTool from './OrangeTool';
 import OrangeImage from './OrangeImage';
 import ViewZoom from './ViewZoom';
+import OrangeText from './OrangeText';
 
 export {
     IOrangeItem,
@@ -26,4 +27,5 @@ export {
     OrangeTool,
     OrangeImage,
     ViewZoom,
+    OrangeText,
 };

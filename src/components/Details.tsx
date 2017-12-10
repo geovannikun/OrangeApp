@@ -8,6 +8,7 @@ import {
   OrangeRect,
   OrangeSize,
   OrangeStyle,
+  OrangeText,
 } from '../classes/index';
 
 import { inject, observer } from 'mobx-react';
@@ -59,6 +60,11 @@ class Details extends React.Component {
             element.setStyle('fillColor', value);
           }
           break;
+        case 'text':
+          if (element instanceof OrangeText) {
+            element.setText(value);
+          }
+          break;
       }
     }
   }
@@ -88,6 +94,7 @@ class Details extends React.Component {
             </span>
           </div>
           {this.renderStyleEditor('Color', selected, 'fill')}
+          {this.renderTextEditor('Text', selected, 'text')}
         </section>
       );
     }
@@ -101,6 +108,20 @@ class Details extends React.Component {
           <span className='input-field'>
             <label>{title}</label>
             <input value={element.style.fillColor} onChange={this.handleElementChange(element, propertie)}/>
+          </span>
+        </div>
+      );
+    }
+    return undefined;
+  }
+  
+  private renderTextEditor = (title: string, element: IOrangeItem, propertie: string) => {
+    if (element instanceof OrangeText) {
+      return (
+        <div className='row'>
+          <span className='input-field'>
+            <label>{title}</label>
+            <input value={element.text} onChange={this.handleElementChange(element, propertie)}/>
           </span>
         </div>
       );
