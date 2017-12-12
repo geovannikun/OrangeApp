@@ -109,7 +109,7 @@ class Tools extends React.Component {
       }
     };
     selection.onKeyDown = (e: paper.KeyEvent) => {
-      if (this.injected.selector.selecteds.length) {
+      if (this.injected.selector.selecteds.length && !(e.event.srcElement && e.event.srcElement.tagName === 'INPUT')) {
         let x = 0;
         let y = 0;
         const multiple = e.event.shiftKey ? 10 : 1;
