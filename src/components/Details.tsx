@@ -127,7 +127,7 @@ class Details extends React.Component {
         <div className='row'>
           <span className='input-field'>
             <label>{title}</label>
-            <input value={element.text} onChange={this.handleElementChange(element, propertie)}/>
+            <textarea value={element.text} onChange={this.handleElementChange(element, propertie)}/>
           </span>
         </div>
       );

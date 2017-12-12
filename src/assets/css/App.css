@@ -316,6 +316,20 @@ ul.win-control > li:hover{
   color: white;
 }
 
+.input-field > textarea{
+  width: 100%;
+  padding: 0;
+  display: inline-block;
+  height: 90px;
+  padding: 10px 0;
+  line-height: 15px;
+  vertical-align: middle;
+  background: transparent;
+  border: 0px;
+  border-bottom: 1px solid white;
+  color: white;
+}
+
 .input-field.unit-px:after{
   content: 'px';
   position: absolute;
