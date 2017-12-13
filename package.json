@@ -20,6 +20,7 @@
   "dependencies": {
     "@types/paper": "^0.9.9",
     "@types/react": "^16.0.25",
+    "@types/react-color": "^2.13.3",
     "@types/react-dom": "^16.0.3",
     "@types/react-dropzone": "^4.1.0",
     "@types/uuid": "^3.4.3",
@@ -29,6 +30,7 @@
     "paper": "^0.11.5",
     "paper-jsdom": "^0.11.5",
     "react": "^16.1.1",
+    "react-color": "^2.13.8",
     "react-dom": "^16.1.1",
     "react-dropzone": "^4.2.3",
     "uuid": "^3.1.0"

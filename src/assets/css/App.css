@@ -336,3 +336,24 @@ ul.win-control > li:hover{
   right: 5px;
   top: 28px;
 }
+
+.detail-fill > .sketch-picker {
+  position: absolute;
+  top: 60px;
+  z-index: 99;
+}
+
+.detail-fill > input {
+  padding-left: 25px;
+  box-sizing: border-box;
+}
+
+.detail-fill > span {
+  width: 15px;
+  height: 15px;
+  display: inline-block;
+  position: absolute;
+  left: 0;
+  top: 30px;
+}
+

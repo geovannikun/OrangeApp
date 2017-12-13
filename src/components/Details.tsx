@@ -13,6 +13,7 @@ import {
 
 import { inject, observer } from 'mobx-react';
 import React, { Component } from 'react';
+import { SketchPicker, ColorResult } from 'react-color';
 import paper, {
   Group,
   Path,
@@ -111,9 +112,14 @@ class Details extends React.Component {
     if (element instanceof IOrangePrimitive) {
       return (
         <div className='row'>
-          <span className='input-field'>
+          <span className={`input-field detail-${propertie}`}>
             <label>{title}</label>
+            <span style={{ backgroundColor: element.style.fillColor }}/>
             <input value={element.style.fillColor} onChange={this.handleElementChange(element, propertie)}/>
+            <SketchPicker
+              color={element.style.fillColor}
+              onChangeComplete={this.handleColorPicker(element, propertie)}
+            />
           </span>
         </div>
       );
@@ -147,6 +153,10 @@ class Details extends React.Component {
       );
     }
     return undefined;
+  }
+
+  private handleColorPicker = (item: IOrangeItem, propertie: string) => (color: ColorResult) => {
+    this.updateElement(item, propertie, color.hex);
   }
 
   private handleElementChange = (item: IOrangeItem, propertie: string) => (event: any) => {
