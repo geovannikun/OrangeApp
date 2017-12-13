@@ -36,7 +36,7 @@ class DetailsColor extends React.Component<MyProps, object> {
     if (this.props.element instanceof IOrangePrimitive) {
       return (
         <div className='row'>
-          <span className={`input-field detail-color`}>
+          <span className={`input-field detail-fill`}>
             <label>Color</label>
             <span style={{ backgroundColor: this.props.element.style.fillColor }}/>
             <input

@@ -25,6 +25,8 @@ import paper, {
 
 import SelectorStore from '../stores/SelectorStore';
 
+import DetailsColor from './partials/DetailsColor';
+
 interface InjectedProps {
   selector: SelectorStore;
 }
@@ -99,7 +101,7 @@ class Details extends React.Component {
               />
             </span>
           </div>
-          {this.renderStyleEditor('Color', selected, 'fill')}
+          <DetailsColor element={selected}/>
           {this.renderTextEditor('Text', selected, 'text')}
           {this.renderFontSizeEditor('FontSize', selected, 'fontSize')}
         </section>

@@ -21,6 +21,7 @@ import SelectorStore from '../stores/SelectorStore';
 import Tools from './Tools';
 import { inject, observer } from 'mobx-react';
 import '../assets/css/App.css';
+import '../assets/css/DetailsColor.css';
 
 import {
   IOrangeItem,
