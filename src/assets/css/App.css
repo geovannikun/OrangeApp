@@ -338,9 +338,27 @@ ul.win-control > li:hover{
 }
 
 .detail-fill > .sketch-picker {
-  position: absolute;
-  top: 60px;
+  margin-top: 10px;
   z-index: 99;
+  background: transparent !important;
+  padding: 5px !important;
+}
+
+.detail-fill > .sketch-picker > .flexbox-fix > div > span > div{
+  border-radius: 0px !important;
+  border: 1px solid white;
+}
+
+.detail-fill > .sketch-picker > .flexbox-fix input {
+  background: transparent;
+  border-radius: 0px !important;
+  border: 1px solid white;
+  color: white;
+  height: 20px;
+}
+
+.detail-fill > .sketch-picker > .flexbox-fix input+span{
+  color: white !important;
 }
 
 .detail-fill > input {
