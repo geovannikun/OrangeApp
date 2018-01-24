@@ -18,24 +18,24 @@ module.exports = {
     publicPath: './',
     filename: 'bundle.js',
   },
+  resolve: {
+    extensions: ['.ts', '.tsx', '.js'],
+  },
   module: {
     rules: [
       {
         test: /\.css$/,
-        use: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: 'css-loader',
-        }),
+        use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
+        include: defaultInclude,
+      },   
+      {
+        test: /\.jsx?$/,
+        use: [{ loader: 'babel-loader' }],
         include: defaultInclude,
       },
       {
         test: /\.tsx?$/,
-        use: [{ loader: "awesome-typescript-loader" }],
-        include: defaultInclude,
-      },  
-      {
-        test: /\.jsx?$/,
-        use: [{ loader: 'babel-loader' }],
+        use: [{ loader: 'ts-loader' }],
         include: defaultInclude,
       },
       {
@@ -48,13 +48,13 @@ module.exports = {
         use: [{ loader: 'file-loader?name=font/[name]__[hash:base64:5].[ext]' }],
         include: defaultInclude,
       },
-      { enforce: "pre", test: /\.js$/, loader: "source-map-loader" },
     ],
   },
   target: 'electron-renderer',
   plugins: [
     new HtmlWebpackPlugin(),
-    new ExtractTextPlugin('bundle.css'),
+    new webpack.IgnorePlugin(/jsdom$/),
+    new HtmlWebpackPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production'),
     }),

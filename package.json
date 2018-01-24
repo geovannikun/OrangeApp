@@ -1,12 +1,12 @@
 {
-  "name": "basic-electron-react-boilerplate",
+  "name": "orange-app",
   "version": "0.7.0",
-  "description": "Minimal and modern react+electron+webpack boilerplate",
+  "description": "Open Source Prototyping App",
   "author": "Phillip Barbiero",
-  "homepage": "https://github.com/pbarbiero/basic-electron-react-boilerplate",
+  "homepage": "https://github.com/geovannikun/OrangeApp",
   "repository": {
     "type": "git",
-    "url": "https://github.com/pbarbiero/basic-electron-react-boilerplate.git"
+    "url": "https://github.com/geovannikun/OrangeApp.git"
   },
   "license": "MIT",
   "main": "main.js",

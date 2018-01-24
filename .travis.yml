@@ -1,3 +1,22 @@
 language: node_js
 node_js:
   - "8"
+
+env:
+ global:
+  - REPO=orange-app-linux-x64
+
+before_deploy:
+  - npm run package
+  - cd builds
+  - tar -zcf ${TRAVIS_BUILD_DIR}${REPO}-${TRAVIS_TAG}-${TRAVIS_BUILD_NUMBER}.tar.gz ${REPO}
+
+deploy:
+  # GitHub - Add zip to release
+  - provider: releases
+    api_key:
+      secure: "YOUR GITHUB API KEY"
+    file: ${TRAVIS_BUILD_DIR}${REPO}-${TRAVIS_TAG}-${TRAVIS_BUILD_NUMBER}.tar.gz
+    skip_cleanup: true
+    on:
+      tags: true
