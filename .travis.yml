@@ -15,7 +15,7 @@ deploy:
   # GitHub - Add zip to release
   - provider: releases
     api_key:
-      secure: "f96b9b0fb48df72be296682f07377c525af19586"
+      secure: "2d34703e0f4341a40b01757806f49412cc395474"
     file: ${TRAVIS_BUILD_DIR}${REPO}-${TRAVIS_TAG}-${TRAVIS_BUILD_NUMBER}.tar.gz
     skip_cleanup: true
     on:
