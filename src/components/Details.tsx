@@ -3,7 +3,6 @@ import {
   IOrangePrimitive,
   OrangeArtboard,
   OrangeLayer,
-  OrangeGuideline,
   OrangePosition,
   OrangeRect,
   OrangeSize,
@@ -14,14 +13,6 @@ import {
 import { inject, observer } from 'mobx-react';
 import React, { Component } from 'react';
 import { SketchPicker, ColorResult } from 'react-color';
-import paper, {
-  Group,
-  Path,
-  Point,
-  Rectangle,
-  Size,
-  Tool,
-} from 'paper';
 
 import SelectorStore from '../stores/SelectorStore';
 

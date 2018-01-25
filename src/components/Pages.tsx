@@ -1,13 +1,5 @@
 import { inject, observer } from 'mobx-react';
 import React, { Component } from 'react';
-import paper, {
-  Group,
-  Path,
-  Point,
-  Rectangle,
-  Size,
-  Tool,
-} from 'paper';
 
 import {
   OrangePage,

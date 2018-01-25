@@ -1,4 +1,4 @@
-body{
+body, main{
   margin: 0;
   padding: 0;
   height: 100vh;
@@ -90,11 +90,8 @@ header{
 }
 
 aside.content{
-  position: absolute;
-  left: 50px;
-  top: 50px;
-  height: calc(100vh - 50px);
-  width: 200px;
+  height: 100%;
+  width: 100%;
   background: rgba(255, 255, 255, .7);
   z-index: 99;
   backdrop-filter: blur(20px);
@@ -155,10 +152,7 @@ aside.content > ul.layer-three li.selected{
 }
 
 aside.tools{
-  position: fixed;
-  left: 0;
-  top: 50px;
-  height: calc(100vh - 50px);
+  height: 100%;
   width: 50px;
   background: #000;
 }
@@ -189,11 +183,8 @@ aside.tools > ul > li:hover, aside.tools > ul > li.selected{
 }
 
 aside.details{
-  position: fixed;
-  right: 0px;
-  top: 50px;
-  height: calc(100vh - 50px);
-  width: 250px;
+  height: 100%;
+  width: 100%;
   background: #000;
   z-index: 99;
   color: white;
@@ -228,6 +219,7 @@ canvas{
 
 header{
   display: flex;
+  width: 100%;
   -webkit-user-select: none;
   -webkit-app-region: drag;
 }

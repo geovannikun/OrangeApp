@@ -2,24 +2,17 @@ import AppStore from '../stores/AppStore';
 import ContextMenu from './ContextMenu';
 import ContextMenuItem from './ContextMenuItem';
 import Details from './Details';
+import Canvas from './Canvas';
 import DocumentStore from '../stores/DocumentStore';
 import Dropzone from 'react-dropzone';
 import electron from 'electron';
 import Header from './Header';
 import Pages from './Pages';
-import paper, {
-  Group,
-  MouseEvent,
-  Path,
-  Point,
-  Rectangle,
-  Size,
-  Tool,
-  } from 'paper';
 import React, { Component } from 'react';
 import SelectorStore from '../stores/SelectorStore';
 import Tools from './Tools';
 import { inject, observer } from 'mobx-react';
+import PanelGroup from 'react-panelgroup';
 import '../assets/css/App.css';
 import '../assets/css/DetailsColor.css';
 
@@ -28,14 +21,12 @@ import {
   IOrangePrimitive,
   OrangeArtboard,
   OrangeLayer,
-  OrangeGuideline,
   OrangePage,
   OrangePosition,
   OrangeRect,
   OrangeSize,
   OrangeStyle,
   OrangeTool,
-  ViewZoom,
   OrangeImage,
   OrangeText,
 } from '../classes/index';
@@ -43,15 +34,6 @@ import {
 declare module 'react' {
   interface CanvasHTMLAttributes<T> extends DOMAttributes<T> {
     resize: any;
-  }
-}
-
-declare module 'paper' {
-  interface ToolEvent {
-    event: NativeMouseEvent;
-  }
-  interface KeyEvent {
-    event: NativeMouseEvent;
   }
 }
 
@@ -76,16 +58,7 @@ class App extends React.Component<object, AppState> {
     return this.props as InjectedProps;
   }
 
-  constructor(props: object) {
-    super(props);
-    paper.install(window);
-  }
-
   public componentDidMount() {
-    paper.setup('canvas');
-    const paperZoom = new ViewZoom(paper.project);
-    this.injected.app.setCanvas(paper);
-
     this.injected.document.addPage(new OrangePage('page1'));
     const page = this.injected.document.selectedPage;
 
@@ -102,8 +75,6 @@ class App extends React.Component<object, AppState> {
     oRectangle.changeParent(oLayer);
     // debugger;
     oLayer.changeParent(oArtboard);
-
-    this.injected.selector.create();
   }
 
   private updateElement = (element: IOrangeItem , prop: string, value: any) => {
@@ -229,16 +200,31 @@ class App extends React.Component<object, AppState> {
           <ContextMenu>
             <ContextMenuItem onClick={this.handleContextMenu}>Teste</ContextMenuItem>
           </ContextMenu>
-          <Header/>
-          <Tools/>
-          <aside className='content'>
-            <Pages/>
-            <ul className='layer-three'>
-              {selectedPage && this.renderObjectList(selectedPage.children)}
-            </ul>
-          </aside>
-          <canvas id='canvas' resize='true'/>
-          <Details/>
+          <PanelGroup
+            direction='column'
+            panelWidths={[{size: 50, minSize: 50, resize: 'fixed'}, {minSize: 100, resize: 'dynamic'}]}
+          >
+            <Header/>
+            <PanelGroup
+              direction='row'
+              panelWidths={[
+                {size: 50, minSize: 50, resize: 'fixed'},
+                {minSize: 200, resize: 'dynamic'},
+                {minSize: 250, resize: 'stretch'},
+                {minSize: 250, resize: 'dynamic'},
+              ]}
+            >
+              <Tools/>
+              <aside className='content'>
+                <Pages/>
+                <ul className='layer-three'>
+                  {selectedPage && this.renderObjectList(selectedPage.children)}
+                </ul>
+              </aside>
+              <Canvas/>
+              <Details/>
+            </PanelGroup>
+          </PanelGroup>
         </main>
       </Dropzone>
     );

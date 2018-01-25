@@ -28,7 +28,6 @@ class DocumentStore {
   public select(value: OrangePage) {
     if (value && this.pages.indexOf(value) > -1) {
       this.selectedPage = value;
-      this.selectedPage.render(appStore.canvas);
     }
   }
 }

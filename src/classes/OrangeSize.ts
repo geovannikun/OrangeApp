@@ -1,4 +1,4 @@
-export default class OrangePosition {
+export default class OrangeSize {
   private _width: number;
   private _height: number;
   constructor(width: number, height: number) {

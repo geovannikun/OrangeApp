@@ -1,13 +1,5 @@
 import { observable, autorun, action } from 'mobx';
 import { OrangeTool } from '../classes';
-import paper, {
-  Group,
-  Path,
-  Point,
-  Rectangle,
-  Size,
-  Tool,
-} from 'paper';
 
 export default class ToolsStore {
   @observable public all: OrangeTool[] = new Array<OrangeTool>();
@@ -27,7 +19,6 @@ export default class ToolsStore {
   public select(value: OrangeTool) {
     if (value && this.all.indexOf(value) > -1) {
       this.selected = value;
-      value.tool.activate();
     }
   }
 }

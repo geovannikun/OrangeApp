@@ -1,4 +1,3 @@
-import paper from 'paper';
 import { observable, action, computed } from 'mobx';
 
 import { OrangePosition, OrangeSize, OrangeLayer, OrangePage } from './index';
@@ -63,11 +62,6 @@ abstract class IOrangeItem {
   @action
   public changeParent(parent: OrangeLayer) {
     parent.add(this);
-  }
-
-  @action
-  public render(canvas: paper.PaperScope) {
-    this.rendered = true;
   }
 }
 
