@@ -1,0 +1,14 @@
+div.canvas{
+  width: 100%;
+  height: 100%
+}
+
+div.canvas *{
+  position: absolute;
+  box-sizing: border-box;
+}
+
+div.canvas > .selector{
+  border: 1px solid black;
+  pointer-events: none;
+}

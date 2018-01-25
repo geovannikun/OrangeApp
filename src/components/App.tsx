@@ -15,6 +15,7 @@ import { inject, observer } from 'mobx-react';
 import PanelGroup from 'react-panelgroup';
 import '../assets/css/App.css';
 import '../assets/css/DetailsColor.css';
+import '../assets/css/Canvas.css';
 
 import {
   IOrangeItem,
@@ -202,13 +203,13 @@ class App extends React.Component<object, AppState> {
           </ContextMenu>
           <PanelGroup
             direction='column'
-            panelWidths={[{size: 50, minSize: 50, resize: 'fixed'}, {minSize: 100, resize: 'dynamic'}]}
+            panelWidths={[{size: 50, resize: 'fixed'}, {minSize: 100, resize: 'dynamic'}]}
           >
             <Header/>
             <PanelGroup
               direction='row'
               panelWidths={[
-                {size: 50, minSize: 50, resize: 'fixed'},
+                {size: 50, resize: 'fixed'},
                 {minSize: 200, resize: 'dynamic'},
                 {minSize: 250, resize: 'stretch'},
                 {minSize: 250, resize: 'dynamic'},

@@ -16,11 +16,6 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-canvas[resize] {
-  width: calc(100% - 50px);
-  height: calc(100% - 50px);
-}
-
 .drag-overlay {
   position: absolute;
   top: 0;
@@ -209,12 +204,6 @@ aside.details .row{
 
 aside.details .row .input-field{
   margin: 0 10px;
-}
-
-canvas{
-  left: 50px;
-  top: 50px;
-  position: absolute;
 }
 
 header{

@@ -11,46 +11,38 @@ import {
 } from '../classes/index';
 
 import { inject, observer } from 'mobx-react';
+import { computed } from 'mobx';
 import React, { Component, HTMLAttributes } from 'react';
-import { SketchPicker, ColorResult } from 'react-color';
 
 import DocumentStore from '../stores/DocumentStore';
-
-import DetailsColor from './partials/DetailsColor';
+import SelectorStore from '../stores/SelectorStore';
 
 interface InjectedProps {
   document: DocumentStore;
+  selector: SelectorStore;
 }
-@inject('document')
+@inject('document', 'selector')
 @observer
 class Canvas extends React.Component {
 
   public state = {
     canvasX: 0,
     canvasY: 0,
-    selectorX: 0,
-    selectorY: 0,
   };
 
-  public componentDidMount() {
-    const canvasEl = document.querySelector('.canvas');
-    if (canvasEl) {
-      /* canvasEl.addEventListener('click', (e) => {
-        console.log(e);
-      }); */
-    }
+  @computed get selectorStyle(): object {
+    const selecteds = this.injected.selector.selecteds;
+    return {
+      height: selecteds.length ? selecteds[0].size.height : 0,
+      left: selecteds.length ? selecteds[0].absolutePosition.x : 0,
+      top: selecteds.length ? selecteds[0].absolutePosition.y : 0,
+      width: selecteds.length ? selecteds[0].size.width : 0,
+    };
   }
 
-  public select = (item: IOrangeItem) => () => {
-    const selectorEl = document.querySelector('.selector');
-    console.log(selectorEl);
-    if (selectorEl) {
-      this.setState({
-        ...this.state,
-        selectorX: item.position.x,
-        selectorY: item.position.y,
-      });
-    }
+  public select = (item: IOrangeItem) => (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+    this.injected.selector.select(item);
   }
 
   get injected() {
@@ -96,7 +88,7 @@ class Canvas extends React.Component {
     return (
       <div className='canvas' style={{ left: this.state.canvasX, top: this.state.canvasY }}>
         {this.renderItems(selectedPage && selectedPage.children)}
-        <span className='selector' style={{ left: this.state.selectorX, top: this.state.selectorY }}/>
+        <span className='selector' style={this.selectorStyle}/>
       </div>
     );
   }
