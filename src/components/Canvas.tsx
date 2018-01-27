@@ -10,6 +10,7 @@ import {
   OrangeText,
 } from '../classes/index';
 
+import Layer from './elements/Layer';
 import { inject, observer } from 'mobx-react';
 import { computed } from 'mobx';
 import React, { Component, HTMLAttributes } from 'react';
@@ -49,45 +50,11 @@ class Canvas extends React.Component {
     return this.props as InjectedProps;
   }
 
-  private itemBackground(item: IOrangeItem) {
-    if (item instanceof OrangeText) {
-      return 'transparent';
-    } else if (item instanceof IOrangePrimitive) {
-      return item.style.fillColor;
-    } else if (item instanceof OrangeArtboard) {
-      return 'white';
-    } else {
-      return 'transparent';
-    }
-  }
-
-  private itemToCSS(item: IOrangeItem) {
-    return {
-      background: this.itemBackground(item),
-      color: item instanceof OrangeText ? item.style.fillColor : undefined,
-      height: item.size.height,
-      left: item.position.x,
-      top: item.position.y,
-      width: item.size.width,
-    };
-  }
-
-  private renderItems = (items: IOrangeItem[]): JSX.Element[] => {
-    return items && items.map((item) => {
-      return (
-        <div style={this.itemToCSS(item)} key={item.id} onClick={this.select(item)}>
-          {item instanceof OrangeLayer && this.renderItems(item.children)}
-          {item instanceof OrangeText && item.text}
-        </div>
-      );
-    });
-  }
-
   public render() {
     const { selectedPage } = this.injected.document;
     return (
       <div className='canvas' style={{ left: this.state.canvasX, top: this.state.canvasY }}>
-        {this.renderItems(selectedPage && selectedPage.children)}
+        <Layer item={selectedPage} select={this.select}/>
         <span className='selector' style={this.selectorStyle}/>
       </div>
     );
