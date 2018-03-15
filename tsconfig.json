@@ -16,7 +16,5 @@
   "exclude": [
     "node_modules"
   ],
-  "files": [
-    "src/declarations/react-resizable-grid.d.ts"
-  ]
+  "typeRoots" : ["src/declarations"]
 }

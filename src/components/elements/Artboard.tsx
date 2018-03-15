@@ -1,18 +1,18 @@
 import React from 'react';
 import {
   IOrangeItem,
-  OrangeLayer,
+  OrangeArtboard,
 } from '../../classes/index';
 
 import Item from './Item';
 import RenderUtils from '../../utils/RenderUtils';
 
-interface LayerProps {
-  item: OrangeLayer;
+interface ArtboardProps {
+  item: OrangeArtboard;
   select: (item: IOrangeItem) => (e: React.MouseEvent<HTMLElement>) => void;
 }
 
-class Layer<P extends LayerProps> extends Item<LayerProps> {
+class Artboard extends Item<ArtboardProps> {
   public renderSubitems(items: IOrangeItem[]): Array<JSX.Element | undefined> {
     return items && items.map((item) => RenderUtils.renderItem(item, this.props.select));
   }
@@ -25,6 +25,7 @@ class Layer<P extends LayerProps> extends Item<LayerProps> {
           key={this.props.item.id}
           onClick={this.props.select(this.props.item)}
         >
+          {this.props.item.name}
           {this.renderSubitems(this.props.item.children)}
         </div>
       );
@@ -33,4 +34,4 @@ class Layer<P extends LayerProps> extends Item<LayerProps> {
   }
 }
 
-export default Layer;
+export default Artboard;

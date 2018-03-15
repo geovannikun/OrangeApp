@@ -51,7 +51,7 @@ class DetailsColor extends React.Component<MyProps, object> {
         </div>
       );
     }
-    return;
+    return(null);
   }
 }
 
