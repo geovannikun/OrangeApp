@@ -16,12 +16,12 @@ class RenderUtils {
   public renderItem(item: IOrangeItem, select: any) {
     if (item instanceof OrangeText) {
       return (<Text item={item} key={item.id} select={select}/>);
+    } else if (item instanceof OrangeArtboard) {
+      return (<Artboard item={item} key={item.id} select={select}/>);
     } else if (item instanceof OrangeLayer) {
       return (<Layer item={item} key={item.id} select={select}/>);
     } else if (item instanceof OrangeRect) {
       return (<Rect item={item} key={item.id} select={select}/>);
-    } else if (item instanceof OrangeArtboard) {
-      return (<Artboard item={item} key={item.id} select={select}/>);
     }
     return;
   }

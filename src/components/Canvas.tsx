@@ -17,6 +17,7 @@ import React, { Component, HTMLAttributes } from 'react';
 
 import DocumentStore from '../stores/DocumentStore';
 import SelectorStore from '../stores/SelectorStore';
+import RenderUtils from '../utils/RenderUtils';
 
 interface InjectedProps {
   document: DocumentStore;
@@ -54,7 +55,7 @@ class Canvas extends React.Component {
     const { selectedPage } = this.injected.document;
     return (
       <div className='canvas' style={{ left: this.state.canvasX, top: this.state.canvasY }}>
-        <Layer item={selectedPage} select={this.select}/>
+        {RenderUtils.renderItem(selectedPage, this.select)}
         <span className='selector' style={this.selectorStyle}/>
       </div>
     );

@@ -25,7 +25,7 @@ class Artboard extends Item<ArtboardProps> {
           key={this.props.item.id}
           onClick={this.props.select(this.props.item)}
         >
-          {this.props.item.name}
+          <p>{this.props.item.name}</p>
           {this.renderSubitems(this.props.item.children)}
         </div>
       );
