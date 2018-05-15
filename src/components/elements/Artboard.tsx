@@ -24,8 +24,9 @@ class Artboard extends Item<ArtboardProps> {
           style={this.itemToCSS(this.props.item)}
           key={this.props.item.id}
           onClick={this.props.select(this.props.item)}
+          className='orange-artboard'
         >
-          <p>{this.props.item.name}</p>
+          <p className='orange-artboard-title'>{this.props.item.name}</p>
           {this.renderSubitems(this.props.item.children)}
         </div>
       );

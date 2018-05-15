@@ -8,6 +8,13 @@ div.canvas *{
   box-sizing: border-box;
 }
 
+div.canvas .orange-artboard > .orange-artboard-title {
+  margin: 0;
+  line-height: 40px;
+  color: white;
+  top: -40px;
+}
+
 div.canvas > .selector{
   border: 1px solid black;
   pointer-events: none;
