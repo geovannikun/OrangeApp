@@ -13,7 +13,7 @@ import Artboard from '../components/elements/Artboard';
 import Text from '../components/elements/Text';
 
 class RenderUtils {
-  public renderItem(item: IOrangeItem, select: any) {
+  public static renderItem(item: IOrangeItem, select: any) {
     if (item instanceof OrangeText) {
       return (<Text item={item} key={item.id} select={select}/>);
     } else if (item instanceof OrangeArtboard) {
@@ -27,4 +27,4 @@ class RenderUtils {
   }
 }
 
-export default new RenderUtils();
+export default RenderUtils;
