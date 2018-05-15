@@ -31,6 +31,7 @@ import {
   OrangeImage,
   OrangeText,
 } from '../classes/index';
+import ParserUtils from '../utils/ParserUtils';
 
 declare module 'react' {
   interface CanvasHTMLAttributes<T> extends DOMAttributes<T> {
@@ -159,7 +160,11 @@ class App extends React.Component<object, AppState> {
     if (rejected.length) {
       alert('Some files are unsuported');
     }
-    accepted.forEach((image) => {
+    accepted.forEach(async (image) => {
+      if (image.name.includes('.sketch')) {
+        const sketchFile = await ParserUtils.parseSketchFile(image.path);
+        console.log(sketchFile);
+      }
       const img = electron.nativeImage.createFromPath(image.path);
       const oImage = new OrangeImage('image', new OrangePosition(0, 0), img.getSize() as OrangeSize, img.toDataURL());
       this.injected.document.selectedPage.add(oImage);
@@ -191,7 +196,7 @@ class App extends React.Component<object, AppState> {
       <Dropzone
         disableClick={true}
         style={{ position: 'fixed', left: 0, top: 0, bottom: 0, right: 0 }}
-        accept={this.injected.app.acceptableImageTypes}
+        accept={this.injected.app.acceptableImageTypes.join(', ')}
         onDrop={this.handleDrop}
         onDragEnter={this.handleDragEnter}
         onDragLeave={this.handleDragLeave}
