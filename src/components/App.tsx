@@ -30,8 +30,10 @@ import {
   OrangeTool,
   OrangeImage,
   OrangeText,
+  OrangePlugin,
 } from '../classes/index';
 import ParserUtils from '../utils/ParserUtils';
+import { SketchFile } from 'node-sketch';
 
 declare module 'react' {
   interface CanvasHTMLAttributes<T> extends DOMAttributes<T> {
@@ -61,7 +63,22 @@ class App extends React.Component<object, AppState> {
   }
 
   public componentDidMount() {
+    const sketchPlugin = new OrangePlugin(['application/zip', 'application/x-wine-extension-sketch']);
+    sketchPlugin.importFile = async (file: File) => {
+      const sketchFile = await ParserUtils.parseSketchFile(file.path);
+      console.log(sketchFile);
+    };
+
+    const imagePlugin = new OrangePlugin(['image/jpeg', 'image/png']);
+    imagePlugin.importFile = async (file: File) => {
+      const img = electron.nativeImage.createFromPath(file.path);
+      const oImage = new OrangeImage('image', new OrangePosition(0, 0), img.getSize() as OrangeSize, img.toDataURL());
+      this.injected.document.selectedPage.add(oImage);
+      oImage.setPosition(100, 100);
+    };
+
     this.injected.document.addPage(new OrangePage('page1'));
+    this.injected.app.addPlugin(sketchPlugin, imagePlugin);
     const page = this.injected.document.selectedPage;
 
     const oArtboard = new OrangeArtboard('oArtboard', new OrangePosition(250, 100), new OrangeSize(400, 800));
@@ -160,15 +177,8 @@ class App extends React.Component<object, AppState> {
     if (rejected.length) {
       alert('Some files are unsuported');
     }
-    accepted.forEach(async (image) => {
-      if (image.name.includes('.sketch')) {
-        const sketchFile = await ParserUtils.parseSketchFile(image.path);
-        console.log(sketchFile);
-      }
-      const img = electron.nativeImage.createFromPath(image.path);
-      const oImage = new OrangeImage('image', new OrangePosition(0, 0), img.getSize() as OrangeSize, img.toDataURL());
-      this.injected.document.selectedPage.add(oImage);
-      oImage.setPosition(100, 100);
+    accepted.forEach(async (file) => {
+      this.injected.app.acceptableTypes[file.type].importFile(file);
     });
     this.setState({ dropZoneActive: false });
   }
@@ -196,7 +206,7 @@ class App extends React.Component<object, AppState> {
       <Dropzone
         disableClick={true}
         style={{ position: 'fixed', left: 0, top: 0, bottom: 0, right: 0 }}
-        accept={this.injected.app.acceptableImageTypes.join(', ')}
+        accept={Object.keys(this.injected.app.acceptableTypes).join(', ')}
         onDrop={this.handleDrop}
         onDragEnter={this.handleDragEnter}
         onDragLeave={this.handleDragLeave}

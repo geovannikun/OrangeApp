@@ -10,6 +10,7 @@ import OrangeStyle from './OrangeStyle';
 import OrangeTool from './OrangeTool';
 import OrangeImage from './OrangeImage';
 import OrangeText from './OrangeText';
+import OrangePlugin from './OrangePlugin';
 
 export {
     IOrangeItem,
@@ -24,4 +25,5 @@ export {
     OrangeTool,
     OrangeImage,
     OrangeText,
+    OrangePlugin,
 };
