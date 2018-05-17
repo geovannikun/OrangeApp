@@ -13,6 +13,7 @@ const defaultInclude = [SRC_DIR];
 module.exports = {
   entry: SRC_DIR + '/index.tsx',
   devtool: 'inline-source-map',
+  mode: 'development',
   output: {
     path: OUTPUT_DIR,
     publicPath: '/',

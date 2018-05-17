@@ -13,6 +13,7 @@ const defaultInclude = [SRC_DIR];
 
 module.exports = {
   entry: SRC_DIR + '/index.tsx',
+  mode: 'production',
   output: {
     path: OUTPUT_DIR,
     publicPath: './',
