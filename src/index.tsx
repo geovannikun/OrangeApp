@@ -9,9 +9,11 @@ import {
 } from './stores';
 
 import { Provider } from 'mobx-react';
-import * as mobx from 'mobx';
+import { configure } from 'mobx';
 
-mobx.useStrict(true);
+configure({
+  enforceActions: true,
+});
 
 const reactSelection = document.createElement('selection');
 document.body.appendChild(reactSelection);
