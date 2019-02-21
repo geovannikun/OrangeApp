@@ -21,16 +21,16 @@ class Header extends React.Component {
     const window = BrowserWindow.getFocusedWindow();
     switch (action) {
       case 'close':
-        window.close();
+        window!.close();
         break;
       case 'minimize':
-        window.minimize();
+        window!.minimize();
         break;
       case 'maximize':
-        if (window.isMaximized()) {
-          window.unmaximize();
+        if (window!.isMaximized()) {
+          window!.unmaximize();
         } else {
-            window.maximize();
+            window!.maximize();
         }
         break;
       default:

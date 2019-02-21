@@ -23,6 +23,7 @@ function createWindow() {
     show: false,
     // frame: false,
     webPreferences: {
+      // nodeIntegration: false,
       experimentalFeatures: true,
     }
   });
