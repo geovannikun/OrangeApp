@@ -1,16 +1,16 @@
 import { observable, autorun, action, computed } from 'mobx';
-import { OrangePlugin } from '../classes';
+import { OrangePlugin, OrangeMimeType } from '../classes';
 
 export default class AppStore {
   @observable public plugins: OrangePlugin[] = [];
+  @observable public mimeTypes: {[mimeType: string]: OrangeMimeType} = {};
 
-  @computed public get acceptableTypes(): any {
-    return this.plugins.reduce((prev: any, current: OrangePlugin) => {
-      current.mimeTypes.forEach((val) => {
-        prev[val] = current;
-      });
-      return prev;
-    }, {});
+  @action public importFile(mimeType: string, file: File): boolean {
+    if (this.mimeTypes[mimeType] && this.mimeTypes[mimeType].parseFile) {
+      const page = this.mimeTypes[mimeType].parseFile(file);
+      return !!page;
+    }
+    return false;
   }
 
   @action public addPlugin(...plugins: OrangePlugin[]) {

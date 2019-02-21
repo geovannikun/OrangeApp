@@ -34,6 +34,7 @@ import {
 } from '../classes/index';
 import ParserUtils from '../utils/ParserUtils';
 import { SketchFile } from 'node-sketch';
+import { toast } from 'react-toastify';
 
 declare module 'react' {
   interface CanvasHTMLAttributes<T> extends DOMAttributes<T> {
@@ -178,7 +179,12 @@ class App extends React.Component<object, AppState> {
       alert('Some files are unsuported');
     }
     accepted.forEach(async (file) => {
-      this.injected.app.acceptableTypes[file.type].importFile(file);
+      if (!this.injected.app.importFile(file.type, file)) {
+        debugger;
+        toast.error('Error on import', {
+          position: toast.POSITION.TOP_LEFT,
+        });
+      }
     });
     this.setState({ dropZoneActive: false });
   }
@@ -206,7 +212,7 @@ class App extends React.Component<object, AppState> {
       <Dropzone
         disableClick={true}
         style={{ position: 'fixed', left: 0, top: 0, bottom: 0, right: 0 }}
-        accept={Object.keys(this.injected.app.acceptableTypes).join(', ')}
+        accept={Object.keys(this.injected.app.mimeTypes).join(', ')}
         onDrop={this.handleDrop}
         onDragEnter={this.handleDragEnter}
         onDragLeave={this.handleDragLeave}

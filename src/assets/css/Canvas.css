@@ -6,6 +6,8 @@ div.canvas{
 div.canvas *{
   position: absolute;
   box-sizing: border-box;
+  padding: 0;
+  margin: 0;
 }
 
 div.canvas .orange-artboard > .orange-artboard-title {
@@ -16,6 +18,11 @@ div.canvas .orange-artboard > .orange-artboard-title {
 }
 
 div.canvas > .selector{
+  border: 1px solid black;
+  pointer-events: none;
+}
+
+div.canvas > .new-item {
   border: 1px solid black;
   pointer-events: none;
 }

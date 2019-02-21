@@ -12,8 +12,8 @@ import {
 
 import Layer from './elements/Layer';
 import { inject, observer } from 'mobx-react';
-import { computed } from 'mobx';
-import React, { Component, HTMLAttributes } from 'react';
+import { computed, action, observable } from 'mobx';
+import React, { Component, HTMLAttributes, CSSProperties } from 'react';
 
 import DocumentStore from '../stores/DocumentStore';
 import SelectorStore from '../stores/SelectorStore';
@@ -32,13 +32,65 @@ class Canvas extends React.Component {
     canvasY: 0,
   };
 
+  @observable public newItem: CSSProperties = {
+    display: 'none',
+    height: 0,
+    left: 0,
+    top: 0,
+    width: 0,
+  };
+
+  @action
+  public startNewItem = (event: React.MouseEvent<HTMLElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    this.newItem = {
+      ...this.newItem,
+      display: 'block',
+      height: 0,
+      left: event.clientX - rect.left,
+      top: event.clientY - rect.top,
+      width: 0,
+    };
+    return;
+  }
+
+  @action
+  public updateNewItem = (event: React.MouseEvent<HTMLElement>) => {
+    if (this.newItem.display === 'none') {
+      return;
+    }
+    const rect = event.currentTarget.getBoundingClientRect();
+    this.newItem = {
+      ...this.newItem,
+      ...RenderUtils.RectToCSS({
+        x1: this.newItem.left as number,
+        x2: (event.clientX - rect.left),
+        y1: this.newItem.top as number,
+        y2: (event.clientY - rect.top),
+      }),
+    };
+  }
+
+  @action
+  public createNewItem = (event: React.MouseEvent<HTMLElement>) => {
+    this.newItem = {
+      ...this.newItem,
+      display: 'none',
+    };
+  }
+
   @computed get selectorStyle(): object {
     const selecteds = this.injected.selector.selecteds;
+    if(!selecteds.length) {
+      return {
+        display: 'none',
+      };
+    }
     return {
-      height: selecteds.length ? selecteds[0].size.height : 0,
-      left: selecteds.length ? selecteds[0].absolutePosition.x : 0,
-      top: selecteds.length ? selecteds[0].absolutePosition.y : 0,
-      width: selecteds.length ? selecteds[0].size.width : 0,
+      height: selecteds[0].size.height,
+      left: selecteds[0].absolutePosition.x,
+      top: selecteds[0].absolutePosition.y,
+      width: selecteds[0].size.width,
     };
   }
 
@@ -51,12 +103,24 @@ class Canvas extends React.Component {
     return this.props as InjectedProps;
   }
 
+  public deselect = () => {
+    this.injected.selector.deselect();
+  }
+
   public render() {
     const { selectedPage } = this.injected.document;
     return (
-      <div className='canvas' style={{ left: this.state.canvasX, top: this.state.canvasY }}>
+      <div
+        className='canvas'
+        style={{ left: this.state.canvasX, top: this.state.canvasY }}
+        onMouseDown={this.startNewItem}
+        onMouseMove={this.updateNewItem}
+        onMouseUp={this.createNewItem}
+        onClick={this.deselect}
+      >
         {RenderUtils.renderItem(selectedPage, this.select)}
         <span className='selector' style={this.selectorStyle}/>
+        <span className='new-item' style={this.newItem}/>
       </div>
     );
   }

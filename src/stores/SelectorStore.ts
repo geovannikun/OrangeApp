@@ -47,10 +47,19 @@ export default class SelectorStore {
   public select(value: IOrangeItem, keep: boolean = false) {
     if (value &&  this.selecteds.indexOf(value) === -1) {
       if (!keep) {
-        this.selecteds.length = 0;
+        this.deselect();
       }
       this.selecteds.push(value);
     }
+  }
+
+  @action
+  public deselect(item?: IOrangeItem) {
+    if (!item) {
+      this.selecteds.length = 0;
+      return;
+    }
+    this.selecteds = this.selecteds.filter((selected) => selected !== item);
   }
 
   @action
