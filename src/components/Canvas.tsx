@@ -119,8 +119,8 @@ class Canvas extends React.Component {
         onClick={this.deselect}
       >
         {RenderUtils.renderItem(selectedPage, this.select)}
-        <span className='selector' style={this.selectorStyle}/>
-        <span className='new-item' style={this.newItem}/>
+        <span className='selector' style={{...this.selectorStyle}}/>
+        <span className='new-item' style={{...this.newItem}}/>
       </div>
     );
   }

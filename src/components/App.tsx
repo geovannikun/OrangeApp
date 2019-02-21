@@ -34,7 +34,7 @@ import {
 } from '../classes/index';
 import ParserUtils from '../utils/ParserUtils';
 import { SketchFile } from 'node-sketch';
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 
 declare module 'react' {
   interface CanvasHTMLAttributes<T> extends DOMAttributes<T> {
@@ -55,9 +55,6 @@ interface InjectedProps {
 @inject('document', 'selector', 'app')
 @observer
 class App extends React.Component<object, AppState> {
-  public state = {
-    dropZoneActive: false,
-  };
 
   get injected() {
     return this.props as InjectedProps;
@@ -188,12 +185,6 @@ class App extends React.Component<object, AppState> {
     });
     this.setState({ dropZoneActive: false });
   }
-  private handleDragEnter = () => {
-    this.setState({ dropZoneActive: true });
-  }
-  private handleDragLeave = () => {
-    this.setState({ dropZoneActive: false });
-  }
 
   private dragOverlayRender = (dropZoneActive: boolean) => {
     if (dropZoneActive) {
@@ -205,49 +196,53 @@ class App extends React.Component<object, AppState> {
     }
   }
 
+  private preventDropzoneClick = (evt: React.MouseEvent<HTMLElement>) =>
+    evt.preventDefault()
+
+  private renderCore = (selectedPage: OrangePage, isDragActive: boolean) => (
+    <main style={{ position: 'fixed', left: 0, top: 0, bottom: 0, right: 0 }}>
+      {this.dragOverlayRender(isDragActive)}
+      <ContextMenu>
+        <ContextMenuItem onClick={this.handleContextMenu}>Teste</ContextMenuItem>
+      </ContextMenu>
+      <PanelGroup
+        direction='column'
+        panelWidths={[{size: 50, resize: 'fixed'}, {minSize: 100, resize: 'dynamic'}]}
+      >
+        <Header/>
+        <PanelGroup
+          direction='row'
+          panelWidths={[
+            {size: 50, resize: 'fixed'},
+            {minSize: 200, resize: 'dynamic'},
+            {minSize: 250, resize: 'stretch'},
+            {minSize: 250, resize: 'dynamic'},
+          ]}
+        >
+          <Tools/>
+          <aside className='content'>
+            <Pages/>
+            <ul className='layer-three'>
+              {selectedPage && this.renderObjectList(selectedPage.children)}
+            </ul>
+          </aside>
+          <Canvas/>
+          <Details/>
+        </PanelGroup>
+      </PanelGroup>
+      <ToastContainer />
+    </main>
+  )
+
   public render() {
     const { selectedPage } = this.injected.document;
-    const { dropZoneActive } = this.state;
     return (
       <Dropzone
-        disableClick={true}
-        style={{ position: 'fixed', left: 0, top: 0, bottom: 0, right: 0 }}
+        onClick={this.preventDropzoneClick}
         accept={Object.keys(this.injected.app.mimeTypes).join(', ')}
         onDrop={this.handleDrop}
-        onDragEnter={this.handleDragEnter}
-        onDragLeave={this.handleDragLeave}
       >
-        {this.dragOverlayRender(dropZoneActive)}
-        <main>
-          <ContextMenu>
-            <ContextMenuItem onClick={this.handleContextMenu}>Teste</ContextMenuItem>
-          </ContextMenu>
-          <PanelGroup
-            direction='column'
-            panelWidths={[{size: 50, resize: 'fixed'}, {minSize: 100, resize: 'dynamic'}]}
-          >
-            <Header/>
-            <PanelGroup
-              direction='row'
-              panelWidths={[
-                {size: 50, resize: 'fixed'},
-                {minSize: 200, resize: 'dynamic'},
-                {minSize: 250, resize: 'stretch'},
-                {minSize: 250, resize: 'dynamic'},
-              ]}
-            >
-              <Tools/>
-              <aside className='content'>
-                <Pages/>
-                <ul className='layer-three'>
-                  {selectedPage && this.renderObjectList(selectedPage.children)}
-                </ul>
-              </aside>
-              <Canvas/>
-              <Details/>
-            </PanelGroup>
-          </PanelGroup>
-        </main>
+        {({ isDragActive }: any) => this.renderCore(selectedPage, isDragActive)}
       </Dropzone>
     );
   }
