@@ -12,7 +12,7 @@ import { Provider } from 'mobx-react';
 import { configure } from 'mobx';
 
 configure({
-  enforceActions: true,
+  enforceActions: 'observed',
 });
 
 const reactSelection = document.createElement('selection');
