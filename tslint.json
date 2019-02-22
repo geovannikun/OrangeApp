@@ -9,10 +9,11 @@
         "quotemark": [true, "single"],
         "jsx-wrap-multiline": false,
         "member-ordering": false,
-        "ordered-imports": false,
+        "ordered-imports": true,
         "no-console": { "severity": "warning" },
         "forin": false,
         "interface-name": false,
+        "semicolon": [true, "never"],
         "variable-name": [true,
             "check-format",
             "allow-leading-underscore"

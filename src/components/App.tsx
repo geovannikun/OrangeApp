@@ -1,55 +1,50 @@
-import AppStore from '../stores/AppStore';
-import ContextMenu from './ContextMenu';
-import ContextMenuItem from './ContextMenuItem';
-import Details from './Details';
-import Canvas from './Canvas';
-import DocumentStore from '../stores/DocumentStore';
-import Dropzone from 'react-dropzone';
-import electron from 'electron';
-import Header from './Header';
-import Pages from './Pages';
-import React, { Component } from 'react';
-import SelectorStore from '../stores/SelectorStore';
-import Tools from './Tools';
-import { inject, observer } from 'mobx-react';
-import PanelGroup from 'react-panelgroup';
-import '../assets/css/App.css';
-import '../assets/css/DetailsColor.css';
-import '../assets/css/Canvas.css';
+import electron from 'electron'
+import { inject, observer } from 'mobx-react'
+import { SketchFile } from 'node-sketch'
+import React, { Component } from 'react'
+import Dropzone from 'react-dropzone'
+import PanelGroup from 'react-panelgroup'
+import { toast, ToastContainer } from 'react-toastify'
 
+import '../assets/css/App.css'
+import '../assets/css/Canvas.css'
+import '../assets/css/DetailsColor.css'
+import Config from '../classes/Config'
 import {
   IOrangeItem,
   IOrangePrimitive,
   OrangeArtboard,
+  OrangeImage,
   OrangeLayer,
   OrangePage,
+  OrangePlugin,
   OrangePosition,
   OrangeRect,
   OrangeSize,
   OrangeStyle,
-  OrangeTool,
-  OrangeImage,
   OrangeText,
-  OrangePlugin,
-} from '../classes/index';
-import ParserUtils from '../utils/ParserUtils';
-import { SketchFile } from 'node-sketch';
-import { ToastContainer, toast } from 'react-toastify';
-
-declare module 'react' {
-  interface CanvasHTMLAttributes<T> extends DOMAttributes<T> {
-    resize: any;
-  }
-}
+  OrangeTool,
+} from '../classes/index'
+import AppStore from '../stores/AppStore'
+import DocumentStore from '../stores/DocumentStore'
+import SelectorStore from '../stores/SelectorStore'
+import ParserUtils from '../utils/ParserUtils'
+import HTMLCanvas from './canvas/HTMLCanvas'
+import ContextMenu from './ContextMenu'
+import ContextMenuItem from './ContextMenuItem'
+import Details from './Details'
+import Header from './Header'
+import Pages from './Pages'
+import Tools from './Tools'
 
 interface AppState {
-  dropZoneActive: boolean;
+  dropZoneActive: boolean
 }
 
 interface InjectedProps {
-  document: DocumentStore;
-  selector: SelectorStore;
-  app: AppStore;
+  document: DocumentStore
+  selector: SelectorStore
+  app: AppStore
 }
 
 @inject('document', 'selector', 'app')
@@ -57,41 +52,46 @@ interface InjectedProps {
 class App extends React.Component<object, AppState> {
 
   get injected() {
-    return this.props as InjectedProps;
+    return this.props as InjectedProps
+  }
+
+  private renderComponents = {
+    HTMLCanvas,
   }
 
   public componentDidMount() {
-    const sketchPlugin = new OrangePlugin(['application/zip', 'application/x-wine-extension-sketch']);
+    Config.startApplication()
+    const sketchPlugin = new OrangePlugin(['application/zip', 'application/x-wine-extension-sketch'])
     sketchPlugin.importFile = async (file: File) => {
-      const sketchFile = await ParserUtils.parseSketchFile(file.path);
-      console.log(sketchFile);
-    };
+      const sketchFile = await ParserUtils.parseSketchFile(file.path)
+      console.log(sketchFile)
+    }
 
-    const imagePlugin = new OrangePlugin(['image/jpeg', 'image/png']);
+    const imagePlugin = new OrangePlugin(['image/jpeg', 'image/png'])
     imagePlugin.importFile = async (file: File) => {
-      const img = electron.nativeImage.createFromPath(file.path);
-      const oImage = new OrangeImage('image', new OrangePosition(0, 0), img.getSize() as OrangeSize, img.toDataURL());
-      this.injected.document.selectedPage.add(oImage);
-      oImage.setPosition(100, 100);
-    };
+      const img = electron.nativeImage.createFromPath(file.path)
+      const oImage = new OrangeImage('image', new OrangePosition(0, 0), img.getSize() as OrangeSize, img.toDataURL())
+      this.injected.document.selectedPage.add(oImage)
+      oImage.setPosition(100, 100)
+    }
 
-    this.injected.document.addPage(new OrangePage('page1'));
-    this.injected.app.addPlugin(sketchPlugin, imagePlugin);
-    const page = this.injected.document.selectedPage;
+    this.injected.document.addPage(new OrangePage('page1'))
+    this.injected.app.addPlugin(sketchPlugin, imagePlugin)
+    const page = this.injected.document.selectedPage
 
-    const oArtboard = new OrangeArtboard('oArtboard', new OrangePosition(250, 100), new OrangeSize(400, 800));
-    const oLayer = new OrangeLayer('layer', new OrangePosition(250, 150), new OrangeSize(100, 100));
-    const oRectangle = new OrangeRect('rect', new OrangePosition(300, 150), new OrangeSize(100, 100));
-    const oText = new OrangeText('text', new OrangePosition(310, 160), new OrangeSize(100, 10));
-    oText.setText('Olar');
+    const oArtboard = new OrangeArtboard('oArtboard', new OrangePosition(250, 100), new OrangeSize(400, 800))
+    const oLayer = new OrangeLayer('layer', new OrangePosition(250, 150), new OrangeSize(100, 100))
+    const oRectangle = new OrangeRect('rect', new OrangePosition(300, 150), new OrangeSize(100, 100))
+    const oText = new OrangeText('text', new OrangePosition(310, 160), new OrangeSize(100, 10))
+    oText.setText('Olar')
 
-    page.add(oArtboard);
-    page.add(oLayer);
-    page.add(oRectangle);
-    page.add(oText);
-    oRectangle.changeParent(oLayer);
+    page.add(oArtboard)
+    page.add(oLayer)
+    page.add(oRectangle)
+    page.add(oText)
+    oRectangle.changeParent(oLayer)
     // debugger;
-    oLayer.changeParent(oArtboard);
+    oLayer.changeParent(oArtboard)
   }
 
   private updateElement = (element: IOrangeItem , prop: string, value: any) => {
@@ -99,26 +99,26 @@ class App extends React.Component<object, AppState> {
       switch (prop) {
         case 'add':
           if (element instanceof OrangeLayer) {
-            element.add(value);
+            element.add(value)
           }
-          break;
+          break
         case 'position':
-          element.position = value;
-          break;
+          element.position = value
+          break
         case 'name':
-          element.name = value;
-          break;
+          element.name = value
+          break
         case 'width':
-          element.size = new OrangeSize(parseInt(value, 0), element.size.height);
-          break;
+          element.size = new OrangeSize(parseInt(value, 0), element.size.height)
+          break
         case 'height':
-          element.size = new OrangeSize(element.size.width, parseInt(value, 0));
-          break;
+          element.size = new OrangeSize(element.size.width, parseInt(value, 0))
+          break
         case 'fill':
           if (element instanceof IOrangePrimitive) {
-            element.style = { fillColor: value };
+            element.style = { fillColor: value }
           }
-          break;
+          break
       }
     }
   }
@@ -127,16 +127,16 @@ class App extends React.Component<object, AppState> {
     if (item instanceof IOrangeItem) {
       artboard.children = artboard.children.map((subItem: IOrangeItem) => {
         if (item === subItem) {
-          return item;
+          return item
         }
-        return subItem;
-      });
-      return artboard;
+        return subItem
+      })
+      return artboard
     } else {
       if (item === artboard) {
-        return item;
+        return item
       }
-      return artboard;
+      return artboard
     }
   }
 
@@ -150,7 +150,7 @@ class App extends React.Component<object, AppState> {
         {item.name}
         {item instanceof OrangeLayer && this.renderSubList(item.children)}
       </li>
-    ));
+    ))
   }
 
   private renderSubList = (list: IOrangeItem[]): JSX.Element => {
@@ -158,32 +158,32 @@ class App extends React.Component<object, AppState> {
       <ul>
         {this.renderObjectList(list)}
       </ul>
-    );
+    )
   }
 
   private handleElementSelection = (item: IOrangeItem, propertie: string) => (event: any) => {
-    event = (event as MouseEvent);
-    event.stopPropagation();
-    this.injected.selector.select(item, event.ctrlKey);
+    event = (event as MouseEvent)
+    event.stopPropagation()
+    this.injected.selector.select(item, event.ctrlKey)
   }
 
   private handleContextMenu = (event: any) => {
-    console.log('oi');
+    console.log('oi')
   }
 
   private handleDrop = (accepted: File[], rejected: File[]) => {
     if (rejected.length) {
-      alert('Some files are unsuported');
+      alert('Some files are unsuported')
     }
     accepted.forEach(async (file) => {
       if (!this.injected.app.importFile(file.type, file)) {
-        debugger;
+        // debugger
         toast.error('Error on import', {
           position: toast.POSITION.TOP_LEFT,
-        });
+        })
       }
-    });
-    this.setState({ dropZoneActive: false });
+    })
+    this.setState({ dropZoneActive: false })
   }
 
   private dragOverlayRender = (dropZoneActive: boolean) => {
@@ -192,7 +192,7 @@ class App extends React.Component<object, AppState> {
         <div className='box'>
           Drop files...
         </div>
-      </div>);
+      </div>)
     }
   }
 
@@ -226,7 +226,7 @@ class App extends React.Component<object, AppState> {
               {selectedPage && this.renderObjectList(selectedPage.children)}
             </ul>
           </aside>
-          <Canvas/>
+          <this.renderComponents.HTMLCanvas/>
           <Details/>
         </PanelGroup>
       </PanelGroup>
@@ -235,7 +235,7 @@ class App extends React.Component<object, AppState> {
   )
 
   public render() {
-    const { selectedPage } = this.injected.document;
+    const { selectedPage } = this.injected.document
     return (
       <Dropzone
         onClick={this.preventDropzoneClick}
@@ -244,8 +244,8 @@ class App extends React.Component<object, AppState> {
       >
         {({ isDragActive }: any) => this.renderCore(selectedPage, isDragActive)}
       </Dropzone>
-    );
+    )
   }
 }
 
-export default App;
+export default App
