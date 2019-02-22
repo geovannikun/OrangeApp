@@ -1,5 +1,3 @@
-'use strict'
-
 import { app, BrowserWindow } from 'electron'
 import * as path from 'path'
 import { format as formatUrl } from 'url'
@@ -7,18 +5,18 @@ import { format as formatUrl } from 'url'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)
-let mainWindow
+let mainWindow: BrowserWindow | null
 
 function createMainWindow() {
   const window = new BrowserWindow({
-    width: 1024,
     height: 768,
     show: true,
     // frame: false,
     webPreferences: {
       // nodeIntegration: false,
       experimentalFeatures: true,
-    }
+    },
+    width: 1024,
   })
 
   if (isDevelopment) {
@@ -27,12 +25,11 @@ function createMainWindow() {
 
   if (isDevelopment) {
     window.loadURL(`http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`)
-  }
-  else {
+  } else {
     window.loadURL(formatUrl({
       pathname: path.join(__dirname, 'index.html'),
       protocol: 'file',
-      slashes: true
+      slashes: true,
     }))
   }
 
