@@ -61,9 +61,9 @@ class Header extends React.Component {
           <input value={this.injected.document.title} onChange={this.handleFileName}/>
         </div>
         <ul className='win-control'>
-          <li onClick={this.handleWinControl('minimize')}>⊖</li>
-          <li onClick={this.handleWinControl('maximize')}>⊕</li>
-          <li onClick={this.handleWinControl('close')}>⊗</li>
+          <li className={'minimize-action'} onClick={this.handleWinControl('minimize')}/>
+          <li className={'maximize-action'} onClick={this.handleWinControl('maximize')}/>
+          <li className={'close-action'} onClick={this.handleWinControl('close')}/>
         </ul>
       </header>
     )

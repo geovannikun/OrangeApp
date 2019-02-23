@@ -1,6 +1,5 @@
 import { inject, observer } from 'mobx-react'
 import React from 'react'
-
 import {
   OrangeTool,
 } from '../classes/index'

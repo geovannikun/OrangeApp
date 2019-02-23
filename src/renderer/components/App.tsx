@@ -2,10 +2,12 @@ import electron from 'electron'
 import { inject, observer } from 'mobx-react'
 import React from 'react'
 import Dropzone from 'react-dropzone'
+import SplitPane from 'react-split-pane'
 import { toast, ToastContainer } from 'react-toastify'
 import '../assets/css/App.css'
 import '../assets/css/Canvas.css'
 import '../assets/css/DetailsColor.css'
+import '../assets/css/Resizer.css'
 import Config from '../classes/Config'
 import {
   IOrangeItem,
@@ -158,29 +160,21 @@ class App extends React.Component<object, AppState> {
       <ContextMenu>
         <ContextMenuItem onClick={this.handleContextMenu}>Teste</ContextMenuItem>
       </ContextMenu>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column'
-        }}
-      >
-        <Header/>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row'
-          }}
-        >
-          <Tools/>
+      <Header/>
+      <div style={{display: 'flex'}}>
+        <Tools/>
+        <SplitPane split='vertical' defaultSize={'250px'} style={{marginLeft: 50}}>
           <aside className='content'>
             <Pages/>
             <ul className='layer-three'>
               {selectedPage && this.renderObjectList(selectedPage.children)}
             </ul>
           </aside>
-          <this.renderComponents.HTMLCanvas/>
-          <Details/>
-        </div>
+          <SplitPane split='vertical' defaultSize={'250px'} primary='second'>
+            <this.renderComponents.HTMLCanvas/>
+            <Details/>
+          </SplitPane>
+        </SplitPane>
       </div>
       <ToastContainer />
     </main>

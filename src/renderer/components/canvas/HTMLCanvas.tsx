@@ -1,7 +1,6 @@
 import { action, computed, observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import React, { CSSProperties } from 'react'
-
 import {
   IOrangeItem,
 } from '../../classes/index'
@@ -16,11 +15,6 @@ interface InjectedProps {
 @inject('document', 'selector')
 @observer
 class Canvas extends React.Component {
-
-  public state = {
-    canvasX: 0,
-    canvasY: 0,
-  }
 
   @observable public newItem: CSSProperties = {
     display: 'none',
@@ -102,7 +96,6 @@ class Canvas extends React.Component {
     return selectedPage ? (
       <div
         className='canvas'
-        style={{ left: this.state.canvasX, top: this.state.canvasY }}
         onMouseDown={this.startNewItem}
         onMouseMove={this.updateNewItem}
         onMouseUp={this.createNewItem}

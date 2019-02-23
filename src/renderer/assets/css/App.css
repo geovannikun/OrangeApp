@@ -90,6 +90,7 @@ aside.content{
   background: rgba(255, 255, 255, .7);
   z-index: 99;
   backdrop-filter: blur(20px);
+  overflow: auto;
 }
 
 aside.content > ul.pages{
@@ -147,6 +148,7 @@ aside.content > ul.layer-three li.selected{
 }
 
 aside.tools{
+  position: absolute;
   height: 100%;
   width: 50px;
   background: #000;
@@ -250,18 +252,61 @@ div.document-name > input {
 }
 
 ul.win-control{
+  display: flex;
   list-style: none;
-  padding: 0;
+  padding: 10px;
   margin: 0;
-  text-align: center;
+  align-items: center;
+  justify-content: center;
   color: white;
 }
 ul.win-control > li{
+  position: relative;
   display: inline-block;
   font-size: 18pt;
-  margin: 10px;
+  height: 15px;
+  width: 15px;
+  margin: 0 10px;
+  border-radius: 50%;
   cursor: default;
   -webkit-app-region: no-drag;
+}
+
+ul.win-control > li::after {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  left: -10px;
+  top: -15px;
+  transform: translate(50%, 50%)
+}
+
+ul.win-control > li:hover::after {
+  color:  rgba(0,0,0,.6);
+}
+
+ul.win-control > li.minimize-action{
+  background-color: #00DA46;
+}
+
+ul.win-control > li.minimize-action:hover::after {
+  content: '⊖';
+}
+
+ul.win-control > li.maximize-action{
+  background-color: #FFBE3A;
+}
+
+ul.win-control > li.maximize-action:hover::after {
+  content: '⊕';
+}
+
+ul.win-control > li.close-action{
+  background-color: #FF1F50;
+}
+
+ul.win-control > li.close-action:hover::after {
+  content: '⊗';
 }
 
 ul.win-control > li:hover{
