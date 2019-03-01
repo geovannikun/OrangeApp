@@ -13,8 +13,10 @@ function createMainWindow() {
     show: true,
     // frame: false,
     webPreferences: {
-      // nodeIntegration: false,
-      experimentalFeatures: true,
+      contextIsolation: false,
+      nodeIntegration: false,
+      preload: path.resolve(__dirname, '..', '..', 'dist', 'main', 'preload.js'),
+      experimentalFeatures: false,
     },
     width: 1024,
   })

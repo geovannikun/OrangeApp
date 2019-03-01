@@ -1,4 +1,3 @@
-import electron from 'electron'
 import { inject, observer } from 'mobx-react'
 import React from 'react'
 import Dropzone from 'react-dropzone'
@@ -21,6 +20,7 @@ import {
   OrangeSize,
   OrangeText,
 } from '../classes/index'
+import OrangeCore from '../classes/OrangeCore'
 import AppStore from '../stores/AppStore'
 import DocumentStore from '../stores/DocumentStore'
 import SelectorStore from '../stores/SelectorStore'
@@ -65,7 +65,7 @@ class App extends React.Component<object, AppState> {
 
     const imagePlugin = new OrangePlugin(['image/jpeg', 'image/png'])
     imagePlugin.importFile = (async (file: File) => {
-      const img = electron.nativeImage.createFromPath(file.path)
+      const img = OrangeCore.createNativeImage(file.path)
       const oImage = new OrangeImage('image', new OrangePosition(0, 0), img.getSize() as OrangeSize, img.toDataURL())
       if (document.selectedPage) {
         document.selectedPage.add(oImage)

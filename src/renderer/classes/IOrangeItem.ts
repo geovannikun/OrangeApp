@@ -1,6 +1,6 @@
 import { action, computed, observable } from 'mobx'
-import { v1 as uuidv1 } from 'uuid'
 import { OrangeLayer, OrangePage, OrangePosition, OrangeSize } from './index'
+import OrangeCore from './OrangeCore'
 
 abstract class IOrangeItem {
   @observable public id: string
@@ -11,7 +11,7 @@ abstract class IOrangeItem {
   @observable public rendered: boolean = false
 
   constructor(name: string, position: OrangePosition, size: OrangeSize) {
-    this.id = uuidv1()
+    this.id = OrangeCore.generateID()
     this.name = name
     this.position = position
     this.size = size

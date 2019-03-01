@@ -1,9 +1,6 @@
 import { inject, observer } from 'mobx-react'
 import React from 'react'
-
-import electron from 'electron'
-const { BrowserWindow } = electron.remote
-
+import OrangeCore from '../classes/OrangeCore'
 import DocumentStore from '../stores/DocumentStore'
 
 interface InjectedProps {
@@ -18,20 +15,15 @@ class Header extends React.Component {
   }
 
   private windowAction = (action: string) => {
-    const window = BrowserWindow.getFocusedWindow()
     switch (action) {
       case 'close':
-        window!.close()
+        OrangeCore.close()
         break
       case 'minimize':
-        window!.minimize()
+        OrangeCore.minimize()
         break
       case 'maximize':
-        if (window!.isMaximized()) {
-          window!.unmaximize()
-        } else {
-            window!.maximize()
-        }
+        OrangeCore.maximize()
         break
       default:
         throw new Error('Error')

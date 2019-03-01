@@ -1,4 +1,4 @@
-import { remote } from 'electron'
+import OrangeCore from './OrangeCore'
 
 interface IPlugin {
   load: (config: Config) => boolean
@@ -7,7 +7,7 @@ export class Config {
   private plugins = ['plugins/sketch-utils/index']
 
   private getPluginPath(pluginPath: string) {
-    return `${remote.app.getAppPath()}/${pluginPath}`
+    return `${OrangeCore.appPath}/${pluginPath}`
   }
 
   private loadPlugins() {

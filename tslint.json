@@ -9,6 +9,7 @@
         "jsx-wrap-multiline": false,
         "member-ordering": false,
         "ordered-imports": true,
+        "object-literal-sort-keys": false,
         "no-console": { "severity": "warning" },
         "forin": false,
         "interface-name": false,

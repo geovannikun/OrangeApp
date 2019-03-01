@@ -3,15 +3,10 @@
   "compilerOptions": {
     "sourceMap": true,
     "noImplicitAny": true,
-    "module": "es6",
-    "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es5",
-    "lib": [ "es6", "dom" ],
     "jsx": "react",
     "allowJs": true,
-    "allowSyntheticDefaultImports": true,
     "strictNullChecks": true
   },
   "exclude": [

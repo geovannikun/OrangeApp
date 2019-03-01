@@ -1,0 +1,18 @@
+{
+  "main": {
+    "extraEntries": ["@/preload.ts"]
+  },
+  "renderer": {
+    "webpackConfig": "webpack.renderer.additions.js"
+  },
+  "whiteListedModules": [
+    "mobx",
+    "mobx-react",
+    "react",
+    "react-dom",
+    "react-split-pane",
+    "react-dropzone",
+    "react-toastify",
+    "react-color"
+  ]
+}

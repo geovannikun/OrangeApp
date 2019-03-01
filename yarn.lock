@@ -752,6 +752,13 @@
     "@types/prop-types" "*"
     csstype "^2.2.0"
 
+"@types/source-map-support@^0.4.2":
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/@types/source-map-support/-/source-map-support-0.4.2.tgz#5b9f4502183430511bb90e84a6e4bf4214e55a67"
+  integrity sha512-GbGWx39O8NdUHSChdrU0XeigBAgu1Teg3llwE0slSVcH2qISaQT70ftAiH+h4HIt3VIObFU34PSpXIKJuXCybQ==
+  dependencies:
+    "@types/node" "*"
+
 "@types/uuid@^3.4.4":
   version "3.4.4"
   resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-3.4.4.tgz#7af69360fa65ef0decb41fd150bf4ca5c0cefdf5"
@@ -5686,11 +5693,6 @@ react-lifecycles-compat@^3.0.2, react-lifecycles-compat@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
-
-react-panelgroup@^1.0.7:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/react-panelgroup/-/react-panelgroup-1.0.7.tgz#20304b0bd2bba0a58f85f673903e449cd5e5993b"
-  integrity sha512-APNVfoWkPknFDKdR07poVsbqJ3SN3jQQym7WZtSVIlnLBIt3eoRqYBsJmDqvEqH4UkUI64oO3sT9+14a1qaYvg==
 
 react-split-pane@^0.1.85:
   version "0.1.85"
