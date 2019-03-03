@@ -1,0 +1,373 @@
+@import 'colors';
+
+body,
+main {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  background: semantic-color(neutral, 1);
+  font-family: arial;
+  overflow: hidden;
+}
+
+input,
+textarea,
+a {
+  outline: none;
+}
+
+input {
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    margin: 0;
+    appearance: none;
+  }
+}
+
+header {
+  display: flex;
+  width: 100%;
+  height: 50px;
+  background: semantic-color(neutral, 0);
+  color: semantic-color(neutral);
+  -webkit-app-region: drag;
+  user-select: none;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.drag-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: semantic-color(black-alpha, 7);
+  color: semantic-color(neutral);
+  text-align: center;
+  z-index: 999;
+
+  > .box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    height: 200px;
+    transform: translate(-50%, -50%);
+    border-radius: 2px;
+    background: semantic-color(neutral);
+    color: semantic-color(neutral, 0);
+    line-height: 200px;
+  }
+}
+
+.context-menu {
+  position: fixed;
+  z-index: 9999;
+
+  &.show {
+    display: inline-block;
+  }
+
+  &.hide {
+    display: none;
+  }
+
+  > ul {
+    display: inline-block;
+    min-width: 200px;
+    margin: 0;
+    padding: 10px 0;
+    border: 1px solid semantic-color(neutral, 3);
+    background: semantic-color(black-alpha, 8);
+    color: semantic-color(neutral);
+    font-size: 10pt;
+    font-weight: bold;
+    list-style: none;
+    backdrop-filter: blur(20px);
+
+    > li {
+      padding: 5px 10px;
+      cursor: default;
+
+      &:hover {
+        background: semantic-color(orange-tones);
+        color: semantic-color(neutral, 0);
+      }
+    }
+  }
+}
+
+.content {
+  width: 100%;
+  height: 100%;
+  background: semantic-color(white-alpha, 7);
+  overflow: auto;
+  z-index: 99;
+  backdrop-filter: blur(20px);
+
+  .layer-three {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    ul {
+      margin: 0;
+      margin-top: 5px;
+      padding: 0;
+      border-left: 1px solid semantic-color(neutral, 0);
+      list-style: none;
+    }
+
+    li {
+      padding: 5px 20px;
+      cursor: default;
+
+      &.selected {
+        padding: 5px 16px;
+        border-left: 4px solid semantic-color(neutral, 0);
+      }
+    }
+  }
+
+  > .pages {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    &:hover > li {
+      display: block;
+    }
+
+    &.open > li {
+      display: block;
+    }
+
+    > li {
+      display: none;
+      height: 50px;
+      padding: 0 20px;
+      background: semantic-color(black-alpha, 9);
+      color: semantic-color(neutral);
+      font-weight: bold;
+      line-height: 50px;
+      cursor: default;
+
+      &:hover {
+        background: semantic-color(black-alpha, 7);
+      }
+
+      &.current {
+        display: block;
+      }
+    }
+  }
+}
+
+.tools {
+  position: absolute;
+  width: 50px;
+  height: 100%;
+  background: semantic-color(neutral, 0);
+
+  > ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-align: center;
+
+    > li {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      margin: 5px;
+      border: 1px solid transparent;
+      color: semantic-color(neutral);
+      font-size: 16pt;
+      line-height: 40px;
+      vertical-align: middle;
+      box-sizing: border-box;
+
+      &:hover,
+      &.selected {
+        border: 1px solid semantic-color(neutral);
+        cursor: default;
+      }
+    }
+  }
+}
+
+.details {
+  width: 100%;
+  height: 100%;
+  padding: 0 20px;
+  background: semantic-color(neutral, 0);
+  color: semantic-color(neutral);
+  z-index: 99;
+  box-sizing: border-box;
+
+  > section > input {
+    height: 50px;
+    margin: 0;
+    border: 0;
+    background: transparent;
+    color: semantic-color(neutral);
+    font-size: 16pt;
+    line-height: 50px;
+    box-sizing: border-box;
+  }
+
+  .row {
+    margin: 10px -10px;
+
+    .input-field {
+      margin: 0 10px;
+    }
+  }
+}
+
+.actions {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  > li {
+    display: inline-block;
+    min-width: 50px;
+    height: 50px;
+    font-size: 18pt;
+    line-height: 50px;
+    text-align: center;
+    cursor: default;
+    vertical-align: middle;
+  }
+}
+
+.document-name {
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  line-height: 50px;
+  text-align: center;
+  vertical-align: middle;
+
+  > input {
+    border: 0;
+    background: transparent;
+    color: semantic-color(neutral);
+    font-size: 12pt;
+    line-height: 50px;
+    text-align: center;
+  }
+}
+
+.win-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 10px;
+  color: semantic-color(neutral);
+  list-style: none;
+
+  > li {
+    display: inline-block;
+    position: relative;
+    width: 15px;
+    height: 15px;
+    margin: 0 10px;
+    border-radius: 50%;
+    font-size: 18pt;
+    cursor: default;
+    -webkit-app-region: no-drag;
+
+    &::after {
+      position: absolute;
+      top: -15px;
+      left: -10px;
+      width: 15px;
+      height: 15px;
+      transform: translate(50%, 50%);
+    }
+
+    &:hover {
+      color: semantic-color(neutral, 8);
+
+      &::after {
+        color: semantic-color(black-alpha, 6);
+      }
+    }
+
+    &.minimize-action {
+      background-color: semantic-color(traffic-light, opened);
+
+      &:hover::after {
+        content: '⊖';
+      }
+    }
+
+    &.maximize-action {
+      background-color: semantic-color(traffic-light, alert);
+
+      &:hover::after {
+        content: '⊕';
+      }
+    }
+
+    &.close-action {
+      background-color: semantic-color(traffic-light, closed);
+
+      &:hover::after {
+        content: '⊗';
+      }
+    }
+  }
+}
+
+.input-field {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+  padding: 5px 0;
+
+  &.unit-px::after {
+    position: absolute;
+    top: 28px;
+    right: 5px;
+    content: 'px';
+  }
+
+  > label {
+    font-size: 10pt;
+  }
+
+  > input {
+    display: inline-block;
+    width: 100%;
+    height: 30px;
+    padding: 0;
+    border: 0;
+    border-bottom: 1px solid semantic-color(neutral);
+    background: transparent;
+    color: semantic-color(neutral);
+    line-height: 30px;
+    vertical-align: middle;
+  }
+
+  > textarea {
+    display: inline-block;
+    width: 100%;
+    height: 90px;
+    padding: 10px 0;
+    border: 0;
+    border-bottom: 1px solid semantic-color(neutral);
+    background: transparent;
+    color: semantic-color(neutral);
+    line-height: 15px;
+    vertical-align: middle;
+  }
+}

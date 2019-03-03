@@ -1,0 +1,43 @@
+$white: #fff;
+
+.detail-fill {
+  > .sketch-picker {
+    margin-top: 10px;
+    padding: 5px;
+    background: transparent;
+    z-index: 99;
+
+    > .flexbox-fix {
+      > div > span > div {
+        border: 1px solid $white;
+        border-radius: 0;
+      }
+
+      input {
+        height: 20px;
+        border: 1px solid $white;
+        border-radius: 0;
+        background: transparent;
+        color: $white;
+      }
+
+      input + span {
+        color: $white;
+      }
+    }
+  }
+
+  > input {
+    padding-left: 25px;
+    box-sizing: border-box;
+  }
+
+  > span {
+    display: inline-block;
+    position: absolute;
+    top: 30px;
+    left: 0;
+    width: 15px;
+    height: 15px;
+  }
+}

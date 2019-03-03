@@ -16,7 +16,7 @@ function createMainWindow() {
       contextIsolation: false,
       nodeIntegration: false,
       preload: path.resolve(__dirname, '..', '..', 'dist', 'main', 'preload.js'),
-      experimentalFeatures: false,
+      experimentalFeatures: true,
     },
     width: 1024,
   })

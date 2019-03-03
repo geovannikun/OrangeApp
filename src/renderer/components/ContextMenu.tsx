@@ -37,8 +37,7 @@ class ContextMenu extends React.Component<IMyProps, IMyState> {
   public render() {
     return (
       <nav
-        id='context-menu'
-        className={this.state.visible ? 'show' : 'hide'}
+        className={`context-menu ${this.state.visible ? 'show' : 'hide'}`}
         style={{ left: this.state.x, top: this.state.y }}
       >
         <ul>

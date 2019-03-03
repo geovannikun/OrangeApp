@@ -1,0 +1,40 @@
+@import 'colors';
+
+.Resizer {
+  background: #000;
+  background-clip: padding-box;
+  opacity: .5;
+  z-index: 1;
+  box-sizing: border-box;
+
+  &:hover {
+    transition: all 2s ease;
+  }
+
+  &.horizontal {
+    width: 100%;
+    height: 11px;
+    margin: -5px 0;
+    border-top: 5px solid semantic-color(helper, alpha);
+    border-bottom: 5px solid semantic-color(helper, alpha);
+    cursor: row-resize;
+
+    &:hover {
+      border-top: 5px solid semantic-color(black-alpha, 5);
+      border-bottom: 5px solid semantic-color(black-alpha, 5);
+    }
+  }
+
+  &.vertical {
+    width: 11px;
+    margin: 0 -5px;
+    border-right: 5px solid semantic-color(helper, alpha);
+    border-left: 5px solid semantic-color(helper, alpha);
+    cursor: col-resize;
+
+    &:hover {
+      border-right: 5px solid semantic-color(black-alpha, 5);
+      border-left: 5px solid semantic-color(black-alpha, 5);
+    }
+  }
+}

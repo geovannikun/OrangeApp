@@ -1,0 +1,50 @@
+$semantic-colors: (
+  neutral: (
+    base: #fff,
+    0: #000,
+    1: #1b1b1b,
+    2: #333,
+    8: #b5b5b5,
+    9: #f7f7f7,
+    10: #fff,
+  ),
+  orange-tones: (
+    base: #ffa500
+  ),
+  traffic-light: (
+    closed: #ff1f50,
+    alert: #ffbe3a,
+    opened: #00da46,
+  ),
+  white-alpha: (
+    base: rgba(255, 255, 255, .9),
+    1: rgba(255, 255, 255, .1),
+    2: rgba(255, 255, 255, .2),
+    3: rgba(255, 255, 255, .3),
+    4: rgba(255, 255, 255, .4),
+    5: rgba(255, 255, 255, .5),
+    6: rgba(255, 255, 255, .6),
+    7: rgba(255, 255, 255, .7),
+    8: rgba(255, 255, 255, .8),
+    9: rgba(255, 255, 255, .9),
+  ),
+  helper: (
+    alpha: rgba(0, 0, 0, 0),
+  ),
+  black-alpha: (
+    base: rgba(0, 0, 0, .9),
+    1: rgba(0, 0, 0, .1),
+    2: rgba(0, 0, 0, .2),
+    3: rgba(0, 0, 0, .3),
+    4: rgba(0, 0, 0, .4),
+    5: rgba(0, 0, 0, .5),
+    6: rgba(0, 0, 0, .6),
+    7: rgba(0, 0, 0, .7),
+    8: rgba(0, 0, 0, .8),
+    9: rgba(0, 0, 0, .9),
+  )
+);
+
+@function semantic-color($semantic-color, $tone: 'base') {
+  @return map-get(map-get($semantic-colors, $semantic-color), $tone);
+}

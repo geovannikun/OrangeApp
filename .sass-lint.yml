@@ -1,0 +1,20 @@
+# File Options
+files:
+  include: 'src/renderer/assets/css/*.scss'
+# Rule Configuration
+rules:
+  no-vendor-prefixes:
+    - 1
+    - excluded-identifiers:
+      - webkit
+    - ignore-non-standard: true
+
+  nesting-depth:
+    - 1
+    - max-depth: 5
+
+  property-sort-order:
+    - 1
+    - order: 'smacss'
+
+  force-pseudo-nesting: 0
