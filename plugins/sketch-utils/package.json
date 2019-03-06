@@ -1,0 +1,11 @@
+{
+  "name": "osp-sketch-plugin",
+  "version": "0.0.1",
+  "description": "OSP Sketch Plugin",
+  "author": "Geovanni Pacheco",
+  "license": "MIT",
+  "main": "index.js",
+  "dependencies": {
+    "node-sketch": "^0.13.0"
+  }
+}

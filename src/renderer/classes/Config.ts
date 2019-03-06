@@ -1,10 +1,8 @@
+import { IOrangeConfig } from '../../common/IOrangeConfig'
 import OrangeCore from './OrangeCore'
 
-interface IPlugin {
-  load: (config: Config) => boolean
-}
-export class Config {
-  private plugins = ['plugins/sketch-utils/index']
+export class Config implements IOrangeConfig {
+  private plugins = ['plugins/sketch-utils']
 
   private getPluginPath(pluginPath: string) {
     return `${OrangeCore.appPath}/${pluginPath}`
@@ -13,12 +11,10 @@ export class Config {
   private loadPlugins() {
     this.plugins.forEach((pluginPath) => {
       try {
-        const getPluginPath = this.getPluginPath
-        // tslint:disable-next-line: no-eval
-        const plugin: IPlugin = eval(`require(${getPluginPath}(pluginPath))`)
+        const plugin = OrangeCore.loadPlugin(this.getPluginPath(pluginPath))
         plugin.load(this)
       } catch (e) {
-        // console.error(e)
+        console.error(e)
       }
     })
   }

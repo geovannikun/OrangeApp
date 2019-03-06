@@ -1,6 +1,7 @@
 import electron from 'electron'
 import sourceMapSupport from 'source-map-support'
 import { v1 as uuidv1 } from 'uuid'
+import { IOrangePlugin } from '../common/IOrangePlugin'
 import IOrangeWindow from '../common/IOrangeWindow'
 const { BrowserWindow, app } = electron.remote
 
@@ -22,6 +23,9 @@ const focusedWindow = BrowserWindow.getFocusedWindow();
   },
   close: () => {
     focusedWindow!.close()
+  },
+  loadPlugin: (path: string) => {
+    return require(path) as IOrangePlugin
   },
   createNativeImage: (path: string) => {
     return electron.nativeImage.createFromPath(path)
