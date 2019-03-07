@@ -25,7 +25,7 @@ const focusedWindow = BrowserWindow.getFocusedWindow();
     focusedWindow!.close()
   },
   loadPlugin: (path: string) => {
-    return require(path) as IOrangePlugin
+    return __non_webpack_require__(path) as IOrangePlugin
   },
   createNativeImage: (path: string) => {
     return electron.nativeImage.createFromPath(path)
