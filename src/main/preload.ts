@@ -1,16 +1,17 @@
 import electron from 'electron'
+import process from 'process'
 import sourceMapSupport from 'source-map-support'
 import { v1 as uuidv1 } from 'uuid'
 import { IOrangePlugin } from '../common/IOrangePlugin'
 import IOrangeWindow from '../common/IOrangeWindow'
-const { BrowserWindow, app } = electron.remote
+const { BrowserWindow } = electron.remote
 
 const focusedWindow = BrowserWindow.getFocusedWindow();
 
 (window as IOrangeWindow).sourceMapSupport = sourceMapSupport;
 
 (window as IOrangeWindow).orangeCore = {
-  appPath: app.getAppPath(),
+  appPath: process.cwd(),
   minimize: () => {
     window!.close()
   },
