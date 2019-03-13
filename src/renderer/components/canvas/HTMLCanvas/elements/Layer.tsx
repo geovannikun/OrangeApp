@@ -1,20 +1,16 @@
-import React from 'react';
-import {
-  IOrangeItem,
-  OrangeLayer,
-} from '../../classes/index';
-
-import Item from './Item';
-import RenderUtils from '../../utils/RenderUtils';
+import React from 'react'
+import { IOrangeItem, OrangeLayer } from '../../../../classes'
+import RenderUtils from '../RenderUtils'
+import Item from './Item'
 
 interface LayerProps {
-  item: OrangeLayer;
-  select: (item: IOrangeItem) => (e: React.MouseEvent<HTMLElement>) => void;
+  item: OrangeLayer
+  select: (item: IOrangeItem) => (e: React.MouseEvent<HTMLElement>) => void
 }
 
 class Layer<P extends LayerProps> extends Item<LayerProps> {
   public renderSubitems(items: IOrangeItem[]): Array<JSX.Element | undefined> {
-    return items && items.map((item) => RenderUtils.renderItem(item, this.props.select));
+    return items && items.map((item) => RenderUtils.renderItem(item, this.props.select))
   }
 
   public render(): JSX.Element {
@@ -27,10 +23,10 @@ class Layer<P extends LayerProps> extends Item<LayerProps> {
         >
           {this.renderSubitems(this.props.item.children)}
         </div>
-      );
+      )
     }
-    return (<div/>);
+    return (<div/>)
   }
 }
 
-export default Layer;
+export default Layer

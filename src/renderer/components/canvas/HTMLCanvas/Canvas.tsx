@@ -3,10 +3,10 @@ import { inject, observer } from 'mobx-react'
 import React, { CSSProperties } from 'react'
 import {
   IOrangeItem,
-} from '../../classes/index'
-import DocumentStore from '../../stores/DocumentStore'
-import SelectorStore from '../../stores/SelectorStore'
-import RenderUtils from '../../utils/RenderUtils'
+} from '../../../classes/index'
+import DocumentStore from '../../../stores/DocumentStore'
+import SelectorStore from '../../../stores/SelectorStore'
+import CanvasRenderUtils from './RenderUtils'
 
 interface InjectedProps {
   document: DocumentStore
@@ -14,7 +14,7 @@ interface InjectedProps {
 }
 @inject('document', 'selector')
 @observer
-class Canvas extends React.Component {
+export class HTMLCanvas extends React.Component {
 
   @observable public newItem: CSSProperties = {
     display: 'none',
@@ -46,7 +46,7 @@ class Canvas extends React.Component {
     const rect = event.currentTarget.getBoundingClientRect()
     this.newItem = {
       ...this.newItem,
-      ...RenderUtils.RectToCSS({
+      ...CanvasRenderUtils.RectToCSS({
         x1: this.newItem.left as number,
         x2: (event.clientX - rect.left),
         y1: this.newItem.top as number,
@@ -101,12 +101,10 @@ class Canvas extends React.Component {
         onMouseUp={this.createNewItem}
         onClick={this.deselect}
       >
-        {RenderUtils.renderItem(selectedPage, this.select)}
+        {CanvasRenderUtils.renderItem(selectedPage, this.select)}
         <span className='selector' style={{...this.selectorStyle}}/>
         <span className='new-item' style={{...this.newItem}}/>
       </div>
     ) : (<></>)
   }
 }
-
-export default Canvas

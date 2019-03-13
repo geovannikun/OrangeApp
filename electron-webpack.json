@@ -13,6 +13,8 @@
     "react-split-pane",
     "react-dropzone",
     "react-toastify",
-    "react-color"
+    "react-color",
+    "react-konva",
+    "konva"
   ]
 }

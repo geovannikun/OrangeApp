@@ -1,10 +1,5 @@
-import React, {  } from 'react'
-import {
-  IOrangeItem,
-  IOrangePrimitive,
-  OrangeArtboard,
-  OrangeText,
-} from '../../classes/index'
+import React from 'react'
+import { IOrangeItem, IOrangePrimitive, OrangeArtboard, OrangeText } from '../../../../classes'
 
 interface ItemProps {
   select: (item: IOrangeItem) => (e: React.MouseEvent<HTMLElement>) => void

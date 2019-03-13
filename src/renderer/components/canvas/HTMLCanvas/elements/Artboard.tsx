@@ -1,20 +1,16 @@
-import React from 'react';
-import {
-  IOrangeItem,
-  OrangeArtboard,
-} from '../../classes/index';
-
-import Item from './Item';
-import RenderUtils from '../../utils/RenderUtils';
+import React from 'react'
+import { IOrangeItem, OrangeArtboard } from '../../../../classes'
+import RenderUtils from '../RenderUtils'
+import Item from './Item'
 
 interface ArtboardProps {
-  item: OrangeArtboard;
-  select: (item: IOrangeItem) => (e: React.MouseEvent<HTMLElement>) => void;
+  item: OrangeArtboard
+  select: (item: IOrangeItem) => (e: React.MouseEvent<HTMLElement>) => void
 }
 
 class Artboard extends Item<ArtboardProps> {
   public renderSubitems(items: IOrangeItem[]): Array<JSX.Element | undefined> {
-    return items && items.map((item) => RenderUtils.renderItem(item, this.props.select));
+    return items && items.map((item) => RenderUtils.renderItem(item, this.props.select))
   }
 
   public render(): JSX.Element {
@@ -29,10 +25,10 @@ class Artboard extends Item<ArtboardProps> {
           <p className='orange-artboard-title'>{this.props.item.name}</p>
           {this.renderSubitems(this.props.item.children)}
         </div>
-      );
+      )
     }
-    return (<div/>);
+    return (<div/>)
   }
 }
 
-export default Artboard;
+export default Artboard

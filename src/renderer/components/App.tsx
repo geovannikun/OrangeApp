@@ -24,7 +24,8 @@ import OrangeCore from '../classes/OrangeCore'
 import AppStore from '../stores/AppStore'
 import DocumentStore from '../stores/DocumentStore'
 import SelectorStore from '../stores/SelectorStore'
-import HTMLCanvas from './canvas/HTMLCanvas'
+import { HTMLCanvas } from './canvas/HTMLCanvas'
+import { KonvaCanvas } from './canvas/KonvaCanvas'
 import ContextMenu from './ContextMenu'
 import ContextMenuItem from './ContextMenuItem'
 import Details from './Details'
@@ -52,6 +53,7 @@ class App extends React.Component<object, AppState> {
 
   private renderComponents = {
     HTMLCanvas,
+    KonvaCanvas,
   }
 
   public componentDidMount() {
@@ -171,7 +173,7 @@ class App extends React.Component<object, AppState> {
             </ul>
           </aside>
           <SplitPane split='vertical' defaultSize={'250px'} primary='second'>
-            <this.renderComponents.HTMLCanvas/>
+            <this.renderComponents.KonvaCanvas/>
             <Details/>
           </SplitPane>
         </SplitPane>
