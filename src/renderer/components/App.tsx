@@ -118,10 +118,15 @@ class App extends React.Component<object, AppState> {
     )
   }
 
-  private handleElementSelection = (item: IOrangeItem) => (event: any) => {
-    event = (event as MouseEvent)
-    event.stopPropagation()
-    this.injected.selector.select(item, event.ctrlKey)
+  private handleElementSelection = (item?: IOrangeItem) => (event?: React.MouseEvent<HTMLElement>) => {
+    // tslint:disable-next-line: no-unused-expression
+    event && event.stopPropagation()
+    const ctrlKey = event ? event.ctrlKey : false
+    if (item) {
+      this.injected.selector.select(item, ctrlKey)
+    } else {
+      this.injected.selector.deselect()
+    }
   }
 
   private handleContextMenu = () => {
@@ -156,7 +161,7 @@ class App extends React.Component<object, AppState> {
   private preventDropzoneClick = (evt: React.MouseEvent<HTMLElement>) =>
     evt.preventDefault()
 
-  private renderCore = (selectedPage: OrangePage, isDragActive: boolean) => (
+  private renderCore = (selectedPage: OrangePage, selecteds: IOrangeItem[], isDragActive: boolean) => (
     <main style={{ position: 'fixed', left: 0, top: 0, bottom: 0, right: 0 }}>
       {this.dragOverlayRender(isDragActive)}
       <ContextMenu>
@@ -173,7 +178,11 @@ class App extends React.Component<object, AppState> {
             </ul>
           </aside>
           <SplitPane split='vertical' defaultSize={'250px'} primary='second'>
-            <this.renderComponents.KonvaCanvas/>
+            <this.renderComponents.KonvaCanvas
+              onSelect={this.handleElementSelection}
+              page={selectedPage}
+              selecteds={selecteds}
+            />
             <Details/>
           </SplitPane>
         </SplitPane>
@@ -184,13 +193,14 @@ class App extends React.Component<object, AppState> {
 
   public render() {
     const { selectedPage } = this.injected.document
+    const { selecteds } = this.injected.selector
     return selectedPage ? (
       <Dropzone
         onClick={this.preventDropzoneClick}
         accept={Object.keys(this.injected.app.mimeTypes).join(', ')}
         onDrop={this.handleDrop}
       >
-        {({ isDragActive }: any) => this.renderCore(selectedPage, isDragActive)}
+        {({ isDragActive }: any) => this.renderCore(selectedPage, selecteds, isDragActive)}
       </Dropzone>
     ) : (<></>)
   }

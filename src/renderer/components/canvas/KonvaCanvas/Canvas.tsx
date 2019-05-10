@@ -1,22 +1,23 @@
 import Konva from 'konva'
+// tslint:disable-next-line: no-submodule-imports
+import { KonvaEventObject } from 'konva/types/types'
 import { action, computed, observable } from 'mobx'
-import { inject, observer } from 'mobx-react'
+import { observer } from 'mobx-react'
 import React, { CSSProperties } from 'react'
 import { Layer, Stage } from 'react-konva'
 import {
-  IOrangeItem,
+  IOrangeItem, OrangePage,
 } from '../../../classes/index'
-import DocumentStore from '../../../stores/DocumentStore'
-import SelectorStore from '../../../stores/SelectorStore'
 import CanvasRenderUtils from './RenderUtils'
 
-interface InjectedProps {
-  document: DocumentStore
-  selector: SelectorStore
+interface KonvaCanvasProps {
+  page?: OrangePage
+  selecteds: IOrangeItem[]
+  onSelect: (item?: IOrangeItem) => (e?: React.MouseEvent<HTMLElement>) => void
 }
-@inject('document', 'selector')
+
 @observer
-export class KonvaCanvas extends React.Component {
+export class KonvaCanvas extends React.PureComponent<KonvaCanvasProps> {
 
   @observable public newItem: CSSProperties = {
     display: 'none',
@@ -66,7 +67,7 @@ export class KonvaCanvas extends React.Component {
   }
 
   @computed get selectorStyle(): object {
-    const selecteds = this.injected.selector.selecteds
+    const selecteds = this.props.selecteds
     if (!selecteds.length) {
       return {
         display: 'none',
@@ -80,32 +81,24 @@ export class KonvaCanvas extends React.Component {
     }
   }
 
-  public select = (item: IOrangeItem) => (e: React.MouseEvent<HTMLElement>) => {
-    e.stopPropagation()
-    this.injected.selector.select(item)
-  }
-
-  get injected() {
-    return this.props as InjectedProps
-  }
-
-  public deselect = () => {
-    this.injected.selector.deselect()
+  public onSelect = (item?: IOrangeItem) => (e: KonvaEventObject<MouseEvent>) => {
+    e.cancelBubble = true
+    this.props.onSelect(item)()
   }
 
   public render() {
-    const { selectedPage } = this.injected.document
-    return selectedPage ? (
+    const { page } = this.props
+    return page ? (
       <Stage
         width={window.innerWidth}
         height={window.innerHeight}
         onMouseDown={this.startNewItem}
         onMouseMove={this.updateNewItem}
         onMouseUp={this.createNewItem}
-        onClick={this.deselect}
+        onClick={this.onSelect()}
       >
         <Layer>
-          {CanvasRenderUtils.renderItem(selectedPage, this.select)}
+          {CanvasRenderUtils.renderItem(page, this.onSelect)}
   {/*         <span className='selector' style={{...this.selectorStyle}}/>
           <span className='new-item' style={{...this.newItem}}/> */}
         </Layer>

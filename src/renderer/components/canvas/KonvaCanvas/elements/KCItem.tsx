@@ -7,7 +7,7 @@ interface ItemProps {
   item: IOrangeItem
 }
 
-abstract class KCItem<P extends ItemProps> extends React.Component<P> {
+abstract class KCItem<P extends ItemProps> extends React.PureComponent<P> {
 
   public itemBackground(item: IOrangeItem) {
     if (item instanceof OrangeText) {
