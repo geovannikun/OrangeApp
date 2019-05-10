@@ -14,6 +14,7 @@ class KCArtboard extends Item<ArtboardProps> {
 
   private nameGap = 20
   private nameFontSize = 16
+  private nameColor = '#FFF'
 
   public renderSubitems(items: IOrangeItem[]): Array<JSX.Element | undefined> {
     return items && items.map((item) => RenderUtils.renderItem(item, this.props.select))
@@ -21,7 +22,7 @@ class KCArtboard extends Item<ArtboardProps> {
 
   public render(): JSX.Element {
     if (this.props.item) {
-      const { x, y, ...rectStyle } = this.itemToCSS(this.props.item)
+      const { x, y, color, ...rectStyle } = this.itemToCSS(this.props.item)
 
       return(
         <Group
@@ -29,7 +30,7 @@ class KCArtboard extends Item<ArtboardProps> {
           onClick={this.props.select(this.props.item)}
           {...{x, y}}
         >
-          <Text text={this.props.item.name} y={-this.nameGap} fontSize={this.nameFontSize}/>
+          <Text text={this.props.item.name} y={-this.nameGap} fontSize={this.nameFontSize} fontStyle={{}}/>
           <Rect {...rectStyle}/>
           {this.renderSubitems(this.props.item.children)}
         </Group>
