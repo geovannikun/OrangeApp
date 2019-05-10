@@ -1,4 +1,5 @@
-import React, { CSSProperties } from 'react'
+import Konva from 'konva'
+import React from 'react'
 import {
   IOrangeItem,
   OrangeArtboard,
@@ -26,7 +27,7 @@ export default class RenderUtils {
   }
   public static RectToCSS(
     rect: { x1: number; y1: number; x2: number; y2: number; },
-  ): CSSProperties {
+  ): Konva.ShapeConfig {
     const cssStyle = {
       left: Math.min(rect.x1, rect.x2),
       top: Math.min(rect.y1, rect.y2),

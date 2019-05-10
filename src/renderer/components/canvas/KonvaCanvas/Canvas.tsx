@@ -1,10 +1,8 @@
 import Konva from 'konva'
-// tslint:disable-next-line: no-submodule-imports
-import { KonvaEventObject } from 'konva/types/types'
 import { action, computed, observable } from 'mobx'
 import { observer } from 'mobx-react'
-import React, { CSSProperties } from 'react'
-import { Layer, Stage } from 'react-konva'
+import React from 'react'
+import { Layer, Rect, Stage } from 'react-konva'
 import {
   IOrangeItem, OrangePage,
 } from '../../../classes/index'
@@ -17,10 +15,10 @@ interface KonvaCanvasProps {
 }
 
 @observer
-export class KonvaCanvas extends React.PureComponent<KonvaCanvasProps> {
+export class KonvaCanvas extends React.Component<KonvaCanvasProps> {
 
-  @observable public newItem: CSSProperties = {
-    display: 'none',
+  @observable public newItem: Konva.ShapeConfig = {
+    visible: false,
     height: 0,
     left: 0,
     top: 0,
@@ -32,7 +30,7 @@ export class KonvaCanvas extends React.PureComponent<KonvaCanvasProps> {
     const event = kevent.evt
     this.newItem = {
       ...this.newItem,
-      display: 'block',
+      visible: true,
       height: 0,
       left: event.clientX - event.offsetX,
       top: event.clientY - event.offsetY,
@@ -44,7 +42,7 @@ export class KonvaCanvas extends React.PureComponent<KonvaCanvasProps> {
   @action
   public updateNewItem = (kevent: Konva.KonvaEventObject<MouseEvent>) => {
     const event = kevent.evt
-    if (this.newItem.display === 'none') {
+    if (!this.newItem.visible) {
       return
     }
     this.newItem = {
@@ -55,6 +53,7 @@ export class KonvaCanvas extends React.PureComponent<KonvaCanvasProps> {
         y1: this.newItem.top as number,
         y2: (event.clientY - event.offsetY),
       }),
+      visible: true,
     }
   }
 
@@ -62,11 +61,11 @@ export class KonvaCanvas extends React.PureComponent<KonvaCanvasProps> {
   public createNewItem = () => {
     this.newItem = {
       ...this.newItem,
-      display: 'none',
+      visible: false,
     }
   }
 
-  @computed get selectorStyle(): object {
+  @computed get selectorStyle(): Konva.ShapeConfig {
     const selecteds = this.props.selecteds
     if (!selecteds.length) {
       return {
@@ -75,19 +74,20 @@ export class KonvaCanvas extends React.PureComponent<KonvaCanvasProps> {
     }
     return {
       height: selecteds[0].size.height,
-      left: selecteds[0].absolutePosition.x,
-      top: selecteds[0].absolutePosition.y,
+      x: selecteds[0].absolutePosition.x,
+      y: selecteds[0].absolutePosition.y,
       width: selecteds[0].size.width,
     }
   }
 
-  public onSelect = (item?: IOrangeItem) => (e: KonvaEventObject<MouseEvent>) => {
+  public onSelect = (item?: IOrangeItem) => (e: Konva.KonvaEventObject<MouseEvent>) => {
     e.cancelBubble = true
     this.props.onSelect(item)()
   }
 
   public render() {
     const { page } = this.props
+
     return page ? (
       <Stage
         width={window.innerWidth}
@@ -99,8 +99,8 @@ export class KonvaCanvas extends React.PureComponent<KonvaCanvasProps> {
       >
         <Layer>
           {CanvasRenderUtils.renderItem(page, this.onSelect)}
-  {/*         <span className='selector' style={{...this.selectorStyle}}/>
-          <span className='new-item' style={{...this.newItem}}/> */}
+          <Rect {...this.selectorStyle} stroke='black'/>
+          <Rect {...this.newItem} stroke='black'/>
         </Layer>
       </Stage>
     ) : (<></>)
