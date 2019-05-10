@@ -99,7 +99,7 @@ export class KonvaCanvas extends React.Component<KonvaCanvasProps> {
       >
         <Layer>
           {CanvasRenderUtils.renderItem(page, this.onSelect)}
-          <Rect {...this.selectorStyle} stroke='black'/>
+          <Rect {...this.selectorStyle} listening={false} stroke='black'/>
           <Rect {...this.newItem} stroke='black'/>
         </Layer>
       </Stage>

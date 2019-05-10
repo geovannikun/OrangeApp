@@ -101,7 +101,7 @@ class App extends React.Component<object, AppState> {
     return list.map((item: IOrangeItem) => (
       <li
         key={item.id}
-        onClick={this.handleElementSelection(item)}
+        onClick={this.onSelect(item)}
         className={this.injected.selector.selecteds.find((selected) => selected === item) ? 'selected' : ''}
       >
         {item.name}
@@ -118,7 +118,7 @@ class App extends React.Component<object, AppState> {
     )
   }
 
-  private handleElementSelection = (item?: IOrangeItem) => (event?: React.MouseEvent<HTMLElement>) => {
+  private onSelect = (item?: IOrangeItem) => (event?: React.MouseEvent<HTMLElement>) => {
     // tslint:disable-next-line: no-unused-expression
     event && event.stopPropagation()
     const ctrlKey = event ? event.ctrlKey : false
@@ -179,7 +179,7 @@ class App extends React.Component<object, AppState> {
           </aside>
           <SplitPane split='vertical' defaultSize={'250px'} primary='second'>
             <this.renderComponents.KonvaCanvas
-              onSelect={this.handleElementSelection}
+              onSelect={this.onSelect}
               page={selectedPage}
               selecteds={selecteds}
             />
