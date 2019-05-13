@@ -20,8 +20,8 @@ export class KonvaCanvas extends React.Component<KonvaCanvasProps> {
   @observable public newItem: Konva.ShapeConfig = {
     visible: false,
     height: 0,
-    left: 0,
-    top: 0,
+    x: 0,
+    y: 0,
     width: 0,
   }
 
@@ -32,11 +32,10 @@ export class KonvaCanvas extends React.Component<KonvaCanvasProps> {
       ...this.newItem,
       visible: true,
       height: 0,
-      left: event.clientX - event.offsetX,
-      top: event.clientY - event.offsetY,
+      x: event.offsetX,
+      y: event.offsetY,
       width: 0,
     }
-    return
   }
 
   @action
@@ -47,12 +46,8 @@ export class KonvaCanvas extends React.Component<KonvaCanvasProps> {
     }
     this.newItem = {
       ...this.newItem,
-      ...CanvasRenderUtils.RectToCSS({
-        x1: this.newItem.left as number,
-        x2: (event.clientX - event.offsetX),
-        y1: this.newItem.top as number,
-        y2: (event.clientY - event.offsetY),
-      }),
+      height: event.offsetY - (this.newItem.y || 0),
+      width: event.offsetX - (this.newItem.x || 0),
       visible: true,
     }
   }
@@ -69,7 +64,7 @@ export class KonvaCanvas extends React.Component<KonvaCanvasProps> {
     const selecteds = this.props.selecteds
     if (!selecteds.length) {
       return {
-        display: 'none',
+        visible: false,
       }
     }
     return {
