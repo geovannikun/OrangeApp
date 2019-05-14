@@ -19,11 +19,13 @@ import {
   OrangeRect,
   OrangeSize,
   OrangeText,
+  OrangeTool,
 } from '../classes/index'
 import OrangeCore from '../classes/OrangeCore'
 import AppStore from '../stores/AppStore'
 import DocumentStore from '../stores/DocumentStore'
 import SelectorStore from '../stores/SelectorStore'
+import ToolsStore from '../stores/ToolsStore'
 import { HTMLCanvas } from './canvas/HTMLCanvas'
 import { KonvaCanvas } from './canvas/KonvaCanvas'
 import ContextMenu from './ContextMenu'
@@ -41,9 +43,10 @@ interface InjectedProps {
   document: DocumentStore
   selector: SelectorStore
   app: AppStore
+  tools: ToolsStore
 }
 
-@inject('document', 'selector', 'app')
+@inject('document', 'selector', 'app', 'tools')
 @observer
 class App extends React.Component<object, AppState> {
 
@@ -95,6 +98,11 @@ class App extends React.Component<object, AppState> {
       // debugger;
       oLayer.changeParent(oArtboard)
     }
+
+    this.injected.tools.add(new OrangeTool('selection', '⊹'))
+    this.injected.tools.add(new OrangeTool('rect', '◻'))
+    this.injected.tools.add(new OrangeTool('text', '℞'))
+    this.injected.tools.add(new OrangeTool('layer', 'layer'))
   }
 
   private renderObjectList = (list: IOrangeItem[]): JSX.Element[] => {
@@ -158,10 +166,20 @@ class App extends React.Component<object, AppState> {
     ) : (<></>)
   }
 
+  private selectTool = (tool: OrangeTool) => {
+    this.injected.tools.select(tool)
+  }
+
   private preventDropzoneClick = (evt: React.MouseEvent<HTMLElement>) =>
     evt.preventDefault()
 
-  private renderCore = (selectedPage: OrangePage, selecteds: IOrangeItem[], isDragActive: boolean) => (
+  private renderCore = (
+    selectedPage: OrangePage,
+    selecteds: IOrangeItem[],
+    isDragActive: boolean,
+    tools: OrangeTool[],
+    selectedTool?: OrangeTool,
+  ) => (
     <main style={{ position: 'fixed', left: 0, top: 0, bottom: 0, right: 0 }}>
       {this.dragOverlayRender(isDragActive)}
       <ContextMenu>
@@ -169,7 +187,11 @@ class App extends React.Component<object, AppState> {
       </ContextMenu>
       <Header/>
       <div style={{display: 'flex'}}>
-        <Tools/>
+        <Tools
+          tools={tools}
+          selectedTool={selectedTool}
+          onSelect={this.selectTool}
+        />
         <SplitPane split='vertical' defaultSize={'250px'} style={{marginLeft: 50}}>
           <aside className='content'>
             <Pages/>
@@ -182,6 +204,7 @@ class App extends React.Component<object, AppState> {
               onSelect={this.onSelect}
               page={selectedPage}
               selecteds={selecteds}
+              selectedTool={this.injected.tools.selected}
             />
             <Details/>
           </SplitPane>
@@ -194,13 +217,14 @@ class App extends React.Component<object, AppState> {
   public render() {
     const { selectedPage } = this.injected.document
     const { selecteds } = this.injected.selector
+    const { all, selected } = this.injected.tools
     return selectedPage ? (
       <Dropzone
         onClick={this.preventDropzoneClick}
         accept={Object.keys(this.injected.app.mimeTypes).join(', ')}
         onDrop={this.handleDrop}
       >
-        {({ isDragActive }: any) => this.renderCore(selectedPage, selecteds, isDragActive)}
+        {({ isDragActive }: any) => this.renderCore(selectedPage, selecteds, isDragActive, all, selected)}
       </Dropzone>
     ) : (<></>)
   }

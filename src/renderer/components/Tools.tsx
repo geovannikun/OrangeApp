@@ -1,38 +1,18 @@
-import { inject, observer } from 'mobx-react'
 import React from 'react'
 import {
   OrangeTool,
 } from '../classes/index'
-import AppStore from '../stores/AppStore'
-import DocumentStore from '../stores/DocumentStore'
-import SelectorStore from '../stores/SelectorStore'
-import Toolstore from '../stores/ToolsStore'
 
-interface InjectedProps {
-  tools: Toolstore
-  selector: SelectorStore
-  app: AppStore
-  document: DocumentStore
+interface ToolsProps {
+  tools: OrangeTool[]
+  selectedTool?: OrangeTool
+  onSelect: (tool: OrangeTool) => void
 }
-@inject('selector', 'tools', 'app', 'document')
-@observer
-class Tools extends React.Component {
 
-  get injected() {
-    return this.props as InjectedProps
-  }
-
-  public componentWillReceiveProps(nextProps: InjectedProps) {
-    if (!this.injected.tools.all.length) {
-      this.injected.tools.add(new OrangeTool('selection', '⊹'))
-      this.injected.tools.add(new OrangeTool('rect', '◻'))
-      this.injected.tools.add(new OrangeTool('text', '℞'))
-      this.injected.tools.add(new OrangeTool('layer', 'layer'))
-    }
-  }
+class Tools extends React.Component<ToolsProps> {
 
   private handleChangeTool = (tool: OrangeTool) => () => {
-    this.injected.tools.select(tool)
+    this.props.onSelect(tool)
   }
 
   private renderToolsList = (list: OrangeTool[]): JSX.Element[] => {
@@ -40,7 +20,7 @@ class Tools extends React.Component {
       <li
         key={tool.title}
         onClick={this.handleChangeTool(tool)}
-        className={(this.injected.tools.selected === tool) ? 'selected' : ''}
+        className={(this.props.selectedTool === tool) ? 'selected' : ''}
       >
         {tool.icon}
       </li>
@@ -51,7 +31,7 @@ class Tools extends React.Component {
     return (
       <aside className='tools'>
         <ul>
-          {this.renderToolsList(this.injected.tools.all)}
+          {this.renderToolsList(this.props.tools)}
         </ul>
       </aside>
     )

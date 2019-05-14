@@ -4,13 +4,14 @@ import { observer } from 'mobx-react'
 import React from 'react'
 import { Layer, Rect, Stage } from 'react-konva'
 import {
-  IOrangeItem, OrangePage,
+  IOrangeItem, OrangePage, OrangeTool,
 } from '../../../classes/index'
 import CanvasRenderUtils from './RenderUtils'
 
 interface KonvaCanvasProps {
   page?: OrangePage
   selecteds: IOrangeItem[]
+  selectedTool?: OrangeTool
   onSelect: (item?: IOrangeItem) => (e?: React.MouseEvent<HTMLElement>) => void
 }
 
@@ -54,6 +55,7 @@ export class KonvaCanvas extends React.Component<KonvaCanvasProps> {
 
   @action
   public createNewItem = () => {
+    // this.props.selectedTool.
     this.newItem = {
       ...this.newItem,
       visible: false,
