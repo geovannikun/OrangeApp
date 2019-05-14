@@ -1,3 +1,4 @@
+import Konva from 'konva'
 import { inject, observer } from 'mobx-react'
 import React from 'react'
 import Dropzone from 'react-dropzone'
@@ -22,6 +23,7 @@ import {
   OrangeTool,
 } from '../classes/index'
 import OrangeCore from '../classes/OrangeCore'
+import OrangeSelectionTool from '../classes/Tools/OrangeSelectionTool'
 import AppStore from '../stores/AppStore'
 import DocumentStore from '../stores/DocumentStore'
 import SelectorStore from '../stores/SelectorStore'
@@ -91,18 +93,12 @@ class App extends React.Component<object, AppState> {
       oText.setText('Olar')
 
       page.add(oArtboard)
-      page.add(oLayer)
-      page.add(oRectangle)
+      page.add(oLayer, oArtboard)
+      page.add(oRectangle, oLayer)
       page.add(oText)
-      oRectangle.changeParent(oLayer)
-      // debugger;
-      oLayer.changeParent(oArtboard)
     }
 
-    this.injected.tools.add(new OrangeTool('selection', '⊹'))
-    this.injected.tools.add(new OrangeTool('rect', '◻'))
-    this.injected.tools.add(new OrangeTool('text', '℞'))
-    this.injected.tools.add(new OrangeTool('layer', 'layer'))
+    this.injected.tools.add(new OrangeSelectionTool())
   }
 
   private renderObjectList = (list: IOrangeItem[]): JSX.Element[] => {
@@ -166,9 +162,12 @@ class App extends React.Component<object, AppState> {
     ) : (<></>)
   }
 
-  private selectTool = (tool: OrangeTool) => {
-    this.injected.tools.select(tool)
+  private onSelectAreaDestroyed = (shape: Konva.ShapeConfig) => {
+    this.injected.tools.selected!.onSelectAreaDestroyed(shape)
   }
+
+  private selectTool = (tool: OrangeTool) =>
+    this.injected.tools.select(tool)
 
   private preventDropzoneClick = (evt: React.MouseEvent<HTMLElement>) =>
     evt.preventDefault()
@@ -204,7 +203,9 @@ class App extends React.Component<object, AppState> {
               onSelect={this.onSelect}
               page={selectedPage}
               selecteds={selecteds}
-              selectedTool={this.injected.tools.selected}
+              onSelectAreaCreated={() => {}}
+              onSelectAreaChange={() => {}}
+              onSelectAreaDestroyed={this.onSelectAreaDestroyed}
             />
             <Details/>
           </SplitPane>

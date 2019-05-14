@@ -60,6 +60,15 @@ abstract class IOrangeItem {
   public changeParent(parent: OrangeLayer) {
     parent.add(this)
   }
+
+  public isInside(position: OrangePosition, size: OrangeSize) {
+    return (
+      this.absolutePosition.x > position.x
+      && this.absolutePosition.y > position.y
+      && this.absolutePosition.x + this.size.width < position.x + size.width
+      && this.absolutePosition.y + this.size.height < position.y + size.height
+    )
+  }
 }
 
 export default IOrangeItem

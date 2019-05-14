@@ -13,12 +13,15 @@ interface KonvaCanvasProps {
   selecteds: IOrangeItem[]
   selectedTool?: OrangeTool
   onSelect: (item?: IOrangeItem) => (e?: React.MouseEvent<HTMLElement>) => void
+  onSelectAreaCreated: (shape: Konva.ShapeConfig) => void
+  onSelectAreaChange: (shape: Konva.ShapeConfig) => void
+  onSelectAreaDestroyed: (shape: Konva.ShapeConfig) => void
 }
 
 @observer
 export class KonvaCanvas extends React.Component<KonvaCanvasProps> {
 
-  @observable public newItem: Konva.ShapeConfig = {
+  @observable public selectArea: Konva.ShapeConfig = {
     visible: false,
     height: 0,
     x: 0,
@@ -27,39 +30,44 @@ export class KonvaCanvas extends React.Component<KonvaCanvasProps> {
   }
 
   @action
-  public startNewItem = (kevent: Konva.KonvaEventObject<MouseEvent>) => {
+  public createSelectArea = (kevent: Konva.KonvaEventObject<MouseEvent>) => {
     const event = kevent.evt
-    this.newItem = {
-      ...this.newItem,
+    this.selectArea = {
+      ...this.selectArea,
       visible: true,
       height: 0,
       x: event.offsetX,
       y: event.offsetY,
       width: 0,
     }
+
+    this.props.onSelectAreaCreated(this.selectArea)
   }
 
   @action
-  public updateNewItem = (kevent: Konva.KonvaEventObject<MouseEvent>) => {
+  public changeSelectArea = (kevent: Konva.KonvaEventObject<MouseEvent>) => {
     const event = kevent.evt
-    if (!this.newItem.visible) {
+    if (!this.selectArea.visible) {
       return
     }
-    this.newItem = {
-      ...this.newItem,
-      height: event.offsetY - (this.newItem.y || 0),
-      width: event.offsetX - (this.newItem.x || 0),
+    this.selectArea = {
+      ...this.selectArea,
+      height: event.offsetY - (this.selectArea.y || 0),
+      width: event.offsetX - (this.selectArea.x || 0),
       visible: true,
     }
+
+    this.props.onSelectAreaChange(this.selectArea)
   }
 
   @action
-  public createNewItem = () => {
-    // this.props.selectedTool.
-    this.newItem = {
-      ...this.newItem,
+  public destroySelectArea = () => {
+    this.selectArea = {
+      ...this.selectArea,
       visible: false,
     }
+
+    this.props.onSelectAreaDestroyed(this.selectArea)
   }
 
   @computed get selectorStyle(): Konva.ShapeConfig {
@@ -89,15 +97,15 @@ export class KonvaCanvas extends React.Component<KonvaCanvasProps> {
       <Stage
         width={window.innerWidth}
         height={window.innerHeight}
-        onMouseDown={this.startNewItem}
-        onMouseMove={this.updateNewItem}
-        onMouseUp={this.createNewItem}
+        onMouseDown={this.createSelectArea}
+        onMouseMove={this.changeSelectArea}
+        onMouseUp={this.destroySelectArea}
         onClick={this.onSelect()}
       >
         <Layer>
           {CanvasRenderUtils.renderItem(page, this.onSelect)}
           <Rect {...this.selectorStyle} listening={false} stroke='black'/>
-          <Rect {...this.newItem} stroke='black'/>
+          <Rect {...this.selectArea} stroke='black'/>
         </Layer>
       </Stage>
     ) : (<></>)
