@@ -5,7 +5,7 @@ import { StaticFiles } from '../../../common/Static'
 
 export default class OrangeRectTool extends OrangeTool {
   public title = 'Rect'
-  public icon = StaticFiles.groupLayers
+  public icon = StaticFiles.orangeSquare
   public onSelectAreaCreated = (shape: Konva.ShapeConfig) => _.identity
   public onSelectAreaChange = (shape: Konva.ShapeConfig) => _.identity
   public onSelectAreaDestroyed = (shape: Konva.ShapeConfig) => _.identity
