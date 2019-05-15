@@ -1,13 +1,16 @@
 import Konva from 'konva'
+import _ from 'lodash'
 import { inject, observer } from 'mobx-react'
 import React from 'react'
 import Dropzone from 'react-dropzone'
 import SplitPane from 'react-split-pane'
 import { toast, ToastContainer } from 'react-toastify'
+
 import '../assets/css/App.scss'
 import '../assets/css/Canvas.scss'
 import '../assets/css/DetailsColor.scss'
 import '../assets/css/Resizer.scss'
+
 import Config from '../classes/Config'
 import {
   IOrangeItem,
@@ -23,6 +26,7 @@ import {
   OrangeTool,
 } from '../classes/index'
 import OrangeCore from '../classes/OrangeCore'
+import OrangeRectTool from '../classes/Tools/OrangeRectTool'
 import OrangeSelectionTool from '../classes/Tools/OrangeSelectionTool'
 import AppStore from '../stores/AppStore'
 import DocumentStore from '../stores/DocumentStore'
@@ -99,6 +103,7 @@ class App extends React.Component<object, AppState> {
     }
 
     this.injected.tools.add(new OrangeSelectionTool())
+    this.injected.tools.add(new OrangeRectTool())
   }
 
   private renderObjectList = (list: IOrangeItem[]): JSX.Element[] => {
@@ -203,8 +208,8 @@ class App extends React.Component<object, AppState> {
               onSelect={this.onSelect}
               page={selectedPage}
               selecteds={selecteds}
-              onSelectAreaCreated={() => {}}
-              onSelectAreaChange={() => {}}
+              onSelectAreaCreated={_.identity}
+              onSelectAreaChange={_.identity}
               onSelectAreaDestroyed={this.onSelectAreaDestroyed}
             />
             <Details/>

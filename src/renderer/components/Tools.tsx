@@ -22,7 +22,7 @@ class Tools extends React.Component<ToolsProps> {
         onClick={this.handleChangeTool(tool)}
         className={(this.props.selectedTool === tool) ? 'selected' : ''}
       >
-        {tool.icon}
+        <img src={tool.icon}/>
       </li>
     ))
   }

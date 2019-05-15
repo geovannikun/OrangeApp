@@ -1,13 +1,14 @@
 import Konva from 'konva'
 import _ from 'lodash'
 import { OrangeTool } from '..'
+import { StaticFiles } from '../../../common/Static'
 import { documentStore, selectorStore } from '../../stores'
 import OrangePosition from '../OrangePosition'
 import OrangeSize from '../OrangeSize'
 
 export default class OrangeSelectionTool extends OrangeTool {
   public title = 'Selection'
-  public icon = '⊹'
+  public icon = StaticFiles.groupLayers
   public onSelectAreaCreated = (shape: Konva.ShapeConfig) => _.identity
   public onSelectAreaChange = (shape: Konva.ShapeConfig) => _.identity
   public onSelectAreaDestroyed = (shape: Konva.ShapeConfig) => {
