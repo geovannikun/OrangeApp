@@ -2,12 +2,22 @@ import { action, computed, observable } from 'mobx'
 import { OrangeLayer, OrangePage, OrangePosition, OrangeSize } from './index'
 import OrangeCore from './OrangeCore'
 
+export enum OrangeItemType {
+  OrangeRect = 'orange-rect',
+  OrangeArtboard = 'orange-artboard',
+  OrangeLayer = 'orange-layer',
+  OrangeImage = 'orange-image',
+  OrangePage = 'orange-page',
+  OrangeText = 'orange-text',
+}
+
 abstract class IOrangeItem {
   @observable public id: string
   @observable public name: string
   @observable public parent?: OrangeLayer | OrangePage
   @observable public position: OrangePosition
   @observable public size: OrangeSize
+  @observable public abstract type: OrangeItemType
   @observable public rendered: boolean = false
 
   constructor(name: string, position: OrangePosition, size: OrangeSize) {

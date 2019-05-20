@@ -20,7 +20,7 @@ export default class OrangeSelectionTool extends OrangeTool {
         new OrangePosition(shape.x || 0, shape.y || 0),
         new OrangeSize(shape.width || 0, shape.height || 0),
       )) {
-        selectorStore.selecteds.push(child)
+        selectorStore.select(child, true)
       }
     })
   }

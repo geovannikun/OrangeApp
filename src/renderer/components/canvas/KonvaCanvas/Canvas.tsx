@@ -6,6 +6,7 @@ import { Layer, Rect, Stage } from 'react-konva'
 import {
   IOrangeItem, OrangePage, OrangeTool,
 } from '../../../classes/index'
+import { OrangeItemType } from '../../../classes/IOrangeItem'
 import CanvasRenderUtils from './RenderUtils'
 
 interface KonvaCanvasProps {
@@ -21,24 +22,43 @@ interface KonvaCanvasProps {
 @observer
 export class KonvaCanvas extends React.Component<KonvaCanvasProps> {
 
-  @observable public selectArea: Konva.ShapeConfig = {
-    visible: false,
-    height: 0,
+  @observable public selecting = false
+
+  @observable public selectingStartPoint = {
     x: 0,
     y: 0,
-    width: 0,
+  }
+
+  @observable public selectingEndPoint = {
+    x: 0,
+    y: 0,
+  }
+
+  @computed get selectArea() {
+    return {
+      visible:
+        this.selectingStartPoint.x !== this.selectingEndPoint.x &&
+        this.selectingStartPoint.y !== this.selectingEndPoint.y,
+      x: this.selectingStartPoint.x,
+      y: this.selectingStartPoint.y,
+      width: this.selectingEndPoint.x - this.selectingStartPoint.x,
+      height: this.selectingEndPoint.y - this.selectingStartPoint.y,
+    }
   }
 
   @action
   public createSelectArea = (kevent: Konva.KonvaEventObject<MouseEvent>) => {
     const event = kevent.evt
-    this.selectArea = {
-      ...this.selectArea,
-      visible: true,
-      height: 0,
+    this.selecting = true
+
+    this.selectingStartPoint = {
       x: event.offsetX,
       y: event.offsetY,
-      width: 0,
+    }
+
+    this.selectingEndPoint = {
+      x: event.offsetX,
+      y: event.offsetY,
     }
 
     this.props.onSelectAreaCreated(this.selectArea)
@@ -47,14 +67,13 @@ export class KonvaCanvas extends React.Component<KonvaCanvasProps> {
   @action
   public changeSelectArea = (kevent: Konva.KonvaEventObject<MouseEvent>) => {
     const event = kevent.evt
-    if (!this.selectArea.visible) {
+    if (!this.selecting) {
       return
     }
-    this.selectArea = {
-      ...this.selectArea,
-      height: event.offsetY - (this.selectArea.y || 0),
-      width: event.offsetX - (this.selectArea.x || 0),
-      visible: true,
+
+    this.selectingEndPoint = {
+      x: event.offsetX,
+      y: event.offsetY,
     }
 
     this.props.onSelectAreaChange(this.selectArea)
@@ -62,33 +81,37 @@ export class KonvaCanvas extends React.Component<KonvaCanvasProps> {
 
   @action
   public destroySelectArea = () => {
-    this.selectArea = {
-      ...this.selectArea,
-      visible: false,
-    }
+    this.selecting = false
 
     this.props.onSelectAreaDestroyed(this.selectArea)
+
+    this.selectingStartPoint = { x: 0, y: 0 }
+    this.selectingEndPoint = { x: 0, y: 0 }
   }
 
-  @computed get selectorStyle(): Konva.ShapeConfig {
+  @computed get selectorsStyle(): Konva.ShapeConfig[] {
     const selecteds = this.props.selecteds
-    if (!selecteds.length) {
-      return {
-        visible: false,
-      }
-    }
-    return {
-      height: selecteds[0].size.height,
-      x: selecteds[0].absolutePosition.x,
-      y: selecteds[0].absolutePosition.y,
-      width: selecteds[0].size.width,
-    }
+
+    return selecteds.map((selector) => ({
+      key: `${selector.id}-selector`,
+      height: selector.size.height,
+      x: selector.absolutePosition.x,
+      y: selector.absolutePosition.y,
+      width: selector.size.width,
+      dash: (selector.type === OrangeItemType.OrangeLayer) ? [5, 5] : undefined,
+    }))
   }
 
   public onSelect = (item?: IOrangeItem) => (e: Konva.KonvaEventObject<MouseEvent>) => {
     e.cancelBubble = true
     this.props.onSelect(item)()
   }
+
+  public renderSelectors = (selectors: Konva.ShapeConfig[]) => (
+    selectors.map(((selector) => (
+      <Rect {...selector} listening={false} stroke='black'/>
+    )))
+  )
 
   public render() {
     const { page } = this.props
@@ -104,7 +127,7 @@ export class KonvaCanvas extends React.Component<KonvaCanvasProps> {
       >
         <Layer>
           {CanvasRenderUtils.renderItem(page, this.onSelect)}
-          <Rect {...this.selectorStyle} listening={false} stroke='black'/>
+          {this.renderSelectors(this.selectorsStyle)}
           <Rect {...this.selectArea} stroke='black'/>
         </Layer>
       </Stage>

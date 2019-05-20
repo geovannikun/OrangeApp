@@ -1,9 +1,12 @@
 import { IOrangeItem, OrangeSize } from './index'
 import OrangePosition from './OrangePosition'
 
+import { observable } from 'mobx'
+import { OrangeItemType } from './IOrangeItem'
 import OrangeLayer from './OrangeLayer'
 
 class OrangePage extends OrangeLayer {
+  @observable public type = OrangeItemType.OrangePage
 
   private _items: IOrangeItem[] = []
 

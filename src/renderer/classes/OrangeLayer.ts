@@ -1,8 +1,9 @@
 import { action, observable, observe } from 'mobx'
 import { OrangePosition, OrangeSize } from './index'
-import IOrangeItem from './IOrangeItem'
+import IOrangeItem, { OrangeItemType } from './IOrangeItem'
 
 export default class OrangeLayer extends IOrangeItem {
+  @observable public type = OrangeItemType.OrangeLayer
   @observable public children: IOrangeItem[] = new Array<IOrangeItem>()
 
   constructor(name: string, position: OrangePosition, size: OrangeSize) {
