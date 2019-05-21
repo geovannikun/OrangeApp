@@ -28,17 +28,14 @@ import {
 import OrangeCore from '../classes/OrangeCore'
 import OrangeRectTool from '../classes/Tools/OrangeRectTool'
 import OrangeSelectionTool from '../classes/Tools/OrangeSelectionTool'
-import AppStore from '../stores/AppStore'
-import DocumentStore from '../stores/DocumentStore'
-import SelectorStore from '../stores/SelectorStore'
-import ToolsStore from '../stores/ToolsStore'
+import { appStore, documentStore, selectorStore, toolsStore } from '../stores'
 import { HTMLCanvas } from './canvas/HTMLCanvas'
 import { KonvaCanvas } from './canvas/KonvaCanvas'
 import ContextMenu from './ContextMenu'
 import ContextMenuItem from './ContextMenuItem'
 import Details from './Details'
+import DocumentThree from './DocumentThree'
 import Header from './Header'
-import Pages from './Pages'
 import Tools from './Tools'
 
 interface AppState {
@@ -46,10 +43,10 @@ interface AppState {
 }
 
 interface InjectedProps {
-  document: DocumentStore
-  selector: SelectorStore
-  app: AppStore
-  tools: ToolsStore
+  document: typeof documentStore
+  selector: typeof selectorStore
+  app: typeof appStore
+  tools: typeof toolsStore
 }
 
 @inject('document', 'selector', 'app', 'tools')
@@ -69,7 +66,7 @@ class App extends React.Component<object, AppState> {
     const { document } = this.injected
     Config.startApplication()
     const sketchPlugin = new OrangePlugin(['application/zip', 'application/x-wine-extension-sketch'])
-    sketchPlugin.importFile = (async (file: File) => {
+    sketchPlugin.importFile = (async () => {
       // const sketchFile = await ParserUtils.parseSketchFile(file.path)
       // console.log(sketchFile)
     })
@@ -104,27 +101,6 @@ class App extends React.Component<object, AppState> {
 
     this.injected.tools.add(new OrangeSelectionTool())
     this.injected.tools.add(new OrangeRectTool())
-  }
-
-  private renderObjectList = (list: IOrangeItem[]): JSX.Element[] => {
-    return list.map((item: IOrangeItem) => (
-      <li
-        key={item.id}
-        onClick={this.onSelect(item)}
-        className={this.injected.selector.selecteds.find((selected) => selected === item) ? 'selected' : ''}
-      >
-        {item.name}
-        {item instanceof OrangeLayer && this.renderSubList(item.children)}
-      </li>
-    ))
-  }
-
-  private renderSubList = (list: IOrangeItem[]): JSX.Element => {
-    return(
-      <ul>
-        {this.renderObjectList(list)}
-      </ul>
-    )
   }
 
   private onSelect = (item?: IOrangeItem) => (event?: React.MouseEvent<HTMLElement>) => {
@@ -197,12 +173,7 @@ class App extends React.Component<object, AppState> {
           onSelect={this.selectTool}
         />
         <SplitPane split='vertical' defaultSize={'250px'} style={{marginLeft: 50}}>
-          <aside className='content'>
-            <Pages/>
-            <ul className='layer-three'>
-              {selectedPage && this.renderObjectList(selectedPage.children)}
-            </ul>
-          </aside>
+          <DocumentThree onSelect={this.onSelect}/>
           <SplitPane split='vertical' defaultSize={'250px'} primary='second'>
             <this.renderComponents.KonvaCanvas
               onSelect={this.onSelect}
@@ -224,6 +195,7 @@ class App extends React.Component<object, AppState> {
     const { selectedPage } = this.injected.document
     const { selecteds } = this.injected.selector
     const { all, selected } = this.injected.tools
+
     return selectedPage ? (
       <Dropzone
         onClick={this.preventDropzoneClick}
