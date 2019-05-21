@@ -50,9 +50,9 @@
     "node-sass": "^4.11.0",
     "sass-lint": "^1.12.1",
     "sass-loader": "^7.1.0",
-    "tslint": "^5.12.1",
-    "tslint-react": "^3.6.0",
-    "typescript": "^3.3.3333",
+    "tslint": "^5.16.0",
+    "tslint-react": "^4.0.0",
+    "typescript": "^3.4.5",
     "webpack": "^4.29.5",
     "webpack-cli": "^3.2.3"
   }
