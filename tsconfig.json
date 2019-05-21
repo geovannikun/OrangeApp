@@ -1,6 +1,8 @@
 {
   "extends": "./node_modules/electron-webpack/tsconfig-base.json",
   "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
     "sourceMap": true,
     "noImplicitAny": true,
     "emitDecoratorMetadata": true,
@@ -10,7 +12,11 @@
     "strictNullChecks": true
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "dist",
+    "plugins",
+    "static",
+    "webpack.renderer.additions.js"
   ],
   "typeRoots" : ["declarations"]
 }
