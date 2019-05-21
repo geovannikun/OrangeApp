@@ -4,10 +4,10 @@ import React from 'react'
 import {
   OrangePage,
 } from '../classes/index'
-import DocumentStore from '../stores/DocumentStore'
+import { documentStore } from '../stores'
 
 interface InjectedProps {
-  document: DocumentStore
+  document: typeof documentStore
 }
 @inject('document')
 @observer

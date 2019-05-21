@@ -1,15 +1,25 @@
+import { inject, observer } from 'mobx-react'
 import React from 'react'
 import {
   OrangeTool,
 } from '../classes/index'
+import { toolsStore } from '../stores'
 
 interface ToolsProps {
-  tools: OrangeTool[]
-  selectedTool?: OrangeTool
   onSelect: (tool: OrangeTool) => void
 }
 
+interface InjectedProps {
+  tools: typeof toolsStore
+}
+
+@inject('tools')
+@observer
 class Tools extends React.Component<ToolsProps> {
+
+  get injected() {
+    return this.props as any as InjectedProps
+  }
 
   private handleChangeTool = (tool: OrangeTool) => () => {
     this.props.onSelect(tool)
@@ -20,7 +30,7 @@ class Tools extends React.Component<ToolsProps> {
       <li
         key={tool.title}
         onClick={this.handleChangeTool(tool)}
-        className={(this.props.selectedTool === tool) ? 'selected' : ''}
+        className={(this.injected.tools.selected === tool) ? 'selected' : ''}
       >
         <img src={tool.icon}/>
       </li>
@@ -31,7 +41,7 @@ class Tools extends React.Component<ToolsProps> {
     return (
       <aside className='tools'>
         <ul>
-          {this.renderToolsList(this.props.tools)}
+          {this.renderToolsList(this.injected.tools.all)}
         </ul>
       </aside>
     )

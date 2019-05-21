@@ -26,17 +26,11 @@ import {
   OrangeTool,
 } from '../classes/index'
 import OrangeCore from '../classes/OrangeCore'
-import OrangeRectTool from '../classes/Tools/OrangeRectTool'
-import OrangeSelectionTool from '../classes/Tools/OrangeSelectionTool'
+import { OrangeRectTool, OrangeSelectionTool } from '../classes/Tools'
+import { ContextMenu, ContextMenuItem, Details, DocumentThree, Header, Tools } from '../components'
 import { appStore, documentStore, selectorStore, toolsStore } from '../stores'
 import { HTMLCanvas } from './canvas/HTMLCanvas'
 import { KonvaCanvas } from './canvas/KonvaCanvas'
-import ContextMenu from './ContextMenu'
-import ContextMenuItem from './ContextMenuItem'
-import Details from './Details'
-import DocumentThree from './DocumentThree'
-import Header from './Header'
-import Tools from './Tools'
 
 interface AppState {
   dropZoneActive: boolean
@@ -167,11 +161,7 @@ class App extends React.Component<object, AppState> {
       </ContextMenu>
       <Header/>
       <div style={{display: 'flex'}}>
-        <Tools
-          tools={tools}
-          selectedTool={selectedTool}
-          onSelect={this.selectTool}
-        />
+        <Tools onSelect={this.selectTool}/>
         <SplitPane split='vertical' defaultSize={'250px'} style={{marginLeft: 50}}>
           <DocumentThree onSelect={this.onSelect}/>
           <SplitPane split='vertical' defaultSize={'250px'} primary='second'>
