@@ -15,13 +15,22 @@ export default class OrangeSelectionTool extends OrangeTool {
     if (!documentStore.selectedPage) {
       return
     }
+
+    selectorStore.clear()
+
     documentStore.selectedPage.items.forEach((child) => {
-      if (child.isInside(
-        new OrangePosition(shape.x || 0, shape.y || 0),
-        new OrangeSize(shape.width || 0, shape.height || 0),
-      )) {
-        selectorStore.select(child, true)
+      if (shape.width === 0 && shape.height === 0) {
+        if (!child.hasHit(
+          new OrangePosition(shape.x || 0, shape.y || 0),
+        )) {return}
+      } else {
+        if (!child.isInside(
+          new OrangePosition(shape.x || 0, shape.y || 0),
+          new OrangeSize(shape.width || 0, shape.height || 0),
+        )) {return}
       }
+
+      selectorStore.select(child, true)
     })
   }
 }

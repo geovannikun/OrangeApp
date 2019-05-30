@@ -13,15 +13,15 @@ import KCRect from './elements/KCRect'
 import KCText from './elements/KCText'
 
 export default class RenderUtils {
-  public static renderItem(item: IOrangeItem, select: any) {
+  public static renderItem(item: IOrangeItem) {
     if (item instanceof OrangeText) {
-      return (<KCText item={item} key={item.id} select={select}/>)
+      return (<KCText item={item} key={item.id}/>)
     } else if (item instanceof OrangeArtboard) {
-      return (<KCArtboard item={item} key={item.id} select={select}/>)
+      return (<KCArtboard item={item} key={item.id}/>)
     } else if (item instanceof OrangeLayer) {
-      return (<KCLayer item={item} key={item.id} select={select}/>)
+      return (<KCLayer item={item} key={item.id}/>)
     } else if (item instanceof OrangeRect) {
-      return (<KCRect item={item} key={item.id} select={select}/>)
+      return (<KCRect item={item} key={item.id}/>)
     }
     return
   }

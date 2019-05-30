@@ -7,7 +7,6 @@ import Item from './KCItem'
 
 interface ArtboardProps {
   item: OrangeArtboard
-  select: (item: IOrangeItem) => (e: Konva.KonvaEventObject<MouseEvent>) => void
 }
 
 class KCArtboard extends Item<ArtboardProps> {
@@ -17,7 +16,7 @@ class KCArtboard extends Item<ArtboardProps> {
   private nameFontSize = 16
 
   public renderSubitems(items: IOrangeItem[]): Array<JSX.Element | undefined> {
-    return items && items.map((item) => RenderUtils.renderItem(item, this.props.select))
+    return items && items.map((item) => RenderUtils.renderItem(item))
   }
 
   public componentDidMount() {
@@ -31,7 +30,6 @@ class KCArtboard extends Item<ArtboardProps> {
       return(
         <Group
           key={this.props.item.id}
-          onClick={this.props.select(this.props.item)}
           {...{x, y}}
         >
           <Text

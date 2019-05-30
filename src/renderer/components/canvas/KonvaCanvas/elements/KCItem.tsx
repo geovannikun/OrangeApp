@@ -3,7 +3,6 @@ import React from 'react'
 import { IOrangeItem, IOrangePrimitive, OrangeArtboard, OrangeText } from '../../../../classes'
 
 interface ItemProps {
-  select: (item: IOrangeItem) => (e: Konva.KonvaEventObject<MouseEvent>) => void
   item: IOrangeItem
 }
 

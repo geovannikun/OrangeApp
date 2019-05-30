@@ -71,6 +71,15 @@ abstract class IOrangeItem {
     parent.add(this)
   }
 
+  public hasHit(position: OrangePosition) {
+    return (
+      position.x > this.absolutePosition.x
+      && position.y > this.absolutePosition.y
+      && position.x < this.absolutePosition.x + this.size.width
+      && position.y < this.absolutePosition.y + this.size.height
+    )
+  }
+
   public isInside(position: OrangePosition, size: OrangeSize) {
     return (
       this.absolutePosition.x > position.x

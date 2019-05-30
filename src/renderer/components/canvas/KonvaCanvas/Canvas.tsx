@@ -13,7 +13,6 @@ interface KonvaCanvasProps {
   page?: OrangePage
   selecteds: IOrangeItem[]
   selectedTool?: OrangeTool
-  onSelect: (item?: IOrangeItem) => (e?: React.MouseEvent<HTMLElement>) => void
   onSelectAreaCreated: (shape: Konva.ShapeConfig) => void
   onSelectAreaChange: (shape: Konva.ShapeConfig) => void
   onSelectAreaDestroyed: (shape: Konva.ShapeConfig) => void
@@ -102,11 +101,6 @@ export class KonvaCanvas extends React.Component<KonvaCanvasProps> {
     }))
   }
 
-  public onSelect = (item?: IOrangeItem) => (e: Konva.KonvaEventObject<MouseEvent>) => {
-    e.cancelBubble = true
-    this.props.onSelect(item)()
-  }
-
   public renderSelectors = (selectors: Konva.ShapeConfig[]) => (
     selectors.map(((selector) => (
       <Rect {...selector} listening={false} stroke='black'/>
@@ -123,10 +117,9 @@ export class KonvaCanvas extends React.Component<KonvaCanvasProps> {
         onMouseDown={this.createSelectArea}
         onMouseMove={this.changeSelectArea}
         onMouseUp={this.destroySelectArea}
-        onClick={this.onSelect()}
       >
         <Layer>
-          {CanvasRenderUtils.renderItem(page, this.onSelect)}
+          {CanvasRenderUtils.renderItem(page)}
           {this.renderSelectors(this.selectorsStyle)}
           <Rect {...this.selectArea} stroke='black'/>
         </Layer>

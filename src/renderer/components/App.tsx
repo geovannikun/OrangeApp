@@ -166,7 +166,6 @@ class App extends React.Component<object, AppState> {
           <DocumentThree onSelect={this.onSelect}/>
           <SplitPane split='vertical' defaultSize={'250px'} primary='second'>
             <this.renderComponents.KonvaCanvas
-              onSelect={this.onSelect}
               page={selectedPage}
               selecteds={selecteds}
               onSelectAreaCreated={_.identity}

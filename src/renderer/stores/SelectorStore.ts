@@ -63,13 +63,6 @@ export default class SelectorStore {
   }
 
   @action
-  public remove(value: IOrangeItem) {
-    if (value) {
-      this.selecteds = this.selecteds.filter((selected) => selected !== value)
-    }
-  }
-
-  @action
   public clear() {
     this.selecteds.length = 0
   }
