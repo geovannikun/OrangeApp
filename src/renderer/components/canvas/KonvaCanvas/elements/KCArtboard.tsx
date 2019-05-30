@@ -16,7 +16,10 @@ class KCArtboard extends Item<ArtboardProps> {
   private nameFontSize = 16
 
   public renderSubitems(items: IOrangeItem[]): Array<JSX.Element | undefined> {
-    return items && items.map((item) => RenderUtils.renderItem(item))
+    return items && items
+      .slice()
+      .reverse()
+      .map((item) => RenderUtils.renderItem(item))
   }
 
   public componentDidMount() {

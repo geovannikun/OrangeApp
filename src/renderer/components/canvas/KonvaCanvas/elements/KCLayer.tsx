@@ -10,7 +10,10 @@ interface LayerProps {
 
 class KCLayer<P extends LayerProps> extends Item<LayerProps> {
   public renderSubitems(items: IOrangeItem[]): Array<JSX.Element | undefined> {
-    return items && items.map((item) => RenderUtils.renderItem(item))
+    return items && items
+      .slice()
+      .reverse()
+      .map((item) => RenderUtils.renderItem(item))
   }
 
   public render(): JSX.Element {
