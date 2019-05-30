@@ -44,8 +44,8 @@ export default class SelectorStore {
   }
 
   @action
-  public select(value: IOrangeItem, keep: boolean = false) {
-    if (value &&  this.selecteds.indexOf(value) === -1) {
+  public select(value?: IOrangeItem, keep: boolean = false) {
+    if (value && this.selecteds.indexOf(value) === -1) {
       if (!keep) {
         this.deselect()
       }

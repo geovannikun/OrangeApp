@@ -32,7 +32,7 @@ export default class OrangeLayer extends IOrangeItem {
   @action
   public add(value: IOrangeItem) {
     value.setParent(this)
-    this.children.push(value)
+    this.children.unshift(value)
   }
 
   @action

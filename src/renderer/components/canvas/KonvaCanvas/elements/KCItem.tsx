@@ -1,4 +1,3 @@
-import Konva from 'konva'
 import React from 'react'
 import { IOrangeItem, IOrangePrimitive, OrangeArtboard, OrangeText } from '../../../../classes'
 
